@@ -1,4 +1,5 @@
 " VUNDLE
+
 	set nocompatible              " be iMproved, required
 	filetype off                  " required
 
@@ -28,75 +29,100 @@
 
 " FUNCIONAMIENTO GENERAL
 
-   set nocompatible "utiliza las opciones avanzadas de vim
-   set helplang=es
-   set langmenu=es_es.utf8
-   lan es_ES.utf8
-   set spell
-   set spelllang=es
-   set ttyfast
-   " Realizar copias de seguridad
-   " set nobackup		" Don't keep a backup file
-   set backup
-   " Directorio para las copias de seguridad
-   set backupdir=/tmp
-   " Enviar al portapapeles todo lo que copiemos
-   set clipboard=unnamed
-   " Activamos los plugins
-   filetype plugin on
-   " Caracter comodin que utilizan algunos plugins por defecto es la barra
-   " invertida pero este es más comodo
-   let mapleader = ","
-   " Opciones al guardar sessiones para que no funcione lento al cargarlas
-   set sessionoptions=buffers,curdir,folds,options
-   " Linea de estado siempre activada
-   set laststatus=2
-   " Activar comprobación de errores en rst
-   " let g:rst_check_syntax = 1   " NO FUNCIONA
-   " Comprobación de errores en php
-   let g:check_words = exists("g:php_check_syntax") ? g:php_check_syntax : 1
-   " Tamaño del historial de comandos
-   set history=50 
+	set encoding=utf-8
+	set nocompatible "utiliza las opciones avanzadas de vim
+	set helplang=es
+	set langmenu=es_es.utf8
+	lan es_ES.utf8
+	set spell
+	set spelllang=es
+	set ttyfast
+	" Realizar copias de seguridad
+	" set nobackup		" Don't keep a backup file
+	set backup
+	" Directorio para las copias de seguridad
+	set backupdir=/tmp
+	" Enviar al portapapeles todo lo que copiemos
+	set clipboard=unnamed
+	" Activamos los plugins
+	filetype plugin on
+	" Caracter comodin que utilizan algunos plugins por defecto es la barra
+	" invertida pero este es más comodo
+	let mapleader = ","
+	" Opciones al guardar sessiones para que no funcione lento al cargarlas
+	set sessionoptions=buffers,curdir,folds,options
+	" Linea de estado siempre activada
+	set laststatus=2
+	" Activar comprobación de errores en rst
+	" let g:rst_check_syntax = 1   " NO FUNCIONA
+	" Comprobación de errores en php
+	let g:check_words = exists("g:php_check_syntax") ? g:php_check_syntax : 1
+	" Tamaño del historial de comandos
+	set history=50 
+	set paste	" Compartir porta papeles entre ventanas de vim.         
+	" Permitir .vimrc en carpetas de proyecto
+	set exrc
+	set secure
 
-" VISUALIZACION
-   set background=dark
-   "set background=light
-   colorscheme edumag " Colores personalizados
-   set sm " Visualización de modos
-   set showcmd " Visualización de comandos mientras vamos escribiendo
-   set showmatch " Indica cierre de llaves
-   set ruler "visualizar numero de linea y columna
-   " set novisualbell
-   set noerrorbells
-   set showbreak=->  " Shows this string before broken lines
-   syntax on
+" VISUALIZACIÓN
 
-   " Aquí se activa el coloreado de sintaxis (syntax highlighting), además de
-   " poner algunas opciones adicionales que son cómodas para programar (ver los
-   " comentarios correspondientes).
+	set background=dark
+	"set background=light
+	colorscheme edumag " Colores personalizados
+	set sm " Visualización de modos
+	set showcmd " Visualización de comandos mientras vamos escribiendo
+	set showmatch " Indica cierre de llaves
+	set ruler "visualizar numero de linea y columna
+	" set novisualbell
+	set noerrorbells
+	set showbreak=->  " Shows this string before broken lines
+	syntax on
 
-   if has("syntax") || has("gui_running")
+	" Aquí se activa el coloreado de sintaxis (syntax highlighting), además de
+	" poner algunas opciones adicionales que son cómodas para programar (ver los
+	" comentarios correspondientes).
 
-      " Con esto Vim señalará con fondo rojo los espacios que queden al final
-      " de línea: rara vez sirven para algo, así que prefiero poder *verlos*
-      " para poder quitarlos.
-      highlight WhitespaceEOL ctermbg=white guibg=white
-      match WhitespaceEOL /\s\+$/
+	if has("syntax") || has("gui_running")
 
-      " El resaltado de sintaxis de algunos lenguajes tiene opciones
-      " adicionales, aquí activamos las más útiles, sobre todo aquéllas que
-      " señalan (normalmente en rojo) ciertos errores de programación.
-      let c_gnu                = 1
-      let c_space_errors       = 1
-      let java_space_errors    = 1
-      let ora_space_errors     = 1
-      let plsql_space_errors   = 1
-      let python_space_errors  = 1
-      let python_highlight_all = 1
-      let g:sql_type_default   = 'mysql'
-   endif
+		" Con esto Vim señalará con fondo rojo los espacios que queden al final
+		" de línea: rara vez sirven para algo, así que prefiero poder *verlos*
+		" para poder quitarlos.
+		highlight WhitespaceEOL ctermbg=white guibg=white
+		match WhitespaceEOL /\s\+$/
+
+		" El resaltado de sintaxis de algunos lenguajes tiene opciones
+		" adicionales, aquí activamos las más útiles, sobre todo aquéllas que
+		" señalan (normalmente en rojo) ciertos errores de programación.
+		let c_gnu                = 1
+		let c_space_errors       = 1
+		let java_space_errors    = 1
+		let ora_space_errors     = 1
+		let plsql_space_errors   = 1
+		let python_space_errors  = 1
+		let python_highlight_all = 1
+		let g:sql_type_default   = 'mysql'
+
+	endif
+
+	" GVIM 
+		
+		" Tipo de fuente
+		" set gfn=Monospace\ 12
+		set gfn=Luxi\ Mono\ 10
+		" Desactivamos menu y toolbar en gui
+		"set guioptions-=T  " Con barra herramientas 
+		set guioptions=''  " Desactivado sin menú
+		"set guioptions='mg'  " solo menú
+		" Activamos menú con <Ctrl>S
+		inoremap <C-S> <esc>:set guioptions=''<CR>a
+		noremap <C-S> :set guioptions=''<CR>
+		" Desactivamos menú con <Ctrl>D
+		inoremap <C-D> <esc>:set guioptions='mg'<CR>a
+		noremap <C-D> :set guioptions='mg'<CR>
+		"set bg=dark
 
 " SANGRADO, SALTOS DE LINEA Y TABULADORES
+
    " setlocal textwidth=80 " Limita el ancho a 80 caracteres.
    set tabstop=2  " ancho de tabulador estandar
    set softtabstop=2 " ancho que deseamos
@@ -108,52 +134,57 @@
    set expandtab " El tabulador utiliza espacios en blanco
    filetype indent on	" Indenta segun tipo de archivo
    set backspace=indent,eol,start	" more powerful backspacing
+   set smartindent
 
 " BÚSQUEDAS
-   " set nohlsearch  " No ilumina las búsquedas encontradas
-   set ignorecase smartcase " Ignora mayúsculas en búsquedas salvo si se escribe en mayúsculas.
-   set incsearch " Búsqueda incremental
+
+	" set nohlsearch  " No ilumina las búsquedas encontradas
+	set ignorecase smartcase " Ignora mayúsculas en búsquedas salvo si se escribe en mayúsculas.
+	set incsearch " Búsqueda incremental
 
 " COMANDOS PROPIOS
-   iab _DP echo "<pre>" ; print_r($_POST) ; echo "</pre>"; // DEV 
-   " FALTA LITERAL
-   ab _FT /** FALTA LITERAL **/
-   ab _FECHA <esc>:read !date +"\%A, \%d de \%B del \%Y"<cr>kJ<end>a
-   " Suffixes that get lower priority when doing tab completion for filenames.
-   " These are files we are not likely to want to edit or read.
-   set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
-   command Incloura !/home/edu/desarrollo/magtrabajos/magtrabajos -a %
 
-" AUTOCOMMAND
-   " En Vim se pueden definir comandos que se ejecutan automáticamente cuando
-   " una determinada cosa ocurre. Este ejemplo hace que al cargar un fichero
-   " que se había editado previamente se posiciones el cursor la línea en que
-   " estaba cuando se dejó de editar por última vez. Muy cómodo :-)
+	iab _DP echo "<pre>" ; print_r($_POST) ; echo "</pre>"; // DEV 
+	" FALTA LITERAL
+	ab _FT /** FALTA LITERAL **/
+	ab _FECHA <esc>:read !date +"\%A, \%d de \%B del \%Y"<cr>kJ<end>a
+	" Suffixes that get lower priority when doing tab completion for filenames.
+	" These are files we are not likely to want to edit or read.
+	set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+	command Incloura !/home/edu/desarrollo/magtrabajos/magtrabajos -a %
 
-   if has("autocmd")
-      autocmd BufReadPost *
-               \ if line("'\"") > 0 && line("'\"") <= line("$") |
-               \		execute "normal g'\"" |
-               \ endif
-   endif
+	" AUTOCOMMAND
+	" En Vim se pueden definir comandos que se ejecutan automáticamente cuando
+	" una determinada cosa ocurre. Este ejemplo hace que al cargar un fichero
+	" que se había editado previamente se posiciones el cursor la línea en que
+	" estaba cuando se dejó de editar por última vez. Muy cómodo :-)
 
-   " Forzar detectar archivos .md como markdown.
-   au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
+	if has("autocmd")
+		autocmd BufReadPost *
+					\ if line("'\"") > 0 && line("'\"") <= line("$") |
+					\		execute "normal g'\"" |
+					\ endif
+	endif
 
-" Permitir .vimrc en carpetas de proyecto
-   set exrc
-   set secure
+	" Forzar detectar archivos .md como markdown.
+	au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
 
-" CONFIGURACIÓN PARA DRUPAL
-   set expandtab
-   set tabstop=2
-   set shiftwidth=2
-   set autoindent
-   set smartindent
-   set encoding=utf-8
-   set paste
+	" Syntax para rst
+	au BufNewFile,BufRead *.rst set ft=rest
 
 " PROGRAMACIÓN
+
+   " si es php cargamos especificamos también como html el tipo de
+   " archivo así por ejemplo tendremos disponible los snippets de
+   " html
+   au BufRead *.php set ft=php.html
+   au BufNewFile *.php set ft=php.html
+   au BufRead *.phtml set ft=php.html
+   au BufNewFile *.phtml set ft=php.html
+
+   " Lista errores
+   map <A-n> :cp<CR> " Ir a error anterior
+   map <A-N> :cn<CR> · Ir a error siguiente
 
 	" Ver documentación de php.
 	" Con ponerte sobre una función y pulsar ‘K’ mayúscula tendrás la documentación 
@@ -161,6 +192,142 @@
 	" Instalar la documentación en el sistema.
 	" sudo pear install doc.php.net/pman
 	set keywordprg=pman
+
+	if has("autocmd")
+		" Drupal *.modules files.
+		augroup module
+			autocmd BufRead *.dox set filetype=java.doxygen
+		augroup END
+		augroup module
+			autocmd BufRead *.inc set filetype=php
+		augroup END
+		augroup module
+			autocmd BufRead *.install set filetype=php
+		augroup END
+		augroup module
+			autocmd BufRead *.module set filetype=php
+		augroup END
+		augroup engine
+			autocmd BufRead *.engine set filetype=php
+		augroup END
+		augroup profile
+			autocmd BufRead *.profile set filetype=php
+		augroup END
+		augroup test
+			autocmd BufRead *.test set filetype=php
+		augroup END
+	endif
+
+	if !exists("autocommads_loaded")
+		 let autocommads_loaded = 1
+		 " autocmd FileType html set omnifunc=htmlcomplete#CompleteTags#Html " @todo Da error falta la función.
+		 autocmd FileType php call Php()
+		 autocmd FileType javascript call Php()
+		 autocmd FileType txt call Txt()
+		 autocmd FileType rst call Rst()
+		 autocmd FileType rest call Txt()
+		 autocmd FileType sh call Sh()
+		 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+	endif
+
+	" Autocommands para PHP
+	function Php() 
+		setlocal textwidth=80 " Limita el ancho a 80 caracteres.
+		call Html()
+		" Compilador tidy
+		compiler tidy
+		" UTF8 para archivos php
+		" set encoding=utf8
+		" Con Ctrl-r comentamos la linea y la copiamos abajo
+		inoremap <C-R> <Esc>yyg^i//<Esc>pi
+		" Con esta opción el texto sera cortado en la columna indicada por
+		" *textwidth* con formatoptions=croql hara que el codigo fuente no sea
+		" formateado pero si los comentarios
+		setlocal fo-=t fo+=croql
+		" Don't concatenate a line that ends with a backslash
+		setlocal cpo-=C
+	endfunction
+
+	function Rst()
+		setlocal textwidth=80 " Limita el ancho a 80 caracteres.
+		setlocal fo=cqt
+		setlocal wm=1
+	endfunction
+
+	function Txt()
+		setlocal textwidth=80 " Limita el ancho a 80 caracteres.
+		setlocal fo=cqt
+		setlocal wm=1
+	endfunction
+
+	function Sh()
+		set foldmethod=marker  " Plegar por marcas
+		"set foldmethod=indent  " Plegar por indent
+		setlocal textwidth=0 " Quita limitacion de caracteres.
+		" Con Ctrl-r comentamos la linea y la copiamos abajo
+		inoremap <C-R> <Esc>yyg^i# <Esc>pi
+		" Ejecutar el script editado con ALT-e, sirve para scripts bash
+		noremap! å :w :!% i
+	endfunction
+
+	" Función para manejo de archivos Html
+	function Html()
+		" let loaded_xmledit = 1
+		setlocal textwidth=0 " Limita el ancho a 80 caracteres.
+		" Format comments to be up to 80 characters long
+		"setlocal tw=80
+		" Don't concatenate a line that ends with a backslash
+		setlocal cpo-=C
+		" No funciona
+		" setlocal equalprg=tidy\ -quiet\ -i\ -language\ es\ -doctype\ omit\ --show-errors\ 0
+		" setlocal  makeprg=tidy\ -quiet\ -i\ -language\ es\ -doctype\ omit\ -e\ %
+		" Compilador tidy
+		compiler tidy
+		" Lista de TAGs.
+		let htmltags = "html head title body h1 h2 h3 h4 h5 p b i u abbr code"
+		let htmltags = htmltags . "pre center strong font span div ul ol li"
+		let htmltags = htmltags . "table thead tbody tfoot th tr td form select"
+		let htmltags = htmltags . "textarea tt a"
+		" Obtengo próximo elemento.
+		let htmltag  = substitute(htmltags, "\\([^ ]\\+\\).*", "\\1",  "")
+		" Borro elemento de la lista temporal
+		let rest = substitute(htmltags, "[^ ]\\+ \\(.*\\)", "\\1", "")
+		" Limpio variables que no uso más.
+		unlet htmltags
+		unlet htmltag
+		unlet rest
+		" let equalprg=tidy\ -quiet\ --show-errors\ 0
+		" let makeprg=tidy\ -quiet\ -e\ %
+
+	" let g:php_check_codesniffer = exists("g:php_check_codesniffer") ? g:php_check_codesniffer : 1
+	" let g:php_check_codesniffer_cmd='phpcs  --standard=Drupal_vim --extensions=php,module,inc,install,test,profile,theme --report=emacs'
+
+	" BEAUTIFULLCODE
+
+	" map <c-f> :call JsBeautify()<cr>
+	" or
+	autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
+	" for json
+	autocmd FileType json noremap <buffer> <c-f> :call JsonBeautify()<cr>
+	" for jsx
+	autocmd FileType jsx noremap <buffer> <c-f> :call JsxBeautify()<cr>
+	" for html
+	autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
+	" for css or scss
+	autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
+
+	autocmd FileType javascript vnoremap <buffer>  <c-f> :call RangeJsBeautify()<cr>
+	autocmd FileType json vnoremap <buffer> <c-f> :call RangeJsonBeautify()<cr>
+	autocmd FileType jsx vnoremap <buffer> <c-f> :call RangeJsxBeautify()<cr>
+	autocmd FileType html vnoremap <buffer> <c-f> :call RangeHtmlBeautify()<cr>
+	autocmd FileType css vnoremap <buffer> <c-f> :call RangeCSSBeautify()<cr>
+
+	" COLORES EN CSS
+
+	"Is used when updatetime value set by plugin (100ms) 
+	"is interfering with your configuration.
+	" g:cssColorVimDoNotMessMyUpdatetime
+	let g:cssColorVimDoNotMessMyUpdatetime = 1
 
 " PLUGINS
 
