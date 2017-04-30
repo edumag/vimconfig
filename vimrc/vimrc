@@ -122,7 +122,7 @@
    " Suffixes that get lower priority when doing tab completion for filenames.
    " These are files we are not likely to want to edit or read.
    set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
-   command Incloura !/home/eduardo/desarrollo/magtrabajos/magtrabajos -a %
+   command Incloura !/home/edu/desarrollo/magtrabajos/magtrabajos -a %
 
 " AUTOCOMMAND
    " En Vim se pueden definir comandos que se ejecutan automáticamente cuando
@@ -136,6 +136,9 @@
                \		execute "normal g'\"" |
                \ endif
    endif
+
+   " Forzar detectar archivos .md como markdown.
+   au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
 
 " Permitir .vimrc en carpetas de proyecto
    set exrc

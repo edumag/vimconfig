@@ -6,7 +6,7 @@ Configuración de vim
 
 ```
 git clone git@github.com:edumag/vimconfig.git .vim
-cd .vim 
-cp vimrc/vimrc ~/.vimrc
+ln -s .vim/vimrc/vimrc .vimrc
+vim +PluginInstall +qall
 ```
 
