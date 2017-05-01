@@ -53,10 +53,6 @@
 	set sessionoptions=buffers,curdir,folds,options
 	" Linea de estado siempre activada
 	set laststatus=2
-	" Activar comprobación de errores en rst
-	" let g:rst_check_syntax = 1   " NO FUNCIONA
-	" Comprobación de errores en php
-	let g:check_words = exists("g:php_check_syntax") ? g:php_check_syntax : 1
 	" Tamaño del historial de comandos
 	set history=50 
 	set paste	" Compartir porta papeles entre ventanas de vim.         
@@ -151,7 +147,7 @@
 	" Suffixes that get lower priority when doing tab completion for filenames.
 	" These are files we are not likely to want to edit or read.
 	set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
-	command Incloura !/home/edu/desarrollo/magtrabajos/magtrabajos -a %
+	command Incloura !$HOME/desarrollo/magtrabajos/magtrabajos -a %
 
 	" AUTOCOMMAND
 	" En Vim se pueden definir comandos que se ejecutan automáticamente cuando
@@ -174,160 +170,156 @@
 
 " PROGRAMACIÓN
 
-   " si es php cargamos especificamos también como html el tipo de
-   " archivo así por ejemplo tendremos disponible los snippets de
-   " html
-   au BufRead *.php set ft=php.html
-   au BufNewFile *.php set ft=php.html
-   au BufRead *.phtml set ft=php.html
-   au BufNewFile *.phtml set ft=php.html
+  " Plugin que detecta errores en php
+  " .vim/plugin/php_check_syntax.vim
 
-   " Lista errores
-   map <A-n> :cp<CR> " Ir a error anterior
-   map <A-N> :cn<CR> · Ir a error siguiente
+  " Lista errores
+  map <A-n> :cp<CR> " Ir a error anterior
+  map <A-N> :cn<CR> · Ir a error siguiente
 
-	" Ver documentación de php.
-	" Con ponerte sobre una función y pulsar ‘K’ mayúscula tendrás la documentación 
-	" correspondiente.
-	" Instalar la documentación en el sistema.
-	" sudo pear install doc.php.net/pman
-	set keywordprg=pman
+  " Ver documentación de php.
+  " Con ponerte sobre una función y pulsar ‘K’ mayúscula tendrás la documentación 
+  " correspondiente.
+  " Instalar la documentación en el sistema.
+  " sudo pear install doc.php.net/pman
+  set keywordprg=pman
 
-	if has("autocmd")
-		" Drupal *.modules files.
-		augroup module
-			autocmd BufRead *.dox set filetype=java.doxygen
-		augroup END
-		augroup module
-			autocmd BufRead *.inc set filetype=php
-		augroup END
-		augroup module
-			autocmd BufRead *.install set filetype=php
-		augroup END
-		augroup module
-			autocmd BufRead *.module set filetype=php
-		augroup END
-		augroup engine
-			autocmd BufRead *.engine set filetype=php
-		augroup END
-		augroup profile
-			autocmd BufRead *.profile set filetype=php
-		augroup END
-		augroup test
-			autocmd BufRead *.test set filetype=php
-		augroup END
-	endif
+  if has("autocmd")
+    " Drupal *.modules files.
+    augroup module
+      autocmd BufRead *.dox set filetype=java.doxygen
+    augroup END
+    augroup module
+      autocmd BufRead *.inc set filetype=php
+    augroup END
+    augroup module
+      autocmd BufRead *.install set filetype=php
+    augroup END
+    augroup module
+      autocmd BufRead *.module set filetype=php
+    augroup END
+    augroup engine
+      autocmd BufRead *.engine set filetype=php
+    augroup END
+    augroup profile
+      autocmd BufRead *.profile set filetype=php
+    augroup END
+    augroup test
+      autocmd BufRead *.test set filetype=php
+    augroup END
+  endif
 
-	if !exists("autocommads_loaded")
-		 let autocommads_loaded = 1
-		 " autocmd FileType html set omnifunc=htmlcomplete#CompleteTags#Html " @todo Da error falta la función.
-		 autocmd FileType php call Php()
-		 autocmd FileType javascript call Php()
-		 autocmd FileType txt call Txt()
-		 autocmd FileType rst call Rst()
-		 autocmd FileType rest call Txt()
-		 autocmd FileType sh call Sh()
-		 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
-	endif
+  if !exists("autocommads_loaded")
+    let autocommads_loaded = 1
+    " autocmd FileType html set omnifunc=htmlcomplete#CompleteTags#Html " @todo Da error falta la función.
+    autocmd FileType php call Php()
+    autocmd FileType javascript call Php()
+    autocmd FileType txt call Txt()
+    autocmd FileType rst call Rst()
+    autocmd FileType rest call Txt()
+    autocmd FileType sh call Sh()
+    autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+  endif
 
-	" Autocommands para PHP
-	function Php() 
-		setlocal textwidth=80 " Limita el ancho a 80 caracteres.
-		call Html()
-		" Compilador tidy
-		compiler tidy
-		" UTF8 para archivos php
-		" set encoding=utf8
-		" Con Ctrl-r comentamos la linea y la copiamos abajo
-		inoremap <C-R> <Esc>yyg^i//<Esc>pi
-		" Con esta opción el texto sera cortado en la columna indicada por
-		" *textwidth* con formatoptions=croql hara que el codigo fuente no sea
-		" formateado pero si los comentarios
-		setlocal fo-=t fo+=croql
-		" Don't concatenate a line that ends with a backslash
-		setlocal cpo-=C
-	endfunction
+  " Autocommands para PHP
+  function Php() 
+    setlocal textwidth=80 " Limita el ancho a 80 caracteres.
+    call Html()
+    " Compilador tidy
+    compiler tidy
+    " UTF8 para archivos php
+    " set encoding=utf8
+    " Con Ctrl-r comentamos la linea y la copiamos abajo
+    inoremap <C-R> <Esc>yyg^i//<Esc>pi
+    " Con esta opción el texto sera cortado en la columna indicada por
+    " *textwidth* con formatoptions=croql hara que el codigo fuente no sea
+    " formateado pero si los comentarios
+    setlocal fo-=t fo+=croql
+    " Don't concatenate a line that ends with a backslash
+    setlocal cpo-=C
+  endfunction
 
-	function Rst()
-		setlocal textwidth=80 " Limita el ancho a 80 caracteres.
-		setlocal fo=cqt
-		setlocal wm=1
-	endfunction
+  function Rst()
+    setlocal textwidth=80 " Limita el ancho a 80 caracteres.
+    setlocal fo=cqt
+    setlocal wm=1
+  endfunction
 
-	function Txt()
-		setlocal textwidth=80 " Limita el ancho a 80 caracteres.
-		setlocal fo=cqt
-		setlocal wm=1
-	endfunction
+  function Txt()
+    setlocal textwidth=80 " Limita el ancho a 80 caracteres.
+    setlocal fo=cqt
+    setlocal wm=1
+  endfunction
 
-	function Sh()
-		set foldmethod=marker  " Plegar por marcas
-		"set foldmethod=indent  " Plegar por indent
-		setlocal textwidth=0 " Quita limitacion de caracteres.
-		" Con Ctrl-r comentamos la linea y la copiamos abajo
-		inoremap <C-R> <Esc>yyg^i# <Esc>pi
-		" Ejecutar el script editado con ALT-e, sirve para scripts bash
-		noremap! å :w :!% i
-	endfunction
+  function Sh()
+    set foldmethod=marker  " Plegar por marcas
+    "set foldmethod=indent  " Plegar por indent
+    setlocal textwidth=0 " Quita limitacion de caracteres.
+    " Con Ctrl-r comentamos la linea y la copiamos abajo
+    inoremap <C-R> <Esc>yyg^i# <Esc>pi
+    " Ejecutar el script editado con ALT-e, sirve para scripts bash
+    noremap! å :w :!% i
+  endfunction
 
-	" Función para manejo de archivos Html
-	function Html()
-		" let loaded_xmledit = 1
-		setlocal textwidth=0 " Limita el ancho a 80 caracteres.
-		" Format comments to be up to 80 characters long
-		"setlocal tw=80
-		" Don't concatenate a line that ends with a backslash
-		setlocal cpo-=C
-		" No funciona
-		" setlocal equalprg=tidy\ -quiet\ -i\ -language\ es\ -doctype\ omit\ --show-errors\ 0
-		" setlocal  makeprg=tidy\ -quiet\ -i\ -language\ es\ -doctype\ omit\ -e\ %
-		" Compilador tidy
-		compiler tidy
-		" Lista de TAGs.
-		let htmltags = "html head title body h1 h2 h3 h4 h5 p b i u abbr code"
-		let htmltags = htmltags . "pre center strong font span div ul ol li"
-		let htmltags = htmltags . "table thead tbody tfoot th tr td form select"
-		let htmltags = htmltags . "textarea tt a"
-		" Obtengo próximo elemento.
-		let htmltag  = substitute(htmltags, "\\([^ ]\\+\\).*", "\\1",  "")
-		" Borro elemento de la lista temporal
-		let rest = substitute(htmltags, "[^ ]\\+ \\(.*\\)", "\\1", "")
-		" Limpio variables que no uso más.
-		unlet htmltags
-		unlet htmltag
-		unlet rest
-		" let equalprg=tidy\ -quiet\ --show-errors\ 0
-		" let makeprg=tidy\ -quiet\ -e\ %
+  " Función para manejo de archivos Html
+  function Html()
+    " let loaded_xmledit = 1
+    setlocal textwidth=0 " Limita el ancho a 80 caracteres.
+    " Format comments to be up to 80 characters long
+    "setlocal tw=80
+    " Don't concatenate a line that ends with a backslash
+    setlocal cpo-=C
+    " No funciona
+    " setlocal equalprg=tidy\ -quiet\ -i\ -language\ es\ -doctype\ omit\ --show-errors\ 0
+    " setlocal  makeprg=tidy\ -quiet\ -i\ -language\ es\ -doctype\ omit\ -e\ %
+    " Compilador tidy
+    compiler tidy
+    " Lista de TAGs.
+    let htmltags = "html head title body h1 h2 h3 h4 h5 p b i u abbr code"
+    let htmltags = htmltags . "pre center strong font span div ul ol li"
+    let htmltags = htmltags . "table thead tbody tfoot th tr td form select"
+    let htmltags = htmltags . "textarea tt a"
+    " Obtengo próximo elemento.
+    let htmltag  = substitute(htmltags, "\\([^ ]\\+\\).*", "\\1",  "")
+    " Borro elemento de la lista temporal
+    let rest = substitute(htmltags, "[^ ]\\+ \\(.*\\)", "\\1", "")
+    " Limpio variables que no uso más.
+    unlet htmltags
+    unlet htmltag
+    unlet rest
+    " let equalprg=tidy\ -quiet\ --show-errors\ 0
+    " let makeprg=tidy\ -quiet\ -e\ %
+  endfunction
 
-	" let g:php_check_codesniffer = exists("g:php_check_codesniffer") ? g:php_check_codesniffer : 1
-	" let g:php_check_codesniffer_cmd='phpcs  --standard=Drupal_vim --extensions=php,module,inc,install,test,profile,theme --report=emacs'
+  " let g:php_check_codesniffer = exists("g:php_check_codesniffer") ? g:php_check_codesniffer : 1
+  " let g:php_check_codesniffer_cmd='phpcs  --standard=Drupal_vim --extensions=php,module,inc,install,test,profile,theme --report=emacs'
 
-	" BEAUTIFULLCODE
+  " BEAUTIFULLCODE
 
-	" map <c-f> :call JsBeautify()<cr>
-	" or
-	autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
-	" for json
-	autocmd FileType json noremap <buffer> <c-f> :call JsonBeautify()<cr>
-	" for jsx
-	autocmd FileType jsx noremap <buffer> <c-f> :call JsxBeautify()<cr>
-	" for html
-	autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
-	" for css or scss
-	autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
+  " map <c-f> :call JsBeautify()<cr>
+  " or
+  autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
+  " for json
+  autocmd FileType json noremap <buffer> <c-f> :call JsonBeautify()<cr>
+  " for jsx
+  autocmd FileType jsx noremap <buffer> <c-f> :call JsxBeautify()<cr>
+  " for html
+  autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
+  " for css or scss
+  autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
 
-	autocmd FileType javascript vnoremap <buffer>  <c-f> :call RangeJsBeautify()<cr>
-	autocmd FileType json vnoremap <buffer> <c-f> :call RangeJsonBeautify()<cr>
-	autocmd FileType jsx vnoremap <buffer> <c-f> :call RangeJsxBeautify()<cr>
-	autocmd FileType html vnoremap <buffer> <c-f> :call RangeHtmlBeautify()<cr>
-	autocmd FileType css vnoremap <buffer> <c-f> :call RangeCSSBeautify()<cr>
+  autocmd FileType javascript vnoremap <buffer>  <c-f> :call RangeJsBeautify()<cr>
+  autocmd FileType json vnoremap <buffer> <c-f> :call RangeJsonBeautify()<cr>
+  autocmd FileType jsx vnoremap <buffer> <c-f> :call RangeJsxBeautify()<cr>
+  autocmd FileType html vnoremap <buffer> <c-f> :call RangeHtmlBeautify()<cr>
+  autocmd FileType css vnoremap <buffer> <c-f> :call RangeCSSBeautify()<cr>
 
-	" COLORES EN CSS
+" COLORES EN CSS
 
-	"Is used when updatetime value set by plugin (100ms) 
-	"is interfering with your configuration.
-	" g:cssColorVimDoNotMessMyUpdatetime
-	let g:cssColorVimDoNotMessMyUpdatetime = 1
+  "Is used when updatetime value set by plugin (100ms) 
+  "is interfering with your configuration.
+  " g:cssColorVimDoNotMessMyUpdatetime
+  let g:cssColorVimDoNotMessMyUpdatetime = 1
 
 " PLUGINS
 
