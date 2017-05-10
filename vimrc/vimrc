@@ -78,6 +78,10 @@
 	" poner algunas opciones adicionales que son cómodas para programar (ver los
 	" comentarios correspondientes).
 
+	if has("gui_running")
+    colorscheme edumag
+	endif
+
 	if has("syntax") || has("gui_running")
 
 		" Con esto Vim señalará con fondo rojo los espacios que queden al final
@@ -169,6 +173,9 @@
 	au BufNewFile,BufRead *.rst set ft=rest
 
 " PROGRAMACIÓN
+
+  " Barra de etiquetas a la derecha.
+  let Tlist_Use_Right_Window = 1
 
   " Plugin que detecta errores en php
   " .vim/plugin/php_check_syntax.vim
