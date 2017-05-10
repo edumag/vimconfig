@@ -34,7 +34,7 @@
 	set helplang=es
 	set langmenu=es_es.utf8
 	lan es_ES.utf8
-	set spell
+	" set spell
 	set spelllang=es
 	set ttyfast
 	" Realizar copias de seguridad
@@ -64,7 +64,7 @@
 
 	set background=dark
 	"set background=light
-	colorscheme edumag " Colores personalizados
+	" colorscheme edumag " Colores personalizados
 	set sm " Visualización de modos
 	set showcmd " Visualización de comandos mientras vamos escribiendo
 	set showmatch " Indica cierre de llaves
