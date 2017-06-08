@@ -14,7 +14,14 @@ endif
 
 let g:colors_name = "edumag"
 
+" Con esto Vim señalará con fondo rojo los espacios que queden al final
+" de línea: rara vez sirven para algo, así que prefiero poder *verlos*
+" para poder quitarlos.
+highlight WhitespaceEOL ctermbg=235 guibg=grey50
+match WhitespaceEOL /\s\+$/
 
+highlight ColorColumn ctermbg=235 guibg=grey50
+call matchadd('ColorColumn', '\%81v', 100) "set column nr
 
 hi Normal guibg=black guifg=grey75
 hi Cursor guibg=grey75

@@ -34,7 +34,7 @@
 	set helplang=es
 	set langmenu=es_es.utf8
 	lan es_ES.utf8
-	" set spell
+	set spell
 	set spelllang=es
 	set ttyfast
 	" Realizar copias de seguridad
@@ -62,6 +62,7 @@
 
 " VISUALIZACIÓN
 
+  set colorcolumn=80
 	set background=dark
 	"set background=light
 	" colorscheme edumag " Colores personalizados
@@ -84,12 +85,6 @@
 
 	if has("syntax") || has("gui_running")
 
-		" Con esto Vim señalará con fondo rojo los espacios que queden al final
-		" de línea: rara vez sirven para algo, así que prefiero poder *verlos*
-		" para poder quitarlos.
-		highlight WhitespaceEOL ctermbg=white guibg=white
-		match WhitespaceEOL /\s\+$/
-
 		" El resaltado de sintaxis de algunos lenguajes tiene opciones
 		" adicionales, aquí activamos las más útiles, sobre todo aquéllas que
 		" señalan (normalmente en rojo) ciertos errores de programación.
@@ -104,22 +99,29 @@
 
 	endif
 
-	" GVIM 
-		
-		" Tipo de fuente
-		" set gfn=Monospace\ 12
-		set gfn=Luxi\ Mono\ 10
-		" Desactivamos menu y toolbar en gui
-		"set guioptions-=T  " Con barra herramientas 
-		set guioptions=''  " Desactivado sin menú
-		"set guioptions='mg'  " solo menú
-		" Activamos menú con <Ctrl>S
-		inoremap <C-S> <esc>:set guioptions=''<CR>a
-		noremap <C-S> :set guioptions=''<CR>
-		" Desactivamos menú con <Ctrl>D
-		inoremap <C-D> <esc>:set guioptions='mg'<CR>a
-		noremap <C-D> :set guioptions='mg'<CR>
-		"set bg=dark
+  " Tipo de fuente
+  " set gfn=Monospace\ 12
+  set gfn=Luxi\ Mono\ 12
+  " Desactivamos menu y toolbar en gui
+  "set guioptions-=T  " Con barra herramientas 
+  set guioptions=''  " Desactivado sin menú
+  "set guioptions='mg'  " solo menú
+  " Activamos menú con <Ctrl>S
+  inoremap <C-S> <esc>:set guioptions=''<CR>a
+  noremap <C-S> :set guioptions=''<CR>
+  " Desactivamos menú con <Ctrl>D
+  inoremap <C-D> <esc>:set guioptions='mg'<CR>a
+  noremap <C-D> :set guioptions='mg'<CR>
+  "set bg=dark
+
+  " Con esto Vim señalará con fondo rojo los espacios que queden al final
+  " de línea: rara vez sirven para algo, así que prefiero poder *verlos*
+  " para poder quitarlos.
+  highlight WhitespaceEOL ctermbg=235 guibg=grey50
+  match WhitespaceEOL /\s\+$/
+
+  highlight ColorColumn ctermbg=235 guibg=grey50
+  call matchadd('ColorColumn', '\%81v', 100) "set column nr
 
 " SANGRADO, SALTOS DE LINEA Y TABULADORES
 
@@ -341,3 +343,5 @@
 
 	" Debug
 	Plugin 'joonty/vdebug'
+
+
