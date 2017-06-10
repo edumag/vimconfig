@@ -191,7 +191,7 @@
   " correspondiente.
   " Instalar la documentación en el sistema.
   " sudo pear install doc.php.net/pman
-  set keywordprg=pman
+  set keywordprg=terminator\ -x\ pman 
 
   if has("autocmd")
     " Drupal *.modules files.
