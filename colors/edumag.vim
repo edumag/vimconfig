@@ -20,7 +20,7 @@ let g:colors_name = "edumag"
 highlight WhitespaceEOL ctermbg=235 guibg=grey50
 match WhitespaceEOL /\s\+$/
 
-highlight ColorColumn ctermbg=235 guibg=grey50
+highlight ColorColumn ctermbg=none ctermfg=red guibg=black guifg=red
 call matchadd('ColorColumn', '\%81v', 100) "set column nr
 
 hi Normal guibg=black guifg=grey75
