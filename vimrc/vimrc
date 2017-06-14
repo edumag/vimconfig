@@ -315,13 +315,13 @@
   " map <c-f> :call JsBeautify()<cr>
   " or
   autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
-  " for json
+  " json
   autocmd FileType json noremap <buffer> <c-f> :call JsonBeautify()<cr>
-  " for jsx
+  " jsx
   autocmd FileType jsx noremap <buffer> <c-f> :call JsxBeautify()<cr>
-  " for html
+  " html
   autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
-  " for css or scss
+  " css or scss
   autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
 
   autocmd FileType javascript vnoremap <buffer>  <c-f> :call RangeJsBeautify()<cr>
@@ -329,6 +329,11 @@
   autocmd FileType jsx vnoremap <buffer> <c-f> :call RangeJsxBeautify()<cr>
   autocmd FileType html vnoremap <buffer> <c-f> :call RangeHtmlBeautify()<cr>
   autocmd FileType css vnoremap <buffer> <c-f> :call RangeCSSBeautify()<cr>
+
+  " python
+  autocmd FileType python set sw=4
+  autocmd FileType python set ts=4
+  autocmd FileType python set sts=4
 
 " COLORES EN CSS
 
@@ -357,5 +362,16 @@
   " Con ctrl+z podemos marcar los que queramos abrir y con ctrl+o abrirlos.
   Plugin 'ctrlp.vim'
 
-  " Verificar código al guardar.
+  " Python Mode.
   Plugin 'Python-mode-klen'
+
+  " Verificar código al guardar.
+  Plugin 'Syntastic' 
+  set statusline+=%#warningmsg#
+  set statusline+=%{SyntasticStatuslineFlag()}
+  set statusline+=%*
+
+  let g:syntastic_always_populate_loc_list = 1
+  let g:syntastic_auto_loc_list = 1
+  let g:syntastic_check_on_open = 1
+  let g:syntastic_check_on_wq = 0
