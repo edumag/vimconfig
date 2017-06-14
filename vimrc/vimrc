@@ -1,5 +1,7 @@
 " VUNDLE
 
+  " Utilizamos Vudle como administrador de plugins.
+
 	set nocompatible              " be iMproved, required
 	filetype off                  " required
 
@@ -70,6 +72,7 @@
 	set showcmd " Visualización de comandos mientras vamos escribiendo
 	set showmatch " Indica cierre de llaves
 	set ruler "visualizar numero de linea y columna
+  set nonumber " Ocultamos número de linea en archivo.
 	" set novisualbell
 	set noerrorbells
 	set showbreak=->  " Shows this string before broken lines
@@ -348,4 +351,11 @@
 	" Debug
 	Plugin 'joonty/vdebug'
 
+  " Abrir archivos.
+  " Pulsando Ctrl+P el pluguin nos permite ir viendo los archivos que 
+  " coinciden con el texto que vamos tecleando.
+  " Con ctrl+z podemos marcar los que queramos abrir y con ctrl+o abrirlos.
+  Plugin 'ctrlp.vim'
 
+  " Verificar código al guardar.
+  Plugin 'Python-mode-klen'
