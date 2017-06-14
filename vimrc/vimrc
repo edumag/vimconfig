@@ -34,7 +34,7 @@
 	set helplang=es
 	set langmenu=es_es.utf8
 	lan es_ES.utf8
-	set spell
+	" set spell
 	set spelllang=es
 	set ttyfast
 	" Realizar copias de seguridad
@@ -173,6 +173,10 @@
 
 	" Syntax para rst
 	au BufNewFile,BufRead *.rst set ft=rest
+
+  au BufRead,BufNewFile *.txt :setlocal spell
+  au BufRead,BufNewFile *.md :setlocal spell
+  au BufRead,BufNewFile *.rst :setlocal spell
 
 " PROGRAMACIÓN
 
