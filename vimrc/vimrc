@@ -365,4 +365,4 @@
   " Python Mode.
   Plugin 'Python-mode-klen'
   let g:pymode_lint = 1
-
+  let g:pymode_lint_ignore="E302,E266"
