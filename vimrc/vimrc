@@ -366,3 +366,8 @@
   Plugin 'Python-mode-klen'
   let g:pymode_lint = 1
   let g:pymode_lint_ignore="E302,E266"
+
+  " SnipMate
+  Plugin 'MarcWeber/vim-addon-mw-utils'
+  Plugin 'tomtom/tlib_vim'
+  Plugin 'garbas/vim-snipmate'
