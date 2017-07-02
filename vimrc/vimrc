@@ -104,7 +104,7 @@
 
   " Tipo de fuente
   " set gfn=Monospace\ 12
-  set gfn=Luxi\ Mono\ 12
+  set gfn=Luxi\ Mono\ 10
   " Desactivamos menu y toolbar en gui
   "set guioptions-=T  " Con barra herramientas 
   set guioptions=''  " Desactivado sin menú
