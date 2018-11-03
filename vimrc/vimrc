@@ -36,7 +36,7 @@
 	set helplang=es
 	set langmenu=es_es.utf8
 	lan es_ES.utf8
-	" set spell
+	set nospell
 	set spelllang=es
 	set ttyfast
 	" Realizar copias de seguridad
@@ -150,37 +150,40 @@
 
 " COMANDOS PROPIOS
 
-	iab _DP echo "<pre>" ; print_r($_POST) ; echo "</pre>"; // DEV 
-	" FALTA LITERAL
-	ab _FT /** FALTA LITERAL **/
-	ab _FECHA <esc>:read !date +"\%A, \%d de \%B del \%Y"<cr>kJ<end>a
-	" Suffixes that get lower priority when doing tab completion for filenames.
-	" These are files we are not likely to want to edit or read.
-	set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
-	command Incloura !$HOME/desarrollo/magtrabajos/magtrabajos -a %
+    iab _DP echo "<pre>" ; print_r($_POST) ; echo "</pre>"; // DEV 
+    " FALTA LITERAL
+    ab _FT /** FALTA LITERAL **/
+    ab _FECHA <esc>:read !date +"\%A, \%d de \%B del \%Y"<cr>kJ<end>a
+    " Suffixes that get lower priority when doing tab completion for filenames.
+    " These are files we are not likely to want to edit or read.
+    set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+    command Incloura !$HOME/desarrollo/magtrabajos/magtrabajos -a %
 
-	" AUTOCOMMAND
-	" En Vim se pueden definir comandos que se ejecutan automáticamente cuando
-	" una determinada cosa ocurre. Este ejemplo hace que al cargar un fichero
-	" que se había editado previamente se posiciones el cursor la línea en que
-	" estaba cuando se dejó de editar por última vez. Muy cómodo :-)
+    " AUTOCOMMAND
+    " En Vim se pueden definir comandos que se ejecutan automáticamente cuando
+    " una determinada cosa ocurre. Este ejemplo hace que al cargar un fichero
+    " que se había editado previamente se posiciones el cursor la línea en que
+    " estaba cuando se dejó de editar por última vez. Muy cómodo :-)
 
-	if has("autocmd")
-		autocmd BufReadPost *
-					\ if line("'\"") > 0 && line("'\"") <= line("$") |
-					\		execute "normal g'\"" |
-					\ endif
-	endif
+    if has("autocmd")
+        autocmd BufReadPost *
+                    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+                    \		execute "normal g'\"" |
+                    \ endif
+    endif
 
-	" Forzar detectar archivos .md como markdown.
-	au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
+    " Forzar detectar archivos .md como markdown.
+    au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
 
-	" Syntax para rst
-	au BufNewFile,BufRead *.rst set ft=rest
+    " Syntax para rst
+    au BufNewFile,BufRead *.rst set ft=rest
 
-  au BufRead,BufNewFile *.txt :setlocal spell
-  au BufRead,BufNewFile *.md :setlocal spell
-  au BufRead,BufNewFile *.rst :setlocal spell
+    " Syntax para html
+    au BufNewFile,BufRead *html set ft=xml
+
+    au BufRead,BufNewFile *.txt :setlocal spell
+    au BufRead,BufNewFile *.md :setlocal spell
+    au BufRead,BufNewFile *.rst :setlocal spell
 
 " PROGRAMACIÓN
 
@@ -241,7 +244,6 @@
   " Autocommands para PHP
   function Php() 
     setlocal textwidth=80 " Limita el ancho a 80 caracteres.
-    call Html()
     " Compilador tidy
     compiler tidy
     " UTF8 para archivos php
@@ -278,59 +280,6 @@
     noremap! å :w :!% i
   endfunction
 
-  " Función para manejo de archivos Html
-  function Html()
-    " let loaded_xmledit = 1
-    setlocal textwidth=0 " Limita el ancho a 80 caracteres.
-    " Format comments to be up to 80 characters long
-    "setlocal tw=80
-    " Don't concatenate a line that ends with a backslash
-    setlocal cpo-=C
-    " No funciona
-    " setlocal equalprg=tidy\ -quiet\ -i\ -language\ es\ -doctype\ omit\ --show-errors\ 0
-    " setlocal  makeprg=tidy\ -quiet\ -i\ -language\ es\ -doctype\ omit\ -e\ %
-    " Compilador tidy
-    compiler tidy
-    " Lista de TAGs.
-    let htmltags = "html head title body h1 h2 h3 h4 h5 p b i u abbr code"
-    let htmltags = htmltags . "pre center strong font span div ul ol li"
-    let htmltags = htmltags . "table thead tbody tfoot th tr td form select"
-    let htmltags = htmltags . "textarea tt a"
-    " Obtengo próximo elemento.
-    let htmltag  = substitute(htmltags, "\\([^ ]\\+\\).*", "\\1",  "")
-    " Borro elemento de la lista temporal
-    let rest = substitute(htmltags, "[^ ]\\+ \\(.*\\)", "\\1", "")
-    " Limpio variables que no uso más.
-    unlet htmltags
-    unlet htmltag
-    unlet rest
-    " let equalprg=tidy\ -quiet\ --show-errors\ 0
-    " let makeprg=tidy\ -quiet\ -e\ %
-  endfunction
-
-  " let g:php_check_codesniffer = exists("g:php_check_codesniffer") ? g:php_check_codesniffer : 1
-  " let g:php_check_codesniffer_cmd='phpcs  --standard=Drupal_vim --extensions=php,module,inc,install,test,profile,theme --report=emacs'
-
-  " BEAUTIFULLCODE
-
-  " map <c-f> :call JsBeautify()<cr>
-  " or
-  autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
-  " json
-  autocmd FileType json noremap <buffer> <c-f> :call JsonBeautify()<cr>
-  " jsx
-  autocmd FileType jsx noremap <buffer> <c-f> :call JsxBeautify()<cr>
-  " html
-  autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
-  " css or scss
-  autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
-
-  autocmd FileType javascript vnoremap <buffer>  <c-f> :call RangeJsBeautify()<cr>
-  autocmd FileType json vnoremap <buffer> <c-f> :call RangeJsonBeautify()<cr>
-  autocmd FileType jsx vnoremap <buffer> <c-f> :call RangeJsxBeautify()<cr>
-  autocmd FileType html vnoremap <buffer> <c-f> :call RangeHtmlBeautify()<cr>
-  autocmd FileType css vnoremap <buffer> <c-f> :call RangeCSSBeautify()<cr>
-
   " python
   autocmd FileType python set sw=4
   autocmd FileType python set ts=4
@@ -349,17 +298,18 @@
 
 " PLUGINS
 
-	" AIRLINE
-	Plugin 'vim-airline/vim-airline'
-	Plugin 'vim-airline/vim-airline-themes'
-	let g:airline_theme='luna'
-	set laststatus=2
-	let g:airline#extensions#tabline#enabled = 1       "Habilita los tabs, para cambiar de tab presionar gt
-	let g:airline_powerline_fonts=1
-	set t_Co=256
+  " AIRLINE
+  Plugin 'vim-airline/vim-airline'
+  Plugin 'vim-airline/vim-airline-themes'
+  let g:airline_theme='luna'
+  set laststatus=2
+  " Habilita los tabs, para cambiar de tab presionar gt
+  let g:airline#extensions#tabline#enabled = 1
+  let g:airline_powerline_fonts=1
+  set t_Co=256
 
-	" Debug
-	" Plugin 'joonty/vdebug'
+  " Debug
+  " Plugin 'joonty/vdebug'
 
   " Abrir archivos.
   " Pulsando Ctrl+P el pluguin nos permite ir viendo los archivos que 
@@ -372,5 +322,7 @@
   let g:pymode_lint = 1
   let g:pymode_lint_ignore="E302,E266"
 
-  " Otros.
+  " Varios.
   Plugin 'rest.vim'
+  Plugin 'sukima/xmledit'
+

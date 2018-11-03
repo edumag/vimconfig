@@ -46,3 +46,10 @@ Ejemplos:
 
 https://github.com/python-mode/python-mode
 
+### Varios.
+
+- rest.vim: Resaltado para rest, markdown.
+
+### xmledit.
+
+https://www.adictosaltrabajo.com/2011/02/01/vim-editar-xml/
