@@ -334,6 +334,10 @@
   autocmd FileType python set sw=4
   autocmd FileType python set ts=4
   autocmd FileType python set sts=4
+  " AutoPep8, dando formato a python. 
+  " sudo pip install autopep8
+  " Seleccionamos texto y tecleamos "gq".
+  au FileType python setlocal formatprg=autopep8\ -
 
 " COLORES EN CSS
 
