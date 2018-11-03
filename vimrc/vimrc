@@ -144,6 +144,7 @@
 " BÚSQUEDAS
 
 	" set nohlsearch  " No ilumina las búsquedas encontradas
+	set hlsearch  " Ilumina las búsquedas encontradas
 	set ignorecase smartcase " Ignora mayúsculas en búsquedas salvo si se escribe en mayúsculas.
 	set incsearch " Búsqueda incremental
 
@@ -375,3 +376,4 @@
   Plugin 'MarcWeber/vim-addon-mw-utils'
   Plugin 'tomtom/tlib_vim'
   Plugin 'garbas/vim-snipmate'
+  Plugin 'rest.vim'
