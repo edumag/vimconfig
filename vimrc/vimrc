@@ -187,24 +187,24 @@
 
 " PROGRAMACIÓN
 
-  " Barra de etiquetas a la derecha.
-  let Tlist_Use_Right_Window = 1
+    " Barra de etiquetas a la derecha.
+    let Tlist_Use_Right_Window = 1
 
-  " Plugin que detecta errores en php
-  " .vim/plugin/php_check_syntax.vim
+    " Plugin que detecta errores en php
+    " .vim/plugin/php_check_syntax.vim
 
-  " Lista errores
-  map <A-n> :cp<CR> " Ir a error anterior
-  map <A-N> :cn<CR> · Ir a error siguiente
+    " Lista errores
+    map <F7> :cp<CR>
+    map <F8> :cn<CR>
 
-  " Ver documentación de php.
-  " Con ponerte sobre una función y pulsar ‘K’ mayúscula tendrás la documentación 
-  " correspondiente.
-  " Instalar la documentación en el sistema.
-  " sudo pear install doc.php.net/pman
-  set keywordprg=terminator\ -x\ pman 
+    " Ver documentación de php.
+    " Con ponerte sobre una función y pulsar ‘K’ mayúscula tendrás la documentación 
+    " correspondiente.
+    " Instalar la documentación en el sistema.
+    " sudo pear install doc.php.net/pman
+    set keywordprg=terminator\ -x\ pman 
 
-  if has("autocmd")
+    if has("autocmd")
     " Drupal *.modules files.
     augroup module
       autocmd BufRead *.dox set filetype=java.doxygen
@@ -227,9 +227,9 @@
     augroup test
       autocmd BufRead *.test set filetype=php
     augroup END
-  endif
+    endif
 
-  if !exists("autocommads_loaded")
+    if !exists("autocommads_loaded")
     let autocommads_loaded = 1
     " autocmd FileType html set omnifunc=htmlcomplete#CompleteTags#Html " @todo Da error falta la función.
     autocmd FileType php call Php()
@@ -239,10 +239,10 @@
     autocmd FileType rest call Txt()
     autocmd FileType sh call Sh()
     autocmd FileType css set omnifunc=csscomplete#CompleteCSS
-  endif
+    endif
 
-  " Autocommands para PHP
-  function Php() 
+    " Autocommands para PHP
+    function Php() 
     setlocal textwidth=80 " Limita el ancho a 80 caracteres.
     " Compilador tidy
     compiler tidy
@@ -256,21 +256,21 @@
     setlocal fo-=t fo+=croql
     " Don't concatenate a line that ends with a backslash
     setlocal cpo-=C
-  endfunction
+    endfunction
 
-  function Rst()
+    function Rst()
     setlocal textwidth=80 " Limita el ancho a 80 caracteres.
     setlocal fo=cqt
     setlocal wm=1
-  endfunction
+    endfunction
 
-  function Txt()
+    function Txt()
     setlocal textwidth=80 " Limita el ancho a 80 caracteres.
     setlocal fo=cqt
     setlocal wm=1
-  endfunction
+    endfunction
 
-  function Sh()
+    function Sh()
     set foldmethod=marker  " Plegar por marcas
     "set foldmethod=indent  " Plegar por indent
     setlocal textwidth=0 " Quita limitacion de caracteres.
@@ -278,16 +278,16 @@
     inoremap <C-R> <Esc>yyg^i# <Esc>pi
     " Ejecutar el script editado con ALT-e, sirve para scripts bash
     noremap! å :w :!% i
-  endfunction
+    endfunction
 
-  " python
-  autocmd FileType python set sw=4
-  autocmd FileType python set ts=4
-  autocmd FileType python set sts=4
-  " AutoPep8, dando formato a python. 
-  " sudo pip install autopep8
-  " Seleccionamos texto y tecleamos "gq".
-  au FileType python setlocal formatprg=autopep8\ -
+    " python
+    autocmd FileType python set sw=4
+    autocmd FileType python set ts=4
+    autocmd FileType python set sts=4
+    " AutoPep8, dando formato a python. 
+    " sudo pip install autopep8
+    " Seleccionamos texto y tecleamos "gq".
+    au FileType python setlocal formatprg=autopep8\ -
 
 " COLORES EN CSS
 
@@ -298,31 +298,30 @@
 
 " PLUGINS
 
-  " AIRLINE
-  Plugin 'vim-airline/vim-airline'
-  Plugin 'vim-airline/vim-airline-themes'
-  let g:airline_theme='luna'
-  set laststatus=2
-  " Habilita los tabs, para cambiar de tab presionar gt
-  let g:airline#extensions#tabline#enabled = 1
-  let g:airline_powerline_fonts=1
-  set t_Co=256
+    " AIRLINE
+    Plugin 'vim-airline/vim-airline'
+    Plugin 'vim-airline/vim-airline-themes'
+    let g:airline_theme='luna'
+    set laststatus=2
+    " Habilita los tabs, para cambiar de tab presionar gt
+    let g:airline#extensions#tabline#enabled = 1
+    let g:airline_powerline_fonts=1
+    set t_Co=256
 
-  " Debug
-  " Plugin 'joonty/vdebug'
+    " Debug
+    " Plugin 'joonty/vdebug'
 
-  " Abrir archivos.
-  " Pulsando Ctrl+P el pluguin nos permite ir viendo los archivos que 
-  " coinciden con el texto que vamos tecleando.
-  " Con ctrl+z podemos marcar los que queramos abrir y con ctrl+o abrirlos.
-  Plugin 'ctrlp.vim'
+    " Abrir archivos.
+    " Pulsando Ctrl+P el pluguin nos permite ir viendo los archivos que 
+    " coinciden con el texto que vamos tecleando.
+    " Con ctrl+z podemos marcar los que queramos abrir y con ctrl+o abrirlos.
+    Plugin 'ctrlp.vim'
 
-  " Python Mode.
-  Plugin 'Python-mode-klen'
-  let g:pymode_lint = 1
-  let g:pymode_lint_ignore="E302,E266"
+    " Python Mode.
+    Plugin 'Python-mode-klen'
+    let g:pymode_lint = 1
+    let g:pymode_lint_ignore="E302,E266"
 
-  " Varios.
-  Plugin 'rest.vim'
-  Plugin 'sukima/xmledit'
-
+    " Varios.
+    Plugin 'rest.vim'
+    Plugin 'sukima/xmledit'

@@ -53,3 +53,24 @@ https://github.com/python-mode/python-mode
 ### xmledit.
 
 https://www.adictosaltrabajo.com/2011/02/01/vim-editar-xml/
+
+## Trucos.
+
+### :Tlist
+
+Nos muestra una barra con el indice de clases y metodos del fichero.
+
+### Mapeo de teclas:
+
+Añadimos:
+
+```
+" Lista errores
+map <F7> :cp<CR>
+map <F8> :cn<CR>
+```
+
+Esto nos permite movernos por la lista de errores o quickfix de forma comoda
+con las teclas F7 y F8.
+
+
