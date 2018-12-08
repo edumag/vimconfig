@@ -126,6 +126,10 @@
   highlight ColorColumn ctermbg=none ctermfg=red guibg=black guifg=red
   call matchadd('ColorColumn', '\%81v', 100) "set column nr
 
+  " Color spell.
+  hi clear SpellBad
+  hi SpellBad cterm=underline
+
 " SANGRADO, SALTOS DE LINEA Y TABULADORES
 
    " setlocal textwidth=80 " Limita el ancho a 80 caracteres.

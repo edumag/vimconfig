@@ -89,7 +89,7 @@ hi Search guifg=black guibg=LightSkyBlue4 gui=none
 
 hi IncSearch guifg=yellow guibg=LightSkyBlue3 gui=bold
 hi WarningMsg guifg=red guibg=GhostWhite gui=bold
-hi Error guibg=red3
+hi Error guibg=white
 
 " color terminal definitions
 hi SpecialKey	ctermfg=darkgreen
