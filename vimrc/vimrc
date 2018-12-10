@@ -325,6 +325,17 @@
     Plugin 'Python-mode-klen'
     let g:pymode_lint = 1
     let g:pymode_lint_ignore="E302,E266"
+    let g:pymode_trim_whitespaces = 1
+    setlocal complete+=t
+    setlocal formatoptions-=t
+    if v:version > 702 && !&relativenumber
+        setlocal number
+    endif
+    setlocal nowrap
+    setlocal textwidth=79
+    setlocal commentstring=#%s
+    setlocal define=^\s*\\(def\\\\|class\\)
+    let g:pymode_virtualenv = 1
 
     " Varios.
     Plugin 'rest.vim'
