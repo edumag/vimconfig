@@ -64,7 +64,7 @@
 
 " VISUALIZACIÓN
 
-  set colorcolumn=80
+    set colorcolumn=80
 	set background=dark
 	"set background=light
 	" colorscheme edumag " Colores personalizados
@@ -72,7 +72,7 @@
 	set showcmd " Visualización de comandos mientras vamos escribiendo
 	set showmatch " Indica cierre de llaves
 	set ruler "visualizar numero de linea y columna
-  set nonumber " Ocultamos número de linea en archivo.
+    setlocal nonumber " Ocultamos número de linea en archivo.
 	" set novisualbell
 	set noerrorbells
 	set showbreak=->  " Shows this string before broken lines
@@ -323,14 +323,15 @@
 
     " Python Mode.
     Plugin 'Python-mode-klen'
+    let g:pymode_options = 0
     let g:pymode_lint = 1
     let g:pymode_lint_ignore="E302,E266"
     let g:pymode_trim_whitespaces = 1
     setlocal complete+=t
     setlocal formatoptions-=t
-    if v:version > 702 && !&relativenumber
-        setlocal number
-    endif
+    " if v:version > 702 && !&relativenumber
+    "     setlocal nonumber
+    " endif
     setlocal nowrap
     setlocal textwidth=79
     setlocal commentstring=#%s
@@ -340,3 +341,11 @@
     " Varios.
     Plugin 'rest.vim'
     Plugin 'sukima/xmledit'
+
+    Plugin 'chrisbra/csv.vim'
+    let did_load_csvfiletype=1
+    au BufNewFile,BufFilePre,BufRead *.csv set filetype=csv
+
+" PERSONALIZACIÓN
+
+    set nonumber " Ocultamos número de linea en archivo.
