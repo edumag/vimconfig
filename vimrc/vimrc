@@ -31,8 +31,9 @@
 
 " FUNCIONAMIENTO GENERAL
 
+    set nowrap " Evitamos lineas partidas.
 	set encoding=utf-8
-	set nocompatible "utiliza las opciones avanzadas de vim
+	set nocompatible " Utiliza las opciones avanzadas de vim
 	set helplang=es
 	set langmenu=es_es.utf8
 	lan es_ES.utf8
