@@ -343,9 +343,22 @@
     Plugin 'rest.vim'
     Plugin 'sukima/xmledit'
 
-    Plugin 'chrisbra/csv.vim'
-    let did_load_csvfiletype=1
-    au BufNewFile,BufFilePre,BufRead *.csv set filetype=csv
+    " Plugin 'chrisbra/csv.vim'
+    " let did_load_csvfiletype=1
+    " au BufNewFile,BufFilePre,BufRead *.csv set filetype=csv
+
+    Plugin 'leafOfTree/vim-vue-plugin'
+    let g:vim_vue_plugin_load_full_syntax = 1
+
+    " Typescript
+    " https://www.vimfromscratch.com/articles/setting-up-vim-for-typescript
+    Plugin 'leafgarland/typescript-vim'
+    " let g:typescript_indent_disable = 1
+    au BufNewFile,BufFilePre,BufRead *.ts set filetype=typescript
+    Plugin 'sbdchd/neoformat'
+    autocmd FileType typescript setlocal formatprg=prettier\ --parser\ typescript
+
+
 
 " PERSONALIZACIÓN
 
