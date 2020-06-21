@@ -197,6 +197,7 @@
 
     " Plugin que detecta errores en php
     " .vim/plugin/php_check_syntax.vim
+    let php_check_syntax = 0
 
     " Lista errores
     map <F7> :cp<CR>
@@ -250,7 +251,7 @@
     function Php() 
     setlocal textwidth=80 " Limita el ancho a 80 caracteres.
     " Compilador tidy
-    compiler tidy
+    " compiler tidy
     " UTF8 para archivos php
     " set encoding=utf8
     " Con Ctrl-r comentamos la linea y la copiamos abajo
