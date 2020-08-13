@@ -262,6 +262,7 @@
     setlocal fo-=t fo+=croql
     " Don't concatenate a line that ends with a backslash
     setlocal cpo-=C
+    set autoindent " Indentación automatica
     endfunction
 
     function Rst()
