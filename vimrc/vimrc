@@ -380,6 +380,16 @@
     " Colores css.
     Plugin 'ap/vim-css-color'
 
+    " Vue
+    Plugin 'posva/vim-vue'
+    if has("autocmd")
+    augroup vue
+      autocmd BufRead *.vue set filetype=vue
+    augroup END
+    endif
+
+
+
 " PERSONALIZACIÓN
 
     set nonumber " Ocultamos número de linea en archivo.
