@@ -2,6 +2,7 @@
 
   " Utilizamos Vudle como administrador de plugins.
 
+    set backupcopy=yes " Recomendado para webpack.
 	set nocompatible              " be iMproved, required
 	filetype off                  " required
 
