@@ -135,9 +135,9 @@
 " SANGRADO, SALTOS DE LINEA Y TABULADORES
 
    " setlocal textwidth=80 " Limita el ancho a 80 caracteres.
-   set tabstop=4  " ancho de tabulador estandar
-   set softtabstop=4 " ancho que deseamos
-   set shiftwidth=4  " ancho del sangrado
+   set tabstop=2  " ancho de tabulador estandar
+   set softtabstop=2 " ancho que deseamos
+   set shiftwidth=2  " ancho del sangrado
    "set foldmethod=marker  " Plegar por marcas
    set foldmarker={,} " Marcas con las que plegar
    set foldmethod=indent  " Plegar por indent
