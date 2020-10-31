@@ -31,8 +31,11 @@
 	" Put your non-Plugin stuff after this line
 
 " FUNCIONAMIENTO GENERAL
-
-    set nowrap " Evitamos lineas partidas.
+       
+  nnoremap <C-PageUp>   :tabprevious<CR>
+  nnoremap <C-PageDown> :tabnext<CR>
+  set nowrap " Evitamos lineas partidas.
+  set virtualedit=block " Permite moverse al cursor por toda la pantalla.
 	set encoding=utf-8
 	set nocompatible " Utiliza las opciones avanzadas de vim
 	set helplang=es
