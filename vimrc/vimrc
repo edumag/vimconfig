@@ -32,9 +32,9 @@
 
 " FUNCIONAMIENTO GENERAL
        
-  nnoremap <C-PageUp>   :tabprevious<CR>
-  nnoremap <C-PageDown> :tabnext<CR>
-  set nowrap " Evitamos lineas partidas.
+  set nonumber " Ocultamos número de linea en archivo.
+  :map <F3> :tabn<cr>
+  " set nowrap " Evitamos lineas partidas.
   set virtualedit=block " Permite moverse al cursor por toda la pantalla.
 	set encoding=utf-8
 	set nocompatible " Utiliza las opciones avanzadas de vim
@@ -63,13 +63,13 @@
 	" Tamaño del historial de comandos
 	set history=50 
 	set paste	" Compartir porta papeles entre ventanas de vim.         
-	" Permitir .vimrc en carpetas de proyecto
+  " Permitir .vimrc en carpetas de proyecto
 	set exrc
 	set secure
 
 " VISUALIZACIÓN
 
-    set colorcolumn=80
+  set colorcolumn=80
 	set background=dark
 	"set background=light
 	" colorscheme edumag " Colores personalizados
@@ -317,6 +317,10 @@
     " Habilita los tabs, para cambiar de tab presionar gt
     let g:airline#extensions#tabline#enabled = 1
     let g:airline_powerline_fonts=1
+    " Enable the list of buffers
+    let g:airline#extensions#tabline#enabled = 0
+    let g:airline#extensions#tabline#show_buffers = 0
+    let g:airline#extensions#tabline#show_tabs = 0
     set t_Co=256
 
     " Debug
@@ -392,8 +396,3 @@
     augroup END
     endif
 
-
-
-" PERSONALIZACIÓN
-
-    set nonumber " Ocultamos número de linea en archivo.
