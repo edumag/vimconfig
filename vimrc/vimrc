@@ -330,7 +330,7 @@
     " Pulsando Ctrl+P el pluguin nos permite ir viendo los archivos que 
     " coinciden con el texto que vamos tecleando.
     " Con ctrl+z podemos marcar los que queramos abrir y con ctrl+o abrirlos.
-    Plugin 'ctrlp.vim'
+    " Plugin 'ctrlp.vim'
 
     " Python Mode.
     Plugin 'Python-mode-klen'
@@ -395,4 +395,10 @@
       autocmd BufRead *.vue set filetype=vue
     augroup END
     endif
+
+    " https://github.com/junegunn/fzf/blob/master/README-VIM.md
+    Plugin 'junegunn/fzf'
+    set rtp+=~/.fzf/bin
+    map <C-P> <esc>:FZF! --preview<CR>
+
 
