@@ -399,6 +399,6 @@
     " https://github.com/junegunn/fzf/blob/master/README-VIM.md
     Plugin 'junegunn/fzf'
     set rtp+=~/.fzf/bin
-    map <C-P> <esc>:FZF! --preview<CR>
+    map <C-P> <esc>:FZF!<CR>
 
 
