@@ -336,7 +336,7 @@
     Plugin 'Python-mode-klen'
     let g:pymode_options = 0
     let g:pymode_lint = 1
-    let g:pymode_lint_ignore="E302,E266,W0401"
+    let g:pymode_lint_ignore="E302,E266,W0401,E501,C901,E221"
     let g:pymode_trim_whitespaces = 1
     setlocal complete+=t
     setlocal formatoptions-=t
