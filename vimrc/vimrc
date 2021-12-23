@@ -359,8 +359,8 @@
 
     " Vue
     Plugin 'leafOfTree/vim-vue-plugin'
-    let g:vim_vue_plugin_load_full_syntax = 1
-    let g:vim_vue_plugin_use_typescript = 1
+    let g:vim_vue_plugin_config_load_full_syntax = 1
+    let g:vim_vue_plugin_config_use_typescript = 1
     " Plugin 'posva/vim-vue'
     " let g:vue_pre_processors = 'detect_on_enter'
 
