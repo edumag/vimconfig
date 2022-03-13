@@ -357,48 +357,46 @@
     " let did_load_csvfiletype=1
     " au BufNewFile,BufFilePre,BufRead *.csv set filetype=csv
 
-    " Vue
-    Plugin 'leafOfTree/vim-vue-plugin'
-    let g:vim_vue_plugin_config_load_full_syntax = 1
-    let g:vim_vue_plugin_config_use_typescript = 1
-    " Plugin 'posva/vim-vue'
-    " let g:vue_pre_processors = 'detect_on_enter'
-
     " Typescript
     " https://www.vimfromscratch.com/articles/setting-up-vim-for-typescript
-    Plugin 'leafgarland/typescript-vim'
-    " let g:typescript_indent_disable = 1
-    au BufNewFile,BufFilePre,BufRead *.ts set filetype=typescript
-    Plugin 'sbdchd/neoformat'
-    autocmd FileType typescript setlocal formatprg=prettier\ --parser\ typescript
-    " Ale
-    " Demasiados recursos, desactivo.
-    " Plugin 'w0rp/ale'
-    " let g:ale_fixers = {}
-    " let g:ale_fixers.javascript = ['eslint']
-    " let g:ale_fix_on_save = 1
+    "" Plugin 'leafgarland/typescript-vim'
+    "" " let g:typescript_indent_disable = 1
+    "" au BufNewFile,BufFilePre,BufRead *.ts set filetype=typescript
+    "" Plugin 'sbdchd/neoformat'
+    "" autocmd FileType typescript setlocal formatprg=prettier\ --parser\ typescript
+    "" " Ale
+    "" " Demasiados recursos, desactivo.
+    "" " Plugin 'w0rp/ale'
+    "" " let g:ale_fixers = {}
+    "" " let g:ale_fixers.javascript = ['eslint']
+    "" " let g:ale_fix_on_save = 1
 
     " Tabulación.
     " :Tab /=
     Plugin 'godlygeek/tabular'
 
     " VimWordperss
-    Plugin 'mrpeterlee/VimWordpress'
+    " Plugin 'mrpeterlee/VimWordpress'
 
     " Colores css.
     Plugin 'ap/vim-css-color'
 
-    " Vue
+    "" Vue
+    " Vim syntax highlighting for [Vue
     Plugin 'posva/vim-vue'
+    " let g:vue_pre_processors = 'detect_on_enter'
     if has("autocmd")
     augroup vue
       autocmd BufRead *.vue set filetype=vue
     augroup END
     endif
+    " Syntax and indent plugin.
+    Plugin 'leafOfTree/vim-vue-plugin'
+    let g:vim_vue_plugin_config_load_full_syntax = 1
+    let g:vim_vue_plugin_config_use_typescript = 0
+
 
     " https://github.com/junegunn/fzf/blob/master/README-VIM.md
     Plugin 'junegunn/fzf'
     set rtp+=~/.fzf/bin
     map <C-P> <esc>:FZF!<CR>
-
-
