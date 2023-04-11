@@ -382,9 +382,6 @@
     " :Tab /=
     Plugin 'godlygeek/tabular'
 
-    " VimWordperss
-    Plugin 'mrpeterlee/VimWordpress'
-
     " Colores css.
     Plugin 'ap/vim-css-color'
 
