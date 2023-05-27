@@ -34,7 +34,7 @@
        
   set nonumber " Ocultamos número de linea en archivo.
   :map <F3> :tabn<cr>
-  " set nowrap " Evitamos lineas partidas.
+  set nowrap " Evitamos lineas partidas.
   set virtualedit=block " Permite moverse al cursor por toda la pantalla.
 	set encoding=utf-8
 	set nocompatible " Utiliza las opciones avanzadas de vim
@@ -77,7 +77,7 @@
 	set showcmd " Visualización de comandos mientras vamos escribiendo
 	set showmatch " Indica cierre de llaves
 	set ruler "visualizar numero de linea y columna
-    setlocal nonumber " Ocultamos número de linea en archivo.
+  setlocal nonumber " Ocultamos número de linea en archivo.
 	" set novisualbell
 	set noerrorbells
 	set showbreak=->  " Shows this string before broken lines
@@ -180,6 +180,9 @@
                     \		execute "normal g'\"" |
                     \ endif
     endif
+
+    " Al abrir fichero desplegari. 
+    autocmd BufWinEnter * silent! :%foldopen!
 
     " Forzar detectar archivos .md como markdown.
     au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
@@ -313,15 +316,18 @@
     Plugin 'vim-airline/vim-airline'
     Plugin 'vim-airline/vim-airline-themes'
     let g:airline_theme='angr'
-    set laststatus=2
-    " Habilita los tabs, para cambiar de tab presionar gt
-    let g:airline#extensions#tabline#enabled = 1
+    " set laststatus=2
     let g:airline_powerline_fonts=1
-    " Enable the list of buffers
+    " Habilita los tabs, para cambiar de tab presionar gt
     let g:airline#extensions#tabline#enabled = 0
+    " Enable the list of buffers
     let g:airline#extensions#tabline#show_buffers = 0
     let g:airline#extensions#tabline#show_tabs = 0
-    set t_Co=256
+    " set t_Co=256
+    let g:airline#extensions#branch#enabled=0
+    let g:airline#extensions#hunks#enabled=0
+
+    " let g:airline_extensions = ['branch', 'tabline']
 
     " Debug
     " Plugin 'joonty/vdebug'
