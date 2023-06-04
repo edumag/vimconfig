@@ -202,10 +202,6 @@
     " Barra de etiquetas a la derecha.
     let Tlist_Use_Right_Window = 1
 
-    " Plugin que detecta errores en php
-    " .vim/plugin/php_check_syntax.vim
-    let php_check_syntax = 0
-
     " Lista errores
     map <F7> :cp<CR>
     map <F8> :cn<CR>
@@ -256,20 +252,28 @@
 
     " Autocommands para PHP
     function Php() 
-    setlocal textwidth=80 " Limita el ancho a 80 caracteres.
-    " Compilador tidy
-    " compiler tidy
-    " UTF8 para archivos php
-    " set encoding=utf8
-    " Con Ctrl-r comentamos la linea y la copiamos abajo
-    inoremap <C-R> <Esc>yyg^i//<Esc>pi
-    " Con esta opción el texto sera cortado en la columna indicada por
-    " *textwidth* con formatoptions=croql hara que el codigo fuente no sea
-    " formateado pero si los comentarios
-    setlocal fo-=t fo+=croql
-    " Don't concatenate a line that ends with a backslash
-    setlocal cpo-=C
-    set autoindent " Indentación automatica
+
+      " Activamos revisión de código Al leer o guardar fichero.
+      autocmd BufRead,BufWritePost *.php call PhpCodeSniffer()
+      
+      " Plugin que detecta errores en php
+      " .vim/plugin/php_check_syntax.vim
+      let php_check_syntax = 1
+
+      setlocal textwidth=80 " Limita el ancho a 80 caracteres.
+      " Compilador tidy
+      " compiler tidy
+      " UTF8 para archivos php
+      " set encoding=utf8
+      " Con Ctrl-r comentamos la linea y la copiamos abajo
+      inoremap <C-R> <Esc>yyg^i//<Esc>pi
+      " Con esta opción el texto sera cortado en la columna indicada por
+      " *textwidth* con formatoptions=croql hara que el codigo fuente no sea
+      " formateado pero si los comentarios
+      setlocal fo-=t fo+=croql
+      " Don't concatenate a line that ends with a backslash
+      setlocal cpo-=C
+      set autoindent " Indentación automatica
     endfunction
 
     function Rst()
@@ -312,22 +316,25 @@
 
 " PLUGINS
 
-    " AIRLINE
-    Plugin 'vim-airline/vim-airline'
-    Plugin 'vim-airline/vim-airline-themes'
-    let g:airline_theme='angr'
-    " set laststatus=2
-    let g:airline_powerline_fonts=1
-    " Habilita los tabs, para cambiar de tab presionar gt
-    let g:airline#extensions#tabline#enabled = 0
-    " Enable the list of buffers
-    let g:airline#extensions#tabline#show_buffers = 0
-    let g:airline#extensions#tabline#show_tabs = 0
-    " set t_Co=256
-    let g:airline#extensions#branch#enabled=0
-    let g:airline#extensions#hunks#enabled=0
+    " PHP_CodeSniffer.
+    Plugin 'phpcs.vim'
 
-    " let g:airline_extensions = ['branch', 'tabline']
+    " AIRLINE
+    " Incompatible con php_check_syntax y otros.
+    " Plugin 'vim-airline/vim-airline'
+    " Plugin 'vim-airline/vim-airline-themes'
+    " let g:airline_theme='angr'
+    " " set laststatus=2
+    " let g:airline_powerline_fonts=1
+    " " Habilita los tabs, para cambiar de tab presionar gt
+    " let g:airline#extensions#tabline#enabled = 0
+    " " Enable the list of buffers
+    " let g:airline#extensions#tabline#show_buffers = 0
+    " let g:airline#extensions#tabline#show_tabs = 0
+    " " set t_Co=256
+    " let g:airline#extensions#branch#enabled=0
+    " let g:airline#extensions#hunks#enabled=0
+    "   " let g:airline_extensions = ['branch', 'tabline']
 
     " Debug
     " Plugin 'joonty/vdebug'
