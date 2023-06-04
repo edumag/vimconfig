@@ -41,7 +41,7 @@
 	set helplang=es
 	set langmenu=es_es.utf8
 	lan es_ES.utf8
-	set nospell
+	set spell
 	set spelllang=es
 	set ttyfast
 	" Realizar copias de seguridad
@@ -82,6 +82,26 @@
 	set noerrorbells
 	set showbreak=->  " Shows this string before broken lines
 	syntax on
+
+  "StatusLine"
+
+  function! GitBranch()
+    return system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
+  endfunction
+
+  function! StatuslineGit()
+    let l:branchname = GitBranch()
+    return strlen(l:branchname) > 0?'  '.l:branchname.' ':''
+  endfunction
+
+  set statusline=
+  set statusline+=%#Visual#             " Color.
+  set statusline+=%{StatuslineGit()}    " Branch git.
+  set statusline+=\ %f                  " File.
+  set statusline+=%=                    " Align right.
+  set statusline+=\ %l:%c               " Line/column.
+
+  "Colores"
 
 	" Aquí se activa el coloreado de sintaxis (syntax highlighting), además de
 	" poner algunas opciones adicionales que son cómodas para programar (ver los
