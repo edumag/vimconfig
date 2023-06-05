@@ -1,7 +1,6 @@
 "
-" This is another version of Dim that rearranges the colors a bit...
+" Edumag Theme Colors.
 "
-
 "
 " Restore default colors
 hi clear
@@ -102,7 +101,7 @@ hi MoreMsg	ctermfg=darkgreen
 hi ModeMsg	cterm=NONE ctermfg=brown
 hi LineNr	ctermfg=3
 hi Question	ctermfg=green
-hi StatusLine	cterm=bold,reverse
+hi StatusLine ctermfg=15 cterm=bold ctermbg=8
 hi StatusLineNC cterm=reverse
 hi VertSplit	cterm=reverse
 hi Title	ctermfg=5

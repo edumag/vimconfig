@@ -95,11 +95,13 @@
   endfunction
 
   set statusline=
-  set statusline+=%#Visual#             " Color.
+  " set statusline+=%#Visual#           " Color.
+  " set statusline+=%#StatusLine#         " Color.
   set statusline+=%{StatuslineGit()}    " Branch git.
   set statusline+=\ %f                  " File.
   set statusline+=%=                    " Align right.
   set statusline+=\ %l:%c               " Line/column.
+  hi StatusLine ctermfg=15 cterm=bold ctermbg=8
 
   "Colores"
 
@@ -274,12 +276,8 @@
     function Php() 
 
       " Activamos revisión de código Al leer o guardar fichero.
-      autocmd BufRead,BufWritePost *.php call PhpCodeSniffer()
+      autocmd BufWritePost *.php call PhpCodeSniffer()
       
-      " Plugin que detecta errores en php
-      " .vim/plugin/php_check_syntax.vim
-      let php_check_syntax = 1
-
       setlocal textwidth=80 " Limita el ancho a 80 caracteres.
       " Compilador tidy
       " compiler tidy
@@ -340,7 +338,6 @@
     Plugin 'phpcs.vim'
 
     " AIRLINE
-    " Incompatible con php_check_syntax y otros.
     " Plugin 'vim-airline/vim-airline'
     " Plugin 'vim-airline/vim-airline-themes'
     " let g:airline_theme='angr'
