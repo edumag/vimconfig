@@ -275,9 +275,6 @@
     " Autocommands para PHP
     function Php() 
 
-      " Activamos revisión de código Al leer o guardar fichero.
-      autocmd BufWritePost *.php call PhpCodeSniffer()
-      
       setlocal textwidth=80 " Limita el ancho a 80 caracteres.
       " Compilador tidy
       " compiler tidy
@@ -336,6 +333,10 @@
 
     " PHP_CodeSniffer.
     Plugin 'phpcs.vim'
+    " Activamos revisión de código Al leer o guardar fichero.
+    " autocmd BufWritePost *.php :Phpcs
+    let g:phpcs_std_list   = "PSR2"
+    let g:phpcs_max_output = 5 " Unlimited output.
 
     " AIRLINE
     " Plugin 'vim-airline/vim-airline'
