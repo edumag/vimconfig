@@ -160,9 +160,9 @@
 " SANGRADO, SALTOS DE LINEA Y TABULADORES
 
    " setlocal textwidth=80 " Limita el ancho a 80 caracteres.
-   set tabstop=2  " ancho de tabulador estandar
-   set softtabstop=2 " ancho que deseamos
-   set shiftwidth=2  " ancho del sangrado
+   set tabstop=4  " ancho de tabulador estandar
+   set softtabstop=4 " ancho que deseamos
+   set shiftwidth=4  " ancho del sangrado
    "set foldmethod=marker  " Plegar por marcas
    set foldmarker={,} " Marcas con las que plegar
    set foldmethod=indent  " Plegar por indent
@@ -334,9 +334,9 @@
     " PHP_CodeSniffer.
     Plugin 'phpcs.vim'
     " Activamos revisión de código Al leer o guardar fichero.
-    " autocmd BufWritePost *.php :Phpcs
+    " autocmd BufRead *.php :Phpcs
     let g:phpcs_std_list   = "PSR2"
-    let g:phpcs_max_output = 5 " Unlimited output.
+    let g:phpcs_max_output = 0 " Unlimited output.
 
     " AIRLINE
     " Plugin 'vim-airline/vim-airline'
