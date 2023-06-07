@@ -85,19 +85,26 @@
 
   "StatusLine"
 
-  function! GitBranch()
-    return system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
+  let g:gitparsedbranchname = ' '
+  function! UpdateGitBranch()
+    let l:string = system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
+    let g:gitparsedbranchname = strlen(l:string) > 0?'['.l:string.']':''
   endfunction
 
-  function! StatuslineGit()
-    let l:branchname = GitBranch()
-    return strlen(l:branchname) > 0?'  '.l:branchname.' ':''
-  endfunction
+  augroup UPDATE_GITBRANCH
+      " clear old commands
+      autocmd!
+
+      " update git branch
+      autocmd BufWritePre * :call UpdateGitBranch()
+      autocmd BufReadPost * :call UpdateGitBranch()
+      autocmd BufEnter * :call UpdateGitBranch()
+  augroup END
 
   set statusline=
   " set statusline+=%#Visual#           " Color.
   " set statusline+=%#StatusLine#         " Color.
-  set statusline+=%{StatuslineGit()}    " Branch git.
+  set statusline+=%{g:gitparsedbranchname}
   set statusline+=\ %f                  " File.
   set statusline+=%=                    " Align right.
   set statusline+=\ %l:%c               " Line/column.
