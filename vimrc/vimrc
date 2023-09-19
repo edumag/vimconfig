@@ -31,7 +31,7 @@
 	" Put your non-Plugin stuff after this line
 
 " FUNCIONAMIENTO GENERAL
-       
+
   set nonumber " Ocultamos número de linea en archivo.
   :map <F3> :tabn<cr>
   set nowrap " Evitamos lineas partidas.
@@ -432,6 +432,30 @@
 
 
     " https://github.com/junegunn/fzf/blob/master/README-VIM.md
-    Plugin 'junegunn/fzf'
-    set rtp+=~/.fzf/bin
-    map <C-P> <esc>:FZF!<CR>
+    " Plugin 'junegunn/fzf'
+    " set rtp+=~/.fzf/bin
+    " map <C-P> <esc>:FZF!<CR>
+
+    " https://dev.to/iggredible/how-to-search-faster-in-vim-with-fzf-vim-36ko
+    Plugin 'junegunn/fzf.vim'
+    Plugin 'junegunn/fzf', { 'do': { -> fzf#install() } }
+    " Buscar ficheros.
+    nnoremap <silent> <C-f> :Files<CR>
+    " Buscar en ficheros.
+    " Dependencias. sudo apt  install ripgrep
+    nnoremap <silent> <Leader>f :Rg<CR>
+
+    " Mostrar indent.
+    Plugin 'yggdroot/indentline'
+
+    " Laravel
+    Plugin 'tpope/vim-dispatch'             "| Optional
+    Plugin 'tpope/vim-projectionist'        "|
+    Plugin 'noahfrederick/vim-composer'     "|
+    Plugin 'noahfrederick/vim-laravel'
+
+    " Auto-cierre de llaves.
+    Plugin 'jiangmiao/auto-pairs'
+
+    " Auto-cierre de etiquetas.
+    Plugin 'alvan/vim-closetag'
