@@ -201,6 +201,14 @@ inoremap " ""<Esc>ha
 inoremap ' ''<Esc>ha
 inoremap ` ``<Esc>ha
 
+" Abreviaturas
+inoreabbrev _USE_LOG use Illuminate\Support\Facades\Log;
+inoreabbrev _LOG LOG::debug('');<Esc>3h
+inoreabbrev _DIV <LT>div><LT>/div><C-o>F<
+" Con Ctrl-r comentamos la linea y la copiamos abajo
+inoremap <C-R> <Esc>yyg^i//<Esc>pi
+
+
 " find /usr/share/vim -iname "*complete*.vim" -exec basename {} \;
 " Con Ctr-x Ctrl-o
 " Sintaxis para HTML
@@ -216,13 +224,6 @@ inoremap ` ``<Esc>ha
 " Activar sintaxis completa
 :set omnifunc=syntaxcomplete#Complete
 
-inoremap <expr> today strftime( "=%Y%m%d", localtime() )
-ab _DP echo "<pre>" ; print_r($_POST) ; echo "</pre>"; // DEV
-iab _hora <C-R>=strftime("%H:%M")<CR>
-inoreabbrev __div <LT>div><LT>/div><C-o>F<
-" FALTA LITERAL
-ab _FT /** FALTA LITERAL **/
-ab _FECHA <esc>:read !date +"\%A, \%d de \%B del \%Y"<cr>kJ<end>a
 " Suffixes that get lower priority when doing tab completion for filenames.
 " These are files we are not likely to want to edit or read.
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
@@ -319,8 +320,6 @@ function Php()
   " compiler tidy
   " UTF8 para archivos php
   " set encoding=utf8
-  " Con Ctrl-r comentamos la linea y la copiamos abajo
-  inoremap <C-R> <Esc>yyg^i//<Esc>pi
   " Con esta opción el texto sera cortado en la columna indicada por
   " *textwidth* con formatoptions=croql hara que el codigo fuente no sea
   " formateado pero si los comentarios
@@ -328,6 +327,10 @@ function Php()
   " Don't concatenate a line that ends with a backslash
   setlocal cpo-=C
   set autoindent " Indentación automatica
+
+  " Revisamos sintaxis con php.
+  map <C-B> :w !php -l<CR>
+
 endfunction
 
 function Rst()
@@ -370,10 +373,11 @@ au FileType python setlocal formatprg=autopep8\ -
 
 " PLUGINS
 
+
 " PHP_CodeSniffer.
 Plugin 'phpcs.vim'
 " Activamos revisión de código Al leer o guardar fichero.
-autocmd BufRead *.php :Phpcs
+autocmd BufWritePre *.php :Phpcs
 let g:phpcs_std_list   = "PSR2"
 let g:phpcs_max_output = 0 " Unlimited output.
 
