@@ -2,8 +2,8 @@
 
   " Utilizamos Vudle como administrador de plugins.
 
-  set backupcopy=yes " Recomendado para webpack.
-  set nocompatible              " be iMproved, required
+  set backupcopy=yes            " Recomendado para webpack.
+  set nocompatible              " No compatible con vi old.
   filetype off                  " required
 
   " set the runtime path to include Vundle and initialize
@@ -32,275 +32,274 @@
 
 " FUNCIONAMIENTO GENERAL
 
-  set nonumber               " Ocultamos número de linea en archivo.
-  " set number
-  " set rnu                      " Numero de lineas respecto a la actual.
-  " set cursorline               " Linea actual subrayada.
-  set clipboard=unnamed        " Copias de vim a fuera.
-  set laststatus=10            " Guardamos rehacer y deshacer.
-  set nowrap                   " Evitamos lineas partidas.
-  set virtualedit=block        " Permite moverse al cursor por toda la pantalla.
-  set encoding=utf-8
-  set nocompatible           " Utiliza las opciones avanzadas de vim
-  set helplang=es
-  set langmenu=es_es.utf8
-  lan es_ES.utf8
-  set spell
-  set spelllang=es
-  set ttyfast
-  " Realizar copias de seguridad
-  " set nobackup		" Don't keep a backup file
-  set backup
-  " Directorio para las copias de seguridad
-  set backupdir=/tmp
-  " Enviar al portapapeles todo lo que copiemos
-  set clipboard=unnamed
-  " Activamos los plugins
-  filetype plugin on
-  " Caracter comodin que utilizan algunos plugins por defecto es la barra
-  " invertida pero este es más comodo
-  let mapleader = ","
-  " Opciones al guardar sessiones para que no funcione lento al cargarlas
-  set sessionoptions=buffers,curdir,folds,options
-  " Linea de estado siempre activada
-  set laststatus=2
-  " Tamaño del historial de comandos
-  set history=50
-  set paste	" Compartir porta papeles entre ventanas de vim.
-  " Permitir .vimrc en carpetas de proyecto
-  set exrc
-  set secure
+set nonumber                   " Ocultamos número de linea en archivo.
+" set number
+" set rnu                      " Numero de lineas respecto a la actual.
+" set cursorline               " Linea actual subrayada.
+set clipboard=unnamed          " Copias de vim a fuera.
+set laststatus=10              " Guardamos rehacer y deshacer.
+set nowrap                     " Evitamos lineas partidas.
+set virtualedit=block          " Permite moverse al cursor por toda la pantalla.
+set encoding=utf-8
+set nocompatible               " Utiliza las opciones avanzadas de vim
+set helplang=es
+set langmenu=es_es.utf8
+lan es_ES.utf8
+set spell
+set spelllang=es
+set ttyfast
+" Realizar copias de seguridad
+" set nobackup		" Don't keep a backup file
+set backup
+" Directorio para las copias de seguridad
+set backupdir=/tmp
+" Enviar al portapapeles todo lo que copiemos
+set clipboard=unnamed
+" Activamos los plugins
+filetype plugin on
+" Carácter comodín que utilizan algunos plugins por defecto es la barra
+" invertida pero este es más cómodo
+let mapleader = ","
+" Opciones al guardar sessiones para que no funcione lento al cargarlas
+set sessionoptions=buffers,curdir,folds,options
+" Linea de estado siempre activada
+" ! Cuidado: paste hace que no funcionen las "abbrev".
+" set paste	" Compartir porta papeles entre ventanas de vim.
+"" Permitir .vimrc en carpetas de proyecto
+set exrc
+set secure
 
 " VISUALIZACIÓN
 
-  set colorcolumn=80
-  set background=dark
-  "set background=light
-  " colorscheme edumag " Colores personalizados
-  set sm " Visualización de modos
-  set showcmd " Visualización de comandos mientras vamos escribiendo
-  set showmatch " Indica cierre de llaves
-  set ruler "visualizar numero de linea y columna
-  setlocal nonumber " Ocultamos número de linea en archivo.
-  " set novisualbell
-  set noerrorbells
-  set showbreak=->  " Shows this string before broken lines
-  syntax on
+set colorcolumn=80
+set background=dark
+"set background=light
+" colorscheme edumag               " Colores personalizados
+set sm                             " Visualización de modos
+set showcmd                        " Visualización de comandos mientras vamos escribiendo
+set showmatch                      " Indica cierre de llaves
+set ruler                          " visualizar numero de linea y columna
+setlocal nonumber                  " Ocultamos número de linea en archivo.
+" set novisualbell
+set noerrorbells
+set showbreak=->                   " Shows this string before broken lines
+syntax on
 
-  "StatusLine"
+"StatusLine"
 
-  let g:gitparsedbranchname = ' '
-  function! UpdateGitBranch()
-    let l:string = system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
-    let g:gitparsedbranchname = strlen(l:string) > 0?'['.l:string.']':''
-  endfunction
+let g:gitparsedbranchname = ' '
+function! UpdateGitBranch()
+  let l:string = system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
+  let g:gitparsedbranchname = strlen(l:string) > 0?'['.l:string.']':''
+endfunction
 
-  augroup UPDATE_GITBRANCH
-      " clear old commands
-      autocmd!
+augroup UPDATE_GITBRANCH
+    " clear old commands
+    autocmd!
 
-      " update git branch
-      autocmd BufWritePre * :call UpdateGitBranch()
-      autocmd BufReadPost * :call UpdateGitBranch()
-      autocmd BufEnter * :call UpdateGitBranch()
-  augroup END
+    " update git branch
+    autocmd BufWritePre * :call UpdateGitBranch()
+    autocmd BufReadPost * :call UpdateGitBranch()
+    autocmd BufEnter * :call UpdateGitBranch()
+augroup END
 
-  set statusline=
-  " set statusline+=%#Visual#           " Color.
-  " set statusline+=%#StatusLine#         " Color.
-  set statusline+=%{g:gitparsedbranchname}
-  set statusline+=\ %f                  " File.
-  set statusline+=%=                    " Align right.
-  set statusline+=\ %l:%c               " Line/column.
-  hi StatusLine ctermfg=15 cterm=bold ctermbg=8
+set statusline=
+" set statusline+=%#Visual#             " Color.
+" set statusline+=%#StatusLine#         " Color.
+set statusline+=%{g:gitparsedbranchname}
+set statusline+=\ %f                    " File.
+set statusline+=%=                      " Align right.
+set statusline+=\ %l:%c                 " Line/column.
+hi StatusLine ctermfg=15 cterm=bold ctermbg=8
 
-" Colores"
+"Colores"
 
-    " Aquí se activa el coloreado de sintaxis (syntax highlighting), además de
-    " poner algunas opciones adicionales que son cómodas para programar (ver los
-    " comentarios correspondientes).
+" Aquí se activa el coloreado de sintaxis (syntax highlighting), además de
+" poner algunas opciones adicionales que son cómodas para programar (ver los
+" comentarios correspondientes).
 
-    if has("gui_running")
-    colorscheme edumag
-    endif
+if has("gui_running")
+colorscheme edumag
+endif
 
-    if has("syntax") || has("gui_running")
+if has("syntax") || has("gui_running")
 
-        " El resaltado de sintaxis de algunos lenguajes tiene opciones
-        " adicionales, aquí activamos las más útiles, sobre todo aquéllas que
-        " señalan (normalmente en rojo) ciertos errores de programación.
-        let c_gnu                = 1
-        let c_space_errors       = 1
-        let java_space_errors    = 1
-        let ora_space_errors     = 1
-        let plsql_space_errors   = 1
-        let python_space_errors  = 1
-        let python_highlight_all = 1
-        let g:sql_type_default   = 'mysql'
+    " El resaltado de sintaxis de algunos lenguajes tiene opciones
+    " adicionales, aquí activamos las más útiles, sobre todo aquéllas que
+    " señalan (normalmente en rojo) ciertos errores de programación.
+    let c_gnu                = 1
+    let c_space_errors       = 1
+    let java_space_errors    = 1
+    let ora_space_errors     = 1
+    let plsql_space_errors   = 1
+    let python_space_errors  = 1
+    let python_highlight_all = 1
+    let g:sql_type_default   = 'mysql'
 
-    endif
+endif
 
-  " Tipo de fuente
-  " set gfn=Monospace\ 12
-  set gfn=Luxi\ Mono\ 10
-  " Desactivamos menu y toolbar en gui
-  "set guioptions-=T  " Con barra herramientas
-  set guioptions=''  " Desactivado sin menú
-  "set guioptions='mg'  " solo menú
-  " Activamos menú con <Ctrl>S
-  inoremap <C-S> <esc>:set guioptions=''<CR>a
-  noremap <C-S> :set guioptions=''<CR>
-  " Desactivamos menú con <Ctrl>D
-  inoremap <C-D> <esc>:set guioptions='mg'<CR>a
-  noremap <C-D> :set guioptions='mg'<CR>
-  "set bg=dark
+" Tipo de fuente
+" set gfn=Monospace\ 12
+set gfn=Luxi\ Mono\ 10
+" Desactivamos menu y toolbar en gui
+"set guioptions-=T  " Con barra herramientas
+set guioptions=''  " Desactivado sin menú
+"set guioptions='mg'  " solo menú
+" Activamos menú con <Ctrl>S
+inoremap <C-S> <esc>:set guioptions=''<CR>a
+noremap <C-S> :set guioptions=''<CR>
+" Desactivamos menú con <Ctrl>D
+inoremap <C-D> <esc>:set guioptions='mg'<CR>a
+noremap <C-D> :set guioptions='mg'<CR>
+"set bg=dark
 
-  " Con esto Vim señalará con fondo rojo los espacios que queden al final
-  " de línea: rara vez sirven para algo, así que prefiero poder *verlos*
-  " para poder quitarlos.
-  highlight WhitespaceEOL ctermbg=235 guibg=grey50
-  match WhitespaceEOL /\s\+$/
+" Con esto Vim señalará con fondo rojo los espacios que queden al final
+" de línea: rara vez sirven para algo, así que prefiero poder *verlos*
+" para poder quitarlos.
+highlight WhitespaceEOL ctermbg=235 guibg=grey50
+match WhitespaceEOL /\s\+$/
 
-  highlight ColorColumn ctermbg=none ctermfg=red guibg=black guifg=red
-  call matchadd('ColorColumn', '\%81v', 100) "set column nr
+highlight ColorColumn ctermbg=none ctermfg=red guibg=black guifg=red
+call matchadd('ColorColumn', '\%81v', 100) "set column nr
 
-  " Color spell.
-  hi clear SpellBad
-  hi SpellBad cterm=underline
+" Color spell.
+hi clear SpellBad
+hi SpellBad cterm=underline
 
 " SANGRADO, SALTOS DE LINEA Y TABULADORES
 
-   " setlocal textwidth=80 " Limita el ancho a 80 caracteres.
-   set tabstop=4  " ancho de tabulador estandar
-   set softtabstop=4 " ancho que deseamos
-   set shiftwidth=4  " ancho del sangrado
-   "set foldmethod=marker  " Plegar por marcas
-   set foldmarker={,} " Marcas con las que plegar
-   set foldmethod=indent  " Plegar por indent
-   set autoindent " Indentación automatica
-   set expandtab " El tabulador utiliza espacios en blanco
-   filetype indent on	" Indenta segun tipo de archivo
-   set backspace=indent,eol,start	" more powerful backspacing
-   set smartindent
+" setlocal textwidth=80          " Limita el ancho a 80 caracteres.
+set tabstop=4                    " ancho de tabulador estandar
+set softtabstop=4                " ancho que deseamos
+set shiftwidth=4                 " ancho del sangrado
+"set foldmethod=marker           " Plegar por marcas
+set foldmarker={,}               " Marcas con las que plegar
+set foldmethod=indent            " Plegar por indent
+set autoindent                   " Indentación automatica
+set expandtab                    " El tabulador utiliza espacios en blanco
+filetype indent on	            " Indenta segun tipo de archivo
+set backspace=indent,eol,start	" more powerful backspacing
+set smartindent
 
 " BÚSQUEDAS
 
-	" set nohlsearch  " No ilumina las búsquedas encontradas
-	set hlsearch  " Ilumina las búsquedas encontradas
-	set ignorecase smartcase " Ignora mayúsculas en búsquedas salvo si se escribe en mayúsculas.
-	set incsearch " Búsqueda incremental
+" set nohlsearch         " No ilumina las búsquedas encontradas
+set hlsearch             " Ilumina las búsquedas encontradas
+set ignorecase smartcase " Ignora mayúsculas en búsquedas salvo si se escribe en mayúsculas.
+set incsearch            " Búsqueda incremental
 
 " COMANDOS PROPIOS
 
-    " Borrado automatico de espacios en blanco.
-    autocmd BufWritePre * :%s/\s\+$//e
+" Borrado automatico de espacios en blanco.
+autocmd BufWritePre * :%s/\s\+$//e
 
-    " Cerrado automatico.
-    inoremap { {}<Esc>ha
-    inoremap ( ()<Esc>ha
-    inoremap [ []<Esc>ha
-    inoremap " ""<Esc>ha
-    inoremap ' ''<Esc>ha
-    inoremap ` ``<Esc>ha
+" Cerrado automatico.
+inoremap { {}<Esc>ha
+inoremap ( ()<Esc>ha
+inoremap [ []<Esc>ha
+inoremap " ""<Esc>ha
+inoremap ' ''<Esc>ha
+inoremap ` ``<Esc>ha
 
-    " find /usr/share/vim -iname "*complete*.vim" -exec basename {} \;
-    " Con Ctr-x Ctrl-o
-    " Sintaxis para HTML
-    :set omnifunc=htmlcomplete#CompleteTags
-    " Sintaxis para CSS
-    :set omnifunc=csscomplete#CompleteCSS
-    " Sintaxis para JavaScript
-    :set omnifunc=javascriptcomplete#CompleteJS
-    " Sintaxis para PHP
-    :set omnifunc=phpcomplete#CompletePHP
-    " Sintaxis para Python 3
-    :set omnifunc=python3complete#Complete
-    " Activar sintaxis completa
-    :set omnifunc=syntaxcomplete#Complete
+" find /usr/share/vim -iname "*complete*.vim" -exec basename {} \;
+" Con Ctr-x Ctrl-o
+" Sintaxis para HTML
+:set omnifunc=htmlcomplete#CompleteTags
+" Sintaxis para CSS
+:set omnifunc=csscomplete#CompleteCSS
+" Sintaxis para JavaScript
+:set omnifunc=javascriptcomplete#CompleteJS
+" Sintaxis para PHP
+:set omnifunc=phpcomplete#CompletePHP
+" Sintaxis para Python 3
+:set omnifunc=python3complete#Complete
+" Activar sintaxis completa
+:set omnifunc=syntaxcomplete#Complete
 
-    inoremap <expr> today strftime( "=%Y%m%d", localtime() )
-    ab _DP echo "<pre>" ; print_r($_POST) ; echo "</pre>"; // DEV
-    iab _hora <C-R>=strftime("%H:%M")<CR>
-    inoreabbrev __div <LT>div><LT>/div><C-o>F<
-    " FALTA LITERAL
-    ab _FT /** FALTA LITERAL **/
-    ab _FECHA <esc>:read !date +"\%A, \%d de \%B del \%Y"<cr>kJ<end>a
-    " Suffixes that get lower priority when doing tab completion for filenames.
-    " These are files we are not likely to want to edit or read.
-    set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
-    command Incloura !$HOME/desarrollo/magtrabajos/magtrabajos -a %
+inoremap <expr> today strftime( "=%Y%m%d", localtime() )
+ab _DP echo "<pre>" ; print_r($_POST) ; echo "</pre>"; // DEV
+iab _hora <C-R>=strftime("%H:%M")<CR>
+inoreabbrev __div <LT>div><LT>/div><C-o>F<
+" FALTA LITERAL
+ab _FT /** FALTA LITERAL **/
+ab _FECHA <esc>:read !date +"\%A, \%d de \%B del \%Y"<cr>kJ<end>a
+" Suffixes that get lower priority when doing tab completion for filenames.
+" These are files we are not likely to want to edit or read.
+set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+command Incloura !$HOME/desarrollo/magtrabajos/magtrabajos -a %
 
-    " AUTOCOMMAND
-    " En Vim se pueden definir comandos que se ejecutan automáticamente cuando
-    " una determinada cosa ocurre. Este ejemplo hace que al cargar un fichero
-    " que se había editado previamente se posiciones el cursor la línea en que
-    " estaba cuando se dejó de editar por última vez. Muy cómodo :-)
+" AUTOCOMMAND
+" En Vim se pueden definir comandos que se ejecutan automáticamente cuando
+" una determinada cosa ocurre. Este ejemplo hace que al cargar un fichero
+" que se había editado previamente se posiciones el cursor la línea en que
+" estaba cuando se dejó de editar por última vez. Muy cómodo :-)
 
-    if has("autocmd")
-        autocmd BufReadPost *
-                    \ if line("'\"") > 0 && line("'\"") <= line("$") |
-                    \		execute "normal g'\"" |
-                    \ endif
-    endif
+if has("autocmd")
+    autocmd BufReadPost *
+                \ if line("'\"") > 0 && line("'\"") <= line("$") |
+                \		execute "normal g'\"" |
+                \ endif
+endif
 
-    " Al abrir fichero desplegari.
-    autocmd BufWinEnter * silent! :%foldopen!
+" Al abrir fichero desplegar.
+autocmd BufWinEnter * silent! :%foldopen!
 
-    " Forzar detectar archivos .md como markdown.
-    au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
+" Forzar detectar archivos .md como markdown.
+au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
 
-    " Syntax para rst
-    au BufNewFile,BufRead *.rst set ft=rest
+" Syntax para rst
+au BufNewFile,BufRead *.rst set ft=rest
 
-    " Syntax para html
-    au BufNewFile,BufRead *html set ft=xml
+" Syntax para html
+au BufNewFile,BufRead *html set ft=xml
 
-    au BufRead,BufNewFile *.txt :setlocal spell
-    au BufRead,BufNewFile *.md :setlocal spell
-    au BufRead,BufNewFile *.rst :setlocal spell
+au BufRead,BufNewFile *.txt :setlocal spell
+au BufRead,BufNewFile *.md :setlocal spell
+au BufRead,BufNewFile *.rst :setlocal spell
 
 " PROGRAMACIÓN
 
-    " Barra de etiquetas a la derecha.
-    let Tlist_Use_Right_Window = 1
+" Barra de etiquetas a la derecha.
+let Tlist_Use_Right_Window = 1
 
-    " Lista errores
-    map <F7> :cp<CR>
-    map <F8> :cn<CR>
+" Lista errores
+map <F7> :cp<CR>
+map <F8> :cn<CR>
 
-    " Ver documentación de php.
-    " Con ponerte sobre una función y pulsar ‘K’ mayúscula tendrás la documentación
-    " correspondiente.
-    " Instalar la documentación en el sistema.
-    " sudo pear install doc.php.net/pman
-    set keywordprg=terminator\ -x\ pman
+" Ver documentación de php.
+" Con ponerte sobre una función y pulsar ‘K’ mayúscula tendrás la documentación
+" correspondiente.
+" Instalar la documentación en el sistema.
+" sudo pear install doc.php.net/pman
+" set keywordprg=terminator\ -x\ pman
+set keywordprg=pman
 
-    if has("autocmd")
-    " Drupal *.modules files.
-    augroup module
-      autocmd BufRead *.dox set filetype=java.doxygen
-    augroup END
-    augroup module
-      autocmd BufRead *.inc set filetype=php
-    augroup END
-    augroup module
-      autocmd BufRead *.install set filetype=php
-    augroup END
-    augroup module
-      autocmd BufRead *.module set filetype=php
-    augroup END
-    augroup engine
-      autocmd BufRead *.engine set filetype=php
-    augroup END
-    augroup profile
-      autocmd BufRead *.profile set filetype=php
-    augroup END
-    augroup test
-      autocmd BufRead *.test set filetype=php
-    augroup END
-    endif
+if has("autocmd")
+" Drupal *.modules files.
+augroup module
+  autocmd BufRead *.dox set filetype=java.doxygen
+augroup END
+augroup module
+  autocmd BufRead *.inc set filetype=php
+augroup END
+augroup module
+  autocmd BufRead *.install set filetype=php
+augroup END
+augroup module
+  autocmd BufRead *.module set filetype=php
+augroup END
+augroup engine
+  autocmd BufRead *.engine set filetype=php
+augroup END
+augroup profile
+  autocmd BufRead *.profile set filetype=php
+augroup END
+augroup test
+  autocmd BufRead *.test set filetype=php
+augroup END
+endif
 
-    if !exists("autocommads_loaded")
+if !exists("autocommads_loaded")
     let autocommads_loaded = 1
     " autocmd FileType html set omnifunc=htmlcomplete#CompleteTags#Html " @todo Da error falta la función.
     autocmd FileType php call Php()
@@ -310,57 +309,57 @@
     autocmd FileType rest call Txt()
     autocmd FileType sh call Sh()
     autocmd FileType css set omnifunc=csscomplete#CompleteCSS
-    endif
+endif
 
-    " Autocommands para PHP
-    function Php()
+" Autocommands para PHP
+function Php()
 
-      setlocal textwidth=80 " Limita el ancho a 80 caracteres.
-      " Compilador tidy
-      " compiler tidy
-      " UTF8 para archivos php
-      " set encoding=utf8
-      " Con Ctrl-r comentamos la linea y la copiamos abajo
-      inoremap <C-R> <Esc>yyg^i//<Esc>pi
-      " Con esta opción el texto sera cortado en la columna indicada por
-      " *textwidth* con formatoptions=croql hara que el codigo fuente no sea
-      " formateado pero si los comentarios
-      setlocal fo-=t fo+=croql
-      " Don't concatenate a line that ends with a backslash
-      setlocal cpo-=C
-      set autoindent " Indentación automatica
-    endfunction
+  setlocal textwidth=80 " Limita el ancho a 80 caracteres.
+  " Compilador tidy
+  " compiler tidy
+  " UTF8 para archivos php
+  " set encoding=utf8
+  " Con Ctrl-r comentamos la linea y la copiamos abajo
+  inoremap <C-R> <Esc>yyg^i//<Esc>pi
+  " Con esta opción el texto sera cortado en la columna indicada por
+  " *textwidth* con formatoptions=croql hara que el codigo fuente no sea
+  " formateado pero si los comentarios
+  setlocal fo-=t fo+=croql
+  " Don't concatenate a line that ends with a backslash
+  setlocal cpo-=C
+  set autoindent " Indentación automatica
+endfunction
 
-    function Rst()
-    setlocal textwidth=80 " Limita el ancho a 80 caracteres.
-    setlocal fo=cqt
-    setlocal wm=1
-    endfunction
+function Rst()
+setlocal textwidth=80 " Limita el ancho a 80 caracteres.
+setlocal fo=cqt
+setlocal wm=1
+endfunction
 
-    function Txt()
-    setlocal textwidth=80 " Limita el ancho a 80 caracteres.
-    setlocal fo=cqt
-    setlocal wm=1
-    endfunction
+function Txt()
+setlocal textwidth=80 " Limita el ancho a 80 caracteres.
+setlocal fo=cqt
+setlocal wm=1
+endfunction
 
-    function Sh()
-    set foldmethod=marker  " Plegar por marcas
-    "set foldmethod=indent  " Plegar por indent
-    setlocal textwidth=0 " Quita limitacion de caracteres.
-    " Con Ctrl-r comentamos la linea y la copiamos abajo
-    inoremap <C-R> <Esc>yyg^i# <Esc>pi
-    " Ejecutar el script editado con ALT-e, sirve para scripts bash
-    noremap! å :w :!% i
-    endfunction
+function Sh()
+set foldmethod=marker  " Plegar por marcas
+"set foldmethod=indent  " Plegar por indent
+setlocal textwidth=0 " Quita limitacion de caracteres.
+" Con Ctrl-r comentamos la linea y la copiamos abajo
+inoremap <C-R> <Esc>yyg^i# <Esc>pi
+" Ejecutar el script editado con ALT-e, sirve para scripts bash
+noremap! å :w :!% i
+endfunction
 
-    " python
-    autocmd FileType python set sw=4
-    autocmd FileType python set ts=4
-    autocmd FileType python set sts=4
-    " AutoPep8, dando formato a python.
-    " sudo pip install autopep8
-    " Seleccionamos texto y tecleamos "gq".
-    au FileType python setlocal formatprg=autopep8\ -
+" python
+autocmd FileType python set sw=4
+autocmd FileType python set ts=4
+autocmd FileType python set sts=4
+" AutoPep8, dando formato a python.
+" sudo pip install autopep8
+" Seleccionamos texto y tecleamos "gq".
+au FileType python setlocal formatprg=autopep8\ -
 
 " COLORES EN CSS
 
@@ -371,109 +370,108 @@
 
 " PLUGINS
 
-    " PHP_CodeSniffer.
-    Plugin 'phpcs.vim'
-    " Activamos revisión de código Al leer o guardar fichero.
-    autocmd BufRead *.php :Phpcs
-    let g:phpcs_std_list   = "PSR2"
-    let g:phpcs_max_output = 0 " Unlimited output.
+" PHP_CodeSniffer.
+Plugin 'phpcs.vim'
+" Activamos revisión de código Al leer o guardar fichero.
+autocmd BufRead *.php :Phpcs
+let g:phpcs_std_list   = "PSR2"
+let g:phpcs_max_output = 0 " Unlimited output.
 
-    " AIRLINE
-    " Plugin 'vim-airline/vim-airline'
-    " Plugin 'vim-airline/vim-airline-themes'
-    " let g:airline_theme='angr'
-    " " set laststatus=2
-    " let g:airline_powerline_fonts=1
-    " " Habilita los tabs, para cambiar de tab presionar gt
-    " let g:airline#extensions#tabline#enabled = 0
-    " " Enable the list of buffers
-    " let g:airline#extensions#tabline#show_buffers = 0
-    " let g:airline#extensions#tabline#show_tabs = 0
-    " " set t_Co=256
-    " let g:airline#extensions#branch#enabled=0
-    " let g:airline#extensions#hunks#enabled=0
-    "   " let g:airline_extensions = ['branch', 'tabline']
+" AIRLINE
+" Plugin 'vim-airline/vim-airline'
+" Plugin 'vim-airline/vim-airline-themes'
+" let g:airline_theme='angr'
+" let g:airline_powerline_fonts=1
+" " Habilita los tabs, para cambiar de tab presionar gt
+" let g:airline#extensions#tabline#enabled = 0
+" " Enable the list of buffers
+" let g:airline#extensions#tabline#show_buffers = 0
+" let g:airline#extensions#tabline#show_tabs = 0
+" " set t_Co=256
+" let g:airline#extensions#branch#enabled=0
+" let g:airline#extensions#hunks#enabled=0
+"   " let g:airline_extensions = ['branch', 'tabline']
 
-    " Debug
-    " Plugin 'joonty/vdebug'
+" Debug
+" Plugin 'joonty/vdebug'
 
-    " Python Mode.
-    " Desactivamos temporalmente.
-    "   Plugin 'Python-mode-klen'
-    "   let g:pymode_options = 0
-    "   let g:pymode_lint = 1
-    "   " let g:pymode_lint_ignore="E302,E266,W0401,E501,C901,E221"
-    "   let g:pymode_trim_whitespaces = 1
-    "   setlocal complete+=t
-    "   setlocal formatoptions-=t
-    "   " if v:version > 702 && !&relativenumber
-    "   "     setlocal nonumber
-    "   " endif
-    "   setlocal nowrap
-    "   setlocal textwidth=79
-    "   setlocal commentstring=#%s
-    "   setlocal define=^\s*\\(def\\\\|class\\)
-    "   let g:pymode_virtualenv = 1
+" Python Mode.
+" Desactivamos temporalmente.
+"   Plugin 'Python-mode-klen'
+"   let g:pymode_options = 0
+"   let g:pymode_lint = 1
+"   " let g:pymode_lint_ignore="E302,E266,W0401,E501,C901,E221"
+"   let g:pymode_trim_whitespaces = 1
+"   setlocal complete+=t
+"   setlocal formatoptions-=t
+"   " if v:version > 702 && !&relativenumber
+"   "     setlocal nonumber
+"   " endif
+"   setlocal nowrap
+"   setlocal textwidth=79
+"   setlocal commentstring=#%s
+"   setlocal define=^\s*\\(def\\\\|class\\)
+"   let g:pymode_virtualenv = 1
 
-    " Varios.
-    " Plugin 'rest.vim'
-    " Plugin 'sukima/xmledit'
+" Varios.
+" Plugin 'rest.vim'
+" Plugin 'sukima/xmledit'
 
-    " Plugin 'chrisbra/csv.vim'
-    " let did_load_csvfiletype=1
-    " au BufNewFile,BufFilePre,BufRead *.csv set filetype=csv
+" Plugin 'chrisbra/csv.vim'
+" let did_load_csvfiletype=1
+" au BufNewFile,BufFilePre,BufRead *.csv set filetype=csv
 
-    " Typescript
-    " https://www.vimfromscratch.com/articles/setting-up-vim-for-typescript
-    "" Plugin 'leafgarland/typescript-vim'
-    "" " let g:typescript_indent_disable = 1
-    "" au BufNewFile,BufFilePre,BufRead *.ts set filetype=typescript
-    "" Plugin 'sbdchd/neoformat'
-    "" autocmd FileType typescript setlocal formatprg=prettier\ --parser\ typescript
-    "" " Ale
-    "" " Demasiados recursos, desactivo.
-    "" " Plugin 'w0rp/ale'
-    "" " let g:ale_fixers = {}
-    "" " let g:ale_fixers.javascript = ['eslint']
-    "" " let g:ale_fix_on_save = 1
+" Typescript
+" https://www.vimfromscratch.com/articles/setting-up-vim-for-typescript
+"" Plugin 'leafgarland/typescript-vim'
+"" " let g:typescript_indent_disable = 1
+"" au BufNewFile,BufFilePre,BufRead *.ts set filetype=typescript
+"" Plugin 'sbdchd/neoformat'
+"" autocmd FileType typescript setlocal formatprg=prettier\ --parser\ typescript
+"" " Ale
+"" " Demasiados recursos, desactivo.
+"" " Plugin 'w0rp/ale'
+"" " let g:ale_fixers = {}
+"" " let g:ale_fixers.javascript = ['eslint']
+"" " let g:ale_fix_on_save = 1
 
-    " Tabulación.
-    " :Tab /=
-    "  Plugin 'godlygeek/tabular'
+" Tabulación.
+" :Tab /=
+"  Plugin 'godlygeek/tabular'
 
-    " Colores css.
-    Plugin 'ap/vim-css-color'
+" Colores css.
+Plugin 'ap/vim-css-color'
 
-    "" Vue
-    " Vim syntax highlighting for [Vue
-    " Desactivado temporalmente.
-    " Plugin 'posva/vim-vue'
-    " " let g:vue_pre_processors = 'detect_on_enter'
-    " if has("autocmd")
-    "     augroup vue
-    "       autocmd BufRead *.vue set filetype=vue
-    "     augroup END
-    " endif
-    " " Syntax and indent plugin.
-    " Plugin 'leafOfTree/vim-vue-plugin'
-    " let g:vim_vue_plugin_config_load_full_syntax = 1
-    " let g:vim_vue_plugin_config_use_typescript = 0
+"" Vue
+" Vim syntax highlighting for [Vue
+" Desactivado temporalmente.
+" Plugin 'posva/vim-vue'
+" " let g:vue_pre_processors = 'detect_on_enter'
+" if has("autocmd")
+"     augroup vue
+"       autocmd BufRead *.vue set filetype=vue
+"     augroup END
+" endif
+" " Syntax and indent plugin.
+" Plugin 'leafOfTree/vim-vue-plugin'
+" let g:vim_vue_plugin_config_load_full_syntax = 1
+" let g:vim_vue_plugin_config_use_typescript = 0
 
 
-    " https://github.com/junegunn/fzf/blob/master/README-VIM.md
-    " Plugin 'junegunn/fzf'
-    " set rtp+=~/.fzf/bin
-    " map <C-P> <esc>:FZF!<CR>
+" https://github.com/junegunn/fzf/blob/master/README-VIM.md
+" Plugin 'junegunn/fzf'
+" set rtp+=~/.fzf/bin
+" map <C-P> <esc>:FZF!<CR>
 
-    " https://dev.to/iggredible/how-to-search-faster-in-vim-with-fzf-vim-36ko
-    Plugin 'junegunn/fzf.vim'
-    Plugin 'junegunn/fzf', { 'do': { -> fzf#install() } }
-    " Buscar ficheros.
-    nnoremap <silent> <C-f> :Files<CR>
-    " Buscar en ficheros.
-    " Dependencias. sudo apt  install ripgrep
-    nnoremap <silent> <Leader>f :Rg<CR>
+" https://dev.to/iggredible/how-to-search-faster-in-vim-with-fzf-vim-36ko
+Plugin 'junegunn/fzf.vim'
+Plugin 'junegunn/fzf', { 'do': { -> fzf#install() } }
+" Buscar ficheros.
+nnoremap <silent> <C-f> :Files<CR>
+" Buscar en ficheros.
+" Dependencias. sudo apt  install ripgrep
+nnoremap <silent> <Leader>f :Rg<CR>
 
-    " Mostrar indent.
-    Plugin 'yggdroot/indentline'
+" Mostrar indent.
+Plugin 'yggdroot/indentline'
 
