@@ -1,4 +1,4 @@
-" VUNDLE
+""" VUNDLE
 
   " Utilizamos Vudle como administrador de plugins.
 
@@ -30,7 +30,7 @@
   " see :h vundle for more details or wiki for FAQ
   " Put your non-Plugin stuff after this line
 
-" FUNCIONAMIENTO GENERAL
+""" FUNCIONAMIENTO GENERAL
 
 set nonumber                   " Ocultamos número de linea en archivo.
 " set number
@@ -69,7 +69,7 @@ set sessionoptions=buffers,curdir,folds,options
 set exrc
 set secure
 
-" VISUALIZACIÓN
+""" VISUALIZACIÓN
 
 set colorcolumn=80
 set background=dark
@@ -166,7 +166,7 @@ call matchadd('ColorColumn', '\%81v', 100) "set column nr
 hi clear SpellBad
 hi SpellBad cterm=underline
 
-" SANGRADO, SALTOS DE LINEA Y TABULADORES
+""" SANGRADO, SALTOS DE LINEA Y TABULADORES
 
 " setlocal textwidth=80          " Limita el ancho a 80 caracteres.
 set tabstop=4                    " ancho de tabulador estandar
@@ -181,14 +181,14 @@ filetype indent on	            " Indenta segun tipo de archivo
 set backspace=indent,eol,start	" more powerful backspacing
 set smartindent
 
-" BÚSQUEDAS
+""" BÚSQUEDAS
 
 " set nohlsearch         " No ilumina las búsquedas encontradas
 set hlsearch             " Ilumina las búsquedas encontradas
 set ignorecase smartcase " Ignora mayúsculas en búsquedas salvo si se escribe en mayúsculas.
 set incsearch            " Búsqueda incremental
 
-" COMANDOS PROPIOS
+""" COMANDOS PROPIOS
 
 " Borrado automatico de espacios en blanco.
 autocmd BufWritePre * :%s/\s\+$//e
@@ -200,14 +200,6 @@ inoremap [ []<Esc>ha
 inoremap " ""<Esc>ha
 inoremap ' ''<Esc>ha
 inoremap ` ``<Esc>ha
-
-" Abreviaturas
-inoreabbrev _USE_LOG use Illuminate\Support\Facades\Log;
-inoreabbrev _LOG LOG::debug('');<Esc>3h
-inoreabbrev _DIV <LT>div><LT>/div><C-o>F<
-" Con Ctrl-r comentamos la linea y la copiamos abajo
-inoremap <C-R> <Esc>yyg^i//<Esc>pi
-
 
 " find /usr/share/vim -iname "*complete*.vim" -exec basename {} \;
 " Con Ctr-x Ctrl-o
@@ -258,7 +250,7 @@ au BufRead,BufNewFile *.txt :setlocal spell
 au BufRead,BufNewFile *.md :setlocal spell
 au BufRead,BufNewFile *.rst :setlocal spell
 
-" PROGRAMACIÓN
+""" PROGRAMACIÓN
 
 " Barra de etiquetas a la derecha.
 let Tlist_Use_Right_Window = 1
@@ -315,44 +307,52 @@ endif
 " Autocommands para PHP
 function Php()
 
-  setlocal textwidth=80 " Limita el ancho a 80 caracteres.
-  " Compilador tidy
-  " compiler tidy
-  " UTF8 para archivos php
-  " set encoding=utf8
-  " Con esta opción el texto sera cortado en la columna indicada por
-  " *textwidth* con formatoptions=croql hara que el codigo fuente no sea
-  " formateado pero si los comentarios
-  setlocal fo-=t fo+=croql
-  " Don't concatenate a line that ends with a backslash
-  setlocal cpo-=C
-  set autoindent " Indentación automatica
+    setlocal textwidth=80 " Limita el ancho a 80 caracteres.
+    " Compilador tidy
+    " compiler tidy
+    " UTF8 para archivos php
+    " set encoding=utf8
+    " Con esta opción el texto sera cortado en la columna indicada por
+    " *textwidth* con formatoptions=croql hara que el codigo fuente no sea
+    " formateado pero si los comentarios
+    setlocal fo-=t fo+=croql
+    " Don't concatenate a line that ends with a backslash
+    setlocal cpo-=C
+    set autoindent " Indentación automatica
 
-  " Revisamos sintaxis con php.
-  map <C-B> :w !php -l<CR>
+    " Revisamos sintaxis con php.
+    " map <C-B> :w !php -l<CR>
+    autocmd BufWritePre *.php :w !php -l<CR>
+
+    " Abreviaturas
+    inoreabbrev _USE_LOG use Illuminate\Support\Facades\Log;
+    inoreabbrev _LOG LOG::debug('');<Esc>3h
+    inoreabbrev _DIV <LT>div><LT>/div><C-o>F<
+    " Con Ctrl-C comentamos la linea y la copiamos abajo
+    map <C-C> <Esc>yyg^i//<Esc>pi
 
 endfunction
 
 function Rst()
-setlocal textwidth=80 " Limita el ancho a 80 caracteres.
-setlocal fo=cqt
-setlocal wm=1
+    setlocal textwidth=80 " Limita el ancho a 80 caracteres.
+    setlocal fo=cqt
+    setlocal wm=1
 endfunction
 
 function Txt()
-setlocal textwidth=80 " Limita el ancho a 80 caracteres.
-setlocal fo=cqt
-setlocal wm=1
+    setlocal textwidth=80 " Limita el ancho a 80 caracteres.
+    setlocal fo=cqt
+    setlocal wm=1
 endfunction
 
 function Sh()
-set foldmethod=marker  " Plegar por marcas
-"set foldmethod=indent  " Plegar por indent
-setlocal textwidth=0 " Quita limitacion de caracteres.
-" Con Ctrl-r comentamos la linea y la copiamos abajo
-inoremap <C-R> <Esc>yyg^i# <Esc>pi
-" Ejecutar el script editado con ALT-e, sirve para scripts bash
-noremap! å :w :!% i
+    set foldmethod=marker  " Plegar por marcas
+    "set foldmethod=indent  " Plegar por indent
+    setlocal textwidth=0 " Quita limitacion de caracteres.
+    " Con Ctrl-C comentamos la linea y la copiamos abajo
+    map <C-C> <Esc>yyg^i# <Esc>pi
+    " Ejecutar el script editado con ALT-e, sirve para scripts bash
+    noremap! å :w :!% i
 endfunction
 
 " python
@@ -364,15 +364,14 @@ autocmd FileType python set sts=4
 " Seleccionamos texto y tecleamos "gq".
 au FileType python setlocal formatprg=autopep8\ -
 
-" COLORES EN CSS
+""" COLORES EN CSS
 
   "Is used when updatetime value set by plugin (100ms)
   "is interfering with your configuration.
   " g:cssColorVimDoNotMessMyUpdatetime
   let g:cssColorVimDoNotMessMyUpdatetime = 1
 
-" PLUGINS
-
+""" PLUGINS
 
 " PHP_CodeSniffer.
 Plugin 'phpcs.vim'
@@ -439,10 +438,6 @@ let g:phpcs_max_output = 0 " Unlimited output.
 "" " let g:ale_fixers.javascript = ['eslint']
 "" " let g:ale_fix_on_save = 1
 
-" Tabulación.
-" :Tab /=
-"  Plugin 'godlygeek/tabular'
-
 " Colores css.
 Plugin 'ap/vim-css-color'
 
@@ -461,11 +456,6 @@ Plugin 'ap/vim-css-color'
 " let g:vim_vue_plugin_config_load_full_syntax = 1
 " let g:vim_vue_plugin_config_use_typescript = 0
 
-
-" https://github.com/junegunn/fzf/blob/master/README-VIM.md
-" Plugin 'junegunn/fzf'
-" set rtp+=~/.fzf/bin
-" map <C-P> <esc>:FZF!<CR>
 
 " https://dev.to/iggredible/how-to-search-faster-in-vim-with-fzf-vim-36ko
 Plugin 'junegunn/fzf.vim'
