@@ -3,85 +3,89 @@
   " Utilizamos Vudle como administrador de plugins.
 
   set backupcopy=yes " Recomendado para webpack.
-	set nocompatible              " be iMproved, required
-	filetype off                  " required
+  set nocompatible              " be iMproved, required
+  filetype off                  " required
 
-	" set the runtime path to include Vundle and initialize
-	set rtp+=~/.vim/bundle/Vundle.vim
-	call vundle#begin()
-	" alternatively, pass a path where Vundle should install plugins
-	"call vundle#begin('~/some/path/here')
+  " set the runtime path to include Vundle and initialize
+  set rtp+=~/.vim/bundle/Vundle.vim
+  call vundle#begin()
+  " alternatively, pass a path where Vundle should install plugins
+  "call vundle#begin('~/some/path/here')
 
-	" let Vundle manage Vundle, required
-	Plugin 'VundleVim/Vundle.vim'
+  " let Vundle manage Vundle, required
+  Plugin 'VundleVim/Vundle.vim'
 
-	" All of your Plugins must be added before the following line
-	call vundle#end()            " required
-	filetype plugin indent on    " required
-	" To ignore plugin indent changes, instead use:
-	"filetype plugin on
-	"
-	" Brief help
-	" :PluginList       - lists configured plugins
-	" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
-	" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-	" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
-	"
-	" see :h vundle for more details or wiki for FAQ
-	" Put your non-Plugin stuff after this line
+  " All of your Plugins must be added before the following line
+  call vundle#end()            " required
+  filetype plugin indent on    " required
+  " To ignore plugin indent changes, instead use:
+  "filetype plugin on
+  "
+  " Brief help
+  " :PluginList       - lists configured plugins
+  " :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+  " :PluginSearch foo - searches for foo; append `!` to refresh local cache
+  " :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+  "
+  " see :h vundle for more details or wiki for FAQ
+  " Put your non-Plugin stuff after this line
 
 " FUNCIONAMIENTO GENERAL
 
-  set nonumber " Ocultamos número de linea en archivo.
-  :map <F3> :tabn<cr>
-  set nowrap " Evitamos lineas partidas.
-  set virtualedit=block " Permite moverse al cursor por toda la pantalla.
-	set encoding=utf-8
-	set nocompatible " Utiliza las opciones avanzadas de vim
-	set helplang=es
-	set langmenu=es_es.utf8
-	lan es_ES.utf8
-	set spell
-	set spelllang=es
-	set ttyfast
-	" Realizar copias de seguridad
-	" set nobackup		" Don't keep a backup file
-	set backup
-	" Directorio para las copias de seguridad
-	set backupdir=/tmp
-	" Enviar al portapapeles todo lo que copiemos
-	set clipboard=unnamed
-	" Activamos los plugins
-	filetype plugin on
-	" Caracter comodin que utilizan algunos plugins por defecto es la barra
-	" invertida pero este es más comodo
-	let mapleader = ","
-	" Opciones al guardar sessiones para que no funcione lento al cargarlas
-	set sessionoptions=buffers,curdir,folds,options
-	" Linea de estado siempre activada
-	set laststatus=2
-	" Tamaño del historial de comandos
-	set history=50 
-	set paste	" Compartir porta papeles entre ventanas de vim.         
+  set nonumber               " Ocultamos número de linea en archivo.
+  " set number
+  " set rnu                      " Numero de lineas respecto a la actual.
+  " set cursorline               " Linea actual subrayada.
+  set clipboard=unnamed        " Copias de vim a fuera.
+  set laststatus=10            " Guardamos rehacer y deshacer.
+  set nowrap                   " Evitamos lineas partidas.
+  set virtualedit=block        " Permite moverse al cursor por toda la pantalla.
+  set encoding=utf-8
+  set nocompatible           " Utiliza las opciones avanzadas de vim
+  set helplang=es
+  set langmenu=es_es.utf8
+  lan es_ES.utf8
+  set spell
+  set spelllang=es
+  set ttyfast
+  " Realizar copias de seguridad
+  " set nobackup		" Don't keep a backup file
+  set backup
+  " Directorio para las copias de seguridad
+  set backupdir=/tmp
+  " Enviar al portapapeles todo lo que copiemos
+  set clipboard=unnamed
+  " Activamos los plugins
+  filetype plugin on
+  " Caracter comodin que utilizan algunos plugins por defecto es la barra
+  " invertida pero este es más comodo
+  let mapleader = ","
+  " Opciones al guardar sessiones para que no funcione lento al cargarlas
+  set sessionoptions=buffers,curdir,folds,options
+  " Linea de estado siempre activada
+  set laststatus=2
+  " Tamaño del historial de comandos
+  set history=50
+  set paste	" Compartir porta papeles entre ventanas de vim.
   " Permitir .vimrc en carpetas de proyecto
-	set exrc
-	set secure
+  set exrc
+  set secure
 
 " VISUALIZACIÓN
 
   set colorcolumn=80
-	set background=dark
-	"set background=light
-	" colorscheme edumag " Colores personalizados
-	set sm " Visualización de modos
-	set showcmd " Visualización de comandos mientras vamos escribiendo
-	set showmatch " Indica cierre de llaves
-	set ruler "visualizar numero de linea y columna
+  set background=dark
+  "set background=light
+  " colorscheme edumag " Colores personalizados
+  set sm " Visualización de modos
+  set showcmd " Visualización de comandos mientras vamos escribiendo
+  set showmatch " Indica cierre de llaves
+  set ruler "visualizar numero de linea y columna
   setlocal nonumber " Ocultamos número de linea en archivo.
-	" set novisualbell
-	set noerrorbells
-	set showbreak=->  " Shows this string before broken lines
-	syntax on
+  " set novisualbell
+  set noerrorbells
+  set showbreak=->  " Shows this string before broken lines
+  syntax on
 
   "StatusLine"
 
@@ -110,37 +114,37 @@
   set statusline+=\ %l:%c               " Line/column.
   hi StatusLine ctermfg=15 cterm=bold ctermbg=8
 
-  "Colores"
+" Colores"
 
-	" Aquí se activa el coloreado de sintaxis (syntax highlighting), además de
-	" poner algunas opciones adicionales que son cómodas para programar (ver los
-	" comentarios correspondientes).
+    " Aquí se activa el coloreado de sintaxis (syntax highlighting), además de
+    " poner algunas opciones adicionales que son cómodas para programar (ver los
+    " comentarios correspondientes).
 
-	if has("gui_running")
+    if has("gui_running")
     colorscheme edumag
-	endif
+    endif
 
-	if has("syntax") || has("gui_running")
+    if has("syntax") || has("gui_running")
 
-		" El resaltado de sintaxis de algunos lenguajes tiene opciones
-		" adicionales, aquí activamos las más útiles, sobre todo aquéllas que
-		" señalan (normalmente en rojo) ciertos errores de programación.
-		let c_gnu                = 1
-		let c_space_errors       = 1
-		let java_space_errors    = 1
-		let ora_space_errors     = 1
-		let plsql_space_errors   = 1
-		let python_space_errors  = 1
-		let python_highlight_all = 1
-		let g:sql_type_default   = 'mysql'
+        " El resaltado de sintaxis de algunos lenguajes tiene opciones
+        " adicionales, aquí activamos las más útiles, sobre todo aquéllas que
+        " señalan (normalmente en rojo) ciertos errores de programación.
+        let c_gnu                = 1
+        let c_space_errors       = 1
+        let java_space_errors    = 1
+        let ora_space_errors     = 1
+        let plsql_space_errors   = 1
+        let python_space_errors  = 1
+        let python_highlight_all = 1
+        let g:sql_type_default   = 'mysql'
 
-	endif
+    endif
 
   " Tipo de fuente
   " set gfn=Monospace\ 12
   set gfn=Luxi\ Mono\ 10
   " Desactivamos menu y toolbar en gui
-  "set guioptions-=T  " Con barra herramientas 
+  "set guioptions-=T  " Con barra herramientas
   set guioptions=''  " Desactivado sin menú
   "set guioptions='mg'  " solo menú
   " Activamos menú con <Ctrl>S
@@ -188,7 +192,36 @@
 
 " COMANDOS PROPIOS
 
-    iab _DP echo "<pre>" ; print_r($_POST) ; echo "</pre>"; // DEV 
+    " Borrado automatico de espacios en blanco.
+    autocmd BufWritePre * :%s/\s\+$//e
+
+    " Cerrado automatico.
+    inoremap { {}<Esc>ha
+    inoremap ( ()<Esc>ha
+    inoremap [ []<Esc>ha
+    inoremap " ""<Esc>ha
+    inoremap ' ''<Esc>ha
+    inoremap ` ``<Esc>ha
+
+    " find /usr/share/vim -iname "*complete*.vim" -exec basename {} \;
+    " Con Ctr-x Ctrl-o
+    " Sintaxis para HTML
+    :set omnifunc=htmlcomplete#CompleteTags
+    " Sintaxis para CSS
+    :set omnifunc=csscomplete#CompleteCSS
+    " Sintaxis para JavaScript
+    :set omnifunc=javascriptcomplete#CompleteJS
+    " Sintaxis para PHP
+    :set omnifunc=phpcomplete#CompletePHP
+    " Sintaxis para Python 3
+    :set omnifunc=python3complete#Complete
+    " Activar sintaxis completa
+    :set omnifunc=syntaxcomplete#Complete
+
+    inoremap <expr> today strftime( "=%Y%m%d", localtime() )
+    ab _DP echo "<pre>" ; print_r($_POST) ; echo "</pre>"; // DEV
+    iab _hora <C-R>=strftime("%H:%M")<CR>
+    inoreabbrev __div <LT>div><LT>/div><C-o>F<
     " FALTA LITERAL
     ab _FT /** FALTA LITERAL **/
     ab _FECHA <esc>:read !date +"\%A, \%d de \%B del \%Y"<cr>kJ<end>a
@@ -210,7 +243,7 @@
                     \ endif
     endif
 
-    " Al abrir fichero desplegari. 
+    " Al abrir fichero desplegari.
     autocmd BufWinEnter * silent! :%foldopen!
 
     " Forzar detectar archivos .md como markdown.
@@ -236,11 +269,11 @@
     map <F8> :cn<CR>
 
     " Ver documentación de php.
-    " Con ponerte sobre una función y pulsar ‘K’ mayúscula tendrás la documentación 
+    " Con ponerte sobre una función y pulsar ‘K’ mayúscula tendrás la documentación
     " correspondiente.
     " Instalar la documentación en el sistema.
     " sudo pear install doc.php.net/pman
-    set keywordprg=terminator\ -x\ pman 
+    set keywordprg=terminator\ -x\ pman
 
     if has("autocmd")
     " Drupal *.modules files.
@@ -280,7 +313,7 @@
     endif
 
     " Autocommands para PHP
-    function Php() 
+    function Php()
 
       setlocal textwidth=80 " Limita el ancho a 80 caracteres.
       " Compilador tidy
@@ -324,14 +357,14 @@
     autocmd FileType python set sw=4
     autocmd FileType python set ts=4
     autocmd FileType python set sts=4
-    " AutoPep8, dando formato a python. 
+    " AutoPep8, dando formato a python.
     " sudo pip install autopep8
     " Seleccionamos texto y tecleamos "gq".
     au FileType python setlocal formatprg=autopep8\ -
 
 " COLORES EN CSS
 
-  "Is used when updatetime value set by plugin (100ms) 
+  "Is used when updatetime value set by plugin (100ms)
   "is interfering with your configuration.
   " g:cssColorVimDoNotMessMyUpdatetime
   let g:cssColorVimDoNotMessMyUpdatetime = 1
@@ -341,7 +374,7 @@
     " PHP_CodeSniffer.
     Plugin 'phpcs.vim'
     " Activamos revisión de código Al leer o guardar fichero.
-    " autocmd BufRead *.php :Phpcs
+    autocmd BufRead *.php :Phpcs
     let g:phpcs_std_list   = "PSR2"
     let g:phpcs_max_output = 0 " Unlimited output.
 
@@ -364,32 +397,27 @@
     " Debug
     " Plugin 'joonty/vdebug'
 
-    " Abrir archivos.
-    " Pulsando Ctrl+P el pluguin nos permite ir viendo los archivos que 
-    " coinciden con el texto que vamos tecleando.
-    " Con ctrl+z podemos marcar los que queramos abrir y con ctrl+o abrirlos.
-    " Plugin 'ctrlp.vim'
-
     " Python Mode.
-    Plugin 'Python-mode-klen'
-    let g:pymode_options = 0
-    let g:pymode_lint = 1
-    " let g:pymode_lint_ignore="E302,E266,W0401,E501,C901,E221"
-    let g:pymode_trim_whitespaces = 1
-    setlocal complete+=t
-    setlocal formatoptions-=t
-    " if v:version > 702 && !&relativenumber
-    "     setlocal nonumber
-    " endif
-    setlocal nowrap
-    setlocal textwidth=79
-    setlocal commentstring=#%s
-    setlocal define=^\s*\\(def\\\\|class\\)
-    let g:pymode_virtualenv = 1
+    " Desactivamos temporalmente.
+    "   Plugin 'Python-mode-klen'
+    "   let g:pymode_options = 0
+    "   let g:pymode_lint = 1
+    "   " let g:pymode_lint_ignore="E302,E266,W0401,E501,C901,E221"
+    "   let g:pymode_trim_whitespaces = 1
+    "   setlocal complete+=t
+    "   setlocal formatoptions-=t
+    "   " if v:version > 702 && !&relativenumber
+    "   "     setlocal nonumber
+    "   " endif
+    "   setlocal nowrap
+    "   setlocal textwidth=79
+    "   setlocal commentstring=#%s
+    "   setlocal define=^\s*\\(def\\\\|class\\)
+    "   let g:pymode_virtualenv = 1
 
     " Varios.
-    Plugin 'rest.vim'
-    Plugin 'sukima/xmledit'
+    " Plugin 'rest.vim'
+    " Plugin 'sukima/xmledit'
 
     " Plugin 'chrisbra/csv.vim'
     " let did_load_csvfiletype=1
@@ -411,24 +439,25 @@
 
     " Tabulación.
     " :Tab /=
-    Plugin 'godlygeek/tabular'
+    "  Plugin 'godlygeek/tabular'
 
     " Colores css.
     Plugin 'ap/vim-css-color'
 
     "" Vue
     " Vim syntax highlighting for [Vue
-    Plugin 'posva/vim-vue'
-    " let g:vue_pre_processors = 'detect_on_enter'
-    if has("autocmd")
-    augroup vue
-      autocmd BufRead *.vue set filetype=vue
-    augroup END
-    endif
-    " Syntax and indent plugin.
-    Plugin 'leafOfTree/vim-vue-plugin'
-    let g:vim_vue_plugin_config_load_full_syntax = 1
-    let g:vim_vue_plugin_config_use_typescript = 0
+    " Desactivado temporalmente.
+    " Plugin 'posva/vim-vue'
+    " " let g:vue_pre_processors = 'detect_on_enter'
+    " if has("autocmd")
+    "     augroup vue
+    "       autocmd BufRead *.vue set filetype=vue
+    "     augroup END
+    " endif
+    " " Syntax and indent plugin.
+    " Plugin 'leafOfTree/vim-vue-plugin'
+    " let g:vim_vue_plugin_config_load_full_syntax = 1
+    " let g:vim_vue_plugin_config_use_typescript = 0
 
 
     " https://github.com/junegunn/fzf/blob/master/README-VIM.md
@@ -448,14 +477,3 @@
     " Mostrar indent.
     Plugin 'yggdroot/indentline'
 
-    " Laravel
-    Plugin 'tpope/vim-dispatch'             "| Optional
-    Plugin 'tpope/vim-projectionist'        "|
-    Plugin 'noahfrederick/vim-composer'     "|
-    Plugin 'noahfrederick/vim-laravel'
-
-    " Auto-cierre de llaves.
-    Plugin 'jiangmiao/auto-pairs'
-
-    " Auto-cierre de etiquetas.
-    Plugin 'alvan/vim-closetag'
