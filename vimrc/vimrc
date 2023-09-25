@@ -322,7 +322,11 @@ function Php()
 
     " Revisamos sintaxis con php.
     " map <C-B> :w !php -l<CR>
-    autocmd BufWritePre *.php :w !php -l<CR>
+    " "autocmd BufWritePre *.php :w !php -l<CR>
+    set makeprg=php\ -l\ %
+    set errorformat=%m\ in\ %f\ on\ line\ %l,%-GErrors\ parsing\ %f,%-G
+    " "autocmd BufWritePre *.php :make<CR>
+    nnoremap <f5> :update<bar>make<bar>cwindow<cr>
 
     " Abreviaturas
     inoreabbrev _USE_LOG use Illuminate\Support\Facades\Log;
@@ -376,7 +380,7 @@ au FileType python setlocal formatprg=autopep8\ -
 " PHP_CodeSniffer.
 Plugin 'phpcs.vim'
 " Activamos revisión de código Al leer o guardar fichero.
-autocmd BufWritePre *.php :Phpcs
+" "autocmd BufWritePre *.php :Phpcs
 let g:phpcs_std_list   = "PSR2"
 let g:phpcs_max_output = 0 " Unlimited output.
 
