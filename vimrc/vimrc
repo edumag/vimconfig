@@ -3,7 +3,7 @@
   " Utilizamos Vudle como administrador de plugins.
 
   set backupcopy=yes            " Recomendado para webpack.
-  set nocompatible              " No compatible con vi old.
+  set nocompatible               " Utiliza las opciones avanzadas de vim
   filetype off                  " required
 
   " set the runtime path to include Vundle and initialize
@@ -37,11 +37,9 @@ set nonumber                   " Ocultamos número de linea en archivo.
 " set rnu                      " Numero de lineas respecto a la actual.
 " set cursorline               " Linea actual subrayada.
 set clipboard=unnamed          " Copias de vim a fuera.
-set laststatus=10              " Guardamos rehacer y deshacer.
 set nowrap                     " Evitamos lineas partidas.
 set virtualedit=block          " Permite moverse al cursor por toda la pantalla.
 set encoding=utf-8
-set nocompatible               " Utiliza las opciones avanzadas de vim
 set helplang=es
 set langmenu=es_es.utf8
 lan es_ES.utf8
@@ -78,15 +76,16 @@ set background=dark
 set sm                             " Visualización de modos
 set showcmd                        " Visualización de comandos mientras vamos escribiendo
 set showmatch                      " Indica cierre de llaves
-set ruler                          " visualizar numero de linea y columna
 setlocal nonumber                  " Ocultamos número de linea en archivo.
 " set novisualbell
 set noerrorbells
 set showbreak=->                   " Shows this string before broken lines
 syntax on
 
-"StatusLine"
+""" StatusLine
 
+" set ruler                          " visualizar numero de linea y columna
+set laststatus=2                     " Mostramos statusline siempre.
 let g:gitparsedbranchname = ' '
 function! UpdateGitBranch()
   let l:string = system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
