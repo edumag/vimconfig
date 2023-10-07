@@ -1,4 +1,4 @@
-""" VUNDLE
+"" VUNDLE
 
   " Utilizamos Vudle como administrador de plugins.
 
@@ -238,6 +238,10 @@ au BufRead,BufNewFile *.txt :setlocal spell
 au BufRead,BufNewFile *.md :setlocal spell
 au BufRead,BufNewFile *.rst :setlocal spell
 
+""" TEMPLATES
+inoreabbrev <h. <Esc>:r ~/.vim/templates/skeleton.html<cr><Esc>ggdd
+inoreabbrev <d. <LT>div><cr><LT>/div><Esc>O
+
 """ PROGRAMACIÓN
 
 " Barra de etiquetas a la derecha.
@@ -319,9 +323,9 @@ function Php()
     " Abreviaturas
     inoreabbrev _USE_LOG use Illuminate\Support\Facades\Log;
     inoreabbrev _LOG Log::debug('');<Esc>3h
-    inoreabbrev _DIV <LT>div><LT>/div><C-o>F<
+
     " Con Ctrl-C comentamos la linea y la copiamos abajo
-    map <C-C> <Esc>yyg^i//<Esc>pi
+    map <C-C> <Esc>yyg^i// <Esc>pi
 
 endfunction
 
@@ -457,6 +461,7 @@ nnoremap <silent> <C-f> :Files<CR>
 " Buscar en ficheros.
 " Dependencias. sudo apt  install ripgrep
 nnoremap <silent> <Leader>f :Rg<CR>
+" Etiquetas :Tags <tag>
 
 " Mostrar indent.
 Plugin 'yggdroot/indentline'
