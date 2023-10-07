@@ -141,21 +141,6 @@ if has("syntax") || has("gui_running")
 
 endif
 
-" Tipo de fuente
-" set gfn=Monospace\ 12
-set gfn=Luxi\ Mono\ 10
-" Desactivamos menu y toolbar en gui
-"set guioptions-=T  " Con barra herramientas
-set guioptions=''  " Desactivado sin menú
-"set guioptions='mg'  " solo menú
-" Activamos menú con <Ctrl>S
-inoremap <C-S> <esc>:set guioptions=''<CR>a
-noremap <C-S> :set guioptions=''<CR>
-" Desactivamos menú con <Ctrl>D
-inoremap <C-D> <esc>:set guioptions='mg'<CR>a
-noremap <C-D> :set guioptions='mg'<CR>
-"set bg=dark
-
 " Con esto Vim señalará con fondo rojo los espacios que queden al final
 " de línea: rara vez sirven para algo, así que prefiero poder *verlos*
 " para poder quitarlos.
@@ -333,7 +318,7 @@ function Php()
 
     " Abreviaturas
     inoreabbrev _USE_LOG use Illuminate\Support\Facades\Log;
-    inoreabbrev _LOG LOG::debug('');<Esc>3h
+    inoreabbrev _LOG Log::debug('');<Esc>3h
     inoreabbrev _DIV <LT>div><LT>/div><C-o>F<
     " Con Ctrl-C comentamos la linea y la copiamos abajo
     map <C-C> <Esc>yyg^i//<Esc>pi
@@ -482,4 +467,9 @@ Plugin 'szw/vim-maximizer.git'
 nnoremap <silent><F3> :MaximizerToggle<CR>
 vnoremap <silent><F3> :MaximizerToggle<CR>gv
 inoremap <silent><F3> <C-o>:MaximizerToggle<CR>
+
+" Ampliamos detección de bloques.
+" https://github.com/andymass/vim-matchup#detailed-feature-documentation
+Plugin 'andymass/vim-matchup'
+" :hi MatchParen ctermbg=blue guibg=lightblue cterm=italic gui=italic
 
