@@ -478,3 +478,9 @@ inoremap <silent><F3> <C-o>:MaximizerToggle<CR>
 Plugin 'andymass/vim-matchup'
 " :hi MatchParen ctermbg=blue guibg=lightblue cterm=italic gui=italic
 
+" Iconos.
+Plugin 'ryanoasis/vim-devicons'
+let g:webdevicons_conceal_nerdtree_brackets = 0
+exec 'autocmd filetype nerdtree syntax match hideBracketsInNerdTree "[\]|\[]*" contained conceal cchar=_ containedin=ALL'
+exec 'autocmd filetype nerdtree set conceallevel=3'
+exec 'autocmd filetype nerdtree set concealcursor=nvic'
