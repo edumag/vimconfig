@@ -37,7 +37,7 @@ set nonumber                   " Ocultamos número de linea en archivo.
 " set rnu                      " Numero de lineas respecto a la actual.
 " set cursorline               " Linea actual subrayada.
 set clipboard=unnamed          " Copias de vim a fuera.
-set nowrap                     " Evitamos lineas partidas.
+" set nowrap                     " Evitamos lineas partidas.
 set virtualedit=block          " Permite moverse al cursor por toda la pantalla.
 set encoding=utf-8
 set helplang=es
@@ -476,11 +476,11 @@ inoremap <silent><F3> <C-o>:MaximizerToggle<CR>
 " Ampliamos detección de bloques.
 " https://github.com/andymass/vim-matchup#detailed-feature-documentation
 Plugin 'andymass/vim-matchup'
-" :hi MatchParen ctermbg=blue guibg=lightblue cterm=italic gui=italic
+:hi MatchParen ctermfg=7 ctermbg=2
 
 " Iconos.
-Plugin 'ryanoasis/vim-devicons'
-let g:webdevicons_conceal_nerdtree_brackets = 0
-exec 'autocmd filetype nerdtree syntax match hideBracketsInNerdTree "[\]|\[]*" contained conceal cchar=_ containedin=ALL'
-exec 'autocmd filetype nerdtree set conceallevel=3'
-exec 'autocmd filetype nerdtree set concealcursor=nvic'
+""Plugin 'ryanoasis/vim-devicons'
+""let g:webdevicons_conceal_nerdtree_brackets = 0
+""exec 'autocmd filetype nerdtree syntax match hideBracketsInNerdTree "[\]|\[]*" contained conceal cchar=_ containedin=ALL'
+""exec 'autocmd filetype nerdtree set conceallevel=3'
+""exec 'autocmd filetype nerdtree set concealcursor=nvic'
