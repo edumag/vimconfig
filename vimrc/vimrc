@@ -324,8 +324,8 @@ function Php()
     inoreabbrev _USE_LOG use Illuminate\Support\Facades\Log;
     inoreabbrev _LOG Log::debug('');<Esc>3h
 
-    " Con Ctrl-C comentamos la linea y la copiamos abajo
-    map <C-C> <Esc>yyg^i// <Esc>pi
+    " Con Ctrl-T comentamos la linea y la copiamos abajo
+    map <C-T> <Esc>yyg^i// <Esc>pi
 
 endfunction
 
@@ -345,8 +345,8 @@ function Sh()
     set foldmethod=marker  " Plegar por marcas
     "set foldmethod=indent  " Plegar por indent
     setlocal textwidth=0 " Quita limitacion de caracteres.
-    " Con Ctrl-C comentamos la linea y la copiamos abajo
-    map <C-C> <Esc>yyg^i# <Esc>pi
+    " Con Ctrl-T comentamos la linea y la copiamos abajo
+    map <C-T> <Esc>yyg^i# <Esc>pi
     " Ejecutar el script editado con ALT-e, sirve para scripts bash
     noremap! å :w :!% i
 endfunction
