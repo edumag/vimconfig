@@ -484,3 +484,8 @@ Plugin 'andymass/vim-matchup'
 ""exec 'autocmd filetype nerdtree syntax match hideBracketsInNerdTree "[\]|\[]*" contained conceal cchar=_ containedin=ALL'
 ""exec 'autocmd filetype nerdtree set conceallevel=3'
 ""exec 'autocmd filetype nerdtree set concealcursor=nvic'
+
+" Ejecutar phpstan sobre fichero actual.
+nmap <leader>pa :let &errorformat = '%f:%l:%m'<cr>:cexpr system('./phpstan ' . expand("%"))<cr>:copen<cr>
+
+
