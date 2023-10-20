@@ -485,7 +485,10 @@ Plugin 'andymass/vim-matchup'
 ""exec 'autocmd filetype nerdtree set conceallevel=3'
 ""exec 'autocmd filetype nerdtree set concealcursor=nvic'
 
+" Configuración de phpstan en phpstan.neon.dist
 " Ejecutar phpstan sobre fichero actual.
 nmap <leader>pa :let &errorformat = '%f:%l:%m'<cr>:cexpr system('./phpstan ' . expand("%"))<cr>:copen<cr>
+" Ejecutar phpstan en proyecto.
+nmap <leader>pt :let &errorformat = '%f:%l:%m'<cr>:cexpr system('./phpstan ')<cr>:copen<cr>
 
 
