@@ -485,6 +485,12 @@ Plugin 'andymass/vim-matchup'
 ""exec 'autocmd filetype nerdtree set conceallevel=3'
 ""exec 'autocmd filetype nerdtree set concealcursor=nvic'
 
+" PhpStan
+" Script phpstan en proyecto.
+"    # https://phpstan.org/user-guide/rule-levels
+"    # make exec c="vendor/phpstan/phpstan/phpstan $@"
+"    docker-compose run app ./vendor/phpstan/phpstan/phpstan analyse --ansi -l 1 --memory-limit 512M --no-progress --error-format=raw $@ \
+"        | sed 's/\/var\/www\///'
 " Configuración de phpstan en phpstan.neon.dist
 " Ejecutar phpstan sobre fichero actual.
 nmap <leader>pa :let &errorformat = '%f:%l:%m'<cr>:cexpr system('./phpstan ' . expand("%"))<cr>:copen<cr>
