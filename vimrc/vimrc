@@ -315,8 +315,9 @@ function Php()
     " Revisamos sintaxis con php.
     " map <C-B> :w !php -l<CR>
     " "autocmd BufWritePre *.php :w !php -l<CR>
-    set makeprg=php\ -l\ %
-    set errorformat=%m\ in\ %f\ on\ line\ %l,%-GErrors\ parsing\ %f,%-G
+    " set makeprg=php\ -l\ %
+    " set makeprg=make\ exec\ c='php\ -l\ %'
+    " set errorformat=%m\ in\ %f\ on\ line\ %l,%-GErrors\ parsing\ %f,%-G
     " "autocmd BufWritePre *.php :make<CR>
     nnoremap <f5> :update<bar>make<bar>cwindow<cr>
 
@@ -370,11 +371,11 @@ au FileType python setlocal formatprg=autopep8\ -
 """ PLUGINS
 
 " PHP_CodeSniffer.
-Plugin 'phpcs.vim'
+" Plugin 'phpcs.vim'
 " Activamos revisión de código Al leer o guardar fichero.
 " "autocmd BufWritePre *.php :Phpcs
-let g:phpcs_std_list   = "PSR2"
-let g:phpcs_max_output = 0 " Unlimited output.
+" let g:phpcs_std_list   = "PSR2"
+" let g:phpcs_max_output = 0 " Unlimited output.
 
 " AIRLINE
 " Plugin 'vim-airline/vim-airline'
@@ -487,5 +488,6 @@ Plugin 'andymass/vim-matchup'
 
 " Ejecutar phpstan sobre fichero actual.
 nmap <leader>pa :let &errorformat = '%f:%l:%m'<cr>:cexpr system('./phpstan ' . expand("%"))<cr>:copen<cr>
+nmap <leader>pt :let &errorformat = '%f:%l:%m'<cr>:cexpr system('./phpstan')<cr>:copen<cr>
 
 
