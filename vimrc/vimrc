@@ -372,11 +372,11 @@ au FileType python setlocal formatprg=autopep8\ -
 """ PLUGINS
 
 " PHP_CodeSniffer.
-Plugin 'phpcs.vim'
+" Plugin 'phpcs.vim'
 " Activamos revisión de código Al leer o guardar fichero.
 " "autocmd BufWritePre *.php :Phpcs
-let g:phpcs_std_list   = "PSR2"
-let g:phpcs_max_output = 0 " Unlimited output.
+" let g:phpcs_std_list   = "PSR2"
+" let g:phpcs_max_output = 0 " Unlimited output.
 
 " AIRLINE
 " Plugin 'vim-airline/vim-airline'
