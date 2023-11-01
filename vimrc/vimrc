@@ -178,7 +178,7 @@ set incsearch            " Búsqueda incremental
 
 """ COMANDOS PROPIOS
 
-" Borrado automatico de espacios en blanco.
+" Borrado automático de espacios en blanco.
 autocmd BufWritePre * :%s/\s\+$//e
 
 " Cerrado automatico.
@@ -313,11 +313,13 @@ function Php()
     set autoindent " Indentación automatica
 
     " Revisamos sintaxis con php.
-    " map <C-B> :w !php -l<CR>
-    " "autocmd BufWritePre *.php :w !php -l<CR>
     set makeprg=php\ -l\ %
     set errorformat=%m\ in\ %f\ on\ line\ %l,%-GErrors\ parsing\ %f,%-G
-    " "autocmd BufWritePre *.php :make<CR>
+    if filereadable("phpstan")
+        set errorformat=%f:%l:%m
+        set makeprg=./phpstan\ %
+    endif
+    autocmd BufWritePre *.php :make
     nnoremap <f5> :update<bar>make<bar>cwindow<cr>
 
     " Abreviaturas
