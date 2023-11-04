@@ -321,8 +321,6 @@ function Php()
     ""    set makeprg=./phpstan\ %
     ""endif
     " Instalado phpLint.vim para que ejecute php -l tras guardar.
-    ":Phplint
-    autocmd BufWritePost *.php :Phplint
 
     " Abreviaturas
     inoreabbrev _USE_LOG use Illuminate\Support\Facades\Log;
