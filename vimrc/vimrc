@@ -313,14 +313,16 @@ function Php()
     set autoindent " Indentación automatica
 
     " Revisamos sintaxis con php.
-    set makeprg=php\ -l\ %
-    set errorformat=%m\ in\ %f\ on\ line\ %l,%-GErrors\ parsing\ %f,%-G
-    if filereadable("phpstan")
-        set errorformat=%f:%l:%m
-        set makeprg=./phpstan\ %
-    endif
-    autocmd BufWritePre *.php :make
-    nnoremap <f5> :update<bar>make<bar>cwindow<cr>
+    ""set makeprg=php\ -l\ %
+    ""set errorformat=%m\ in\ %f\ on\ line\ %l,%-GErrors\ parsing\ %f,%-G
+    ""if filereadable("phpstan_Muy_lento")
+    ""    " Descartamos, es muy lento.
+    ""    set errorformat=%f:%l:%m
+    ""    set makeprg=./phpstan\ %
+    ""endif
+    " Instalado phpLint.vim para que ejecute php -l tras guardar.
+    ":Phplint
+    autocmd BufWritePost *.php :Phplint
 
     " Abreviaturas
     inoreabbrev _USE_LOG use Illuminate\Support\Facades\Log;
