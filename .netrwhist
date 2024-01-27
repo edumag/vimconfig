@@ -1,5 +1,6 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhistcnt =8
+let g:netrw_dirhistcnt =9
+let g:netrw_dirhist_9='/home/edumag/.vim'
 let g:netrw_dirhist_8='/home/edu/desarrollo/rubricae/reconoce/reconoce-dev/resources/views/livewire'
 let g:netrw_dirhist_7='/home/edu/desarrollo/rubricae/reconoce/reconoce-dev/resources/views'
 let g:netrw_dirhist_6='/home/edu/desarrollo/rubricae/reconoce/reconoce-dev/resources'

@@ -3,7 +3,7 @@
   " Utilizamos Vudle como administrador de plugins.
 
   set backupcopy=yes            " Recomendado para webpack.
-  set nocompatible               " Utiliza las opciones avanzadas de vim
+  set nocompatible              " Utiliza las opciones avanzadas de vim
   filetype off                  " required
 
   " set the runtime path to include Vundle and initialize
@@ -68,15 +68,16 @@ set exrc
 set secure
 
 " Guardamos historial de cambios.
-set undofile
-set undodir=~/.vim/undodir
+" Desactivo por crear confusión.
+" set undofile
+" set undodir=~/.vim/undodir
 
 """ VISUALIZACIÓN
 
 set colorcolumn=80
 set background=dark
 "set background=light
-" colorscheme edumag               " Colores personalizados
+colorscheme onedark                " Colores personalizados
 set sm                             " Visualización de modos
 set showcmd                        " Visualización de comandos mientras vamos escribiendo
 set showmatch                      " Indica cierre de llaves
@@ -122,7 +123,8 @@ hi StatusLine ctermfg=15 cterm=bold ctermbg=8
 " comentarios correspondientes).
 
 if has("gui_running")
-colorscheme edumag
+" colorscheme edumag
+colorscheme onedark
 endif
 
 if has("syntax") || has("gui_running")
@@ -479,8 +481,59 @@ inoremap <silent><F3> <C-o>:MaximizerToggle<CR>
 Plugin 'andymass/vim-matchup'
 :hi MatchParen ctermfg=7 ctermbg=2
 
+" Diagnostics (via Language Server Protocol linters)
+"
+" - Go To Definition (:ALEGoToDefinition)
+" - Completion (Built in completion support, or with Deoplete)
+" - Finding references (:ALEFindReferences)
+" - Hover information (:ALEHover)
+" - Symbol search (:ALESymbolSearch)
+"
+" https://github.com/dense-analysis/ale
+Plugin 'dense-analysis/ale'
+let g:ale_fix_on_save = 1
+let g:ale_sign_error = '>>'
+let g:ale_sign_warning = '--'
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+let g:ale_python_flake8_options = '--max-line-length 88 --extend-ignore=E203'
+" ALE omni-completion completion manually with <C-x><C-o>.
+let g:ale_completion_enabled = 1
+" Only run linters named in ale_linters settings.
+let g:ale_linters_explicit = 0
+
+" Barra de estado.
+" https://github.com/itchyny/lightline.vim
+Plugin 'itchyny/lightline.vim'
+" https://github.com/maximbaz/lightline-ale
+Plugin 'maximbaz/lightline-ale'
+let g:lightline = {
+    \ 'colorscheme': 'onedark',
+    \}
+
+let g:lightline.component_expand = {
+      \  'linter_checking': 'lightline#ale#checking',
+      \  'linter_infos': 'lightline#ale#infos',
+      \  'linter_warnings': 'lightline#ale#warnings',
+      \  'linter_errors': 'lightline#ale#errors',
+      \  'linter_ok': 'lightline#ale#ok',
+      \ }
+let g:lightline.active = {
+            \ 'right': [ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ],
+            \            [ 'lineinfo' ],
+            \            [ 'percent' ],
+            \            [ 'fileformat', 'fileencoding', 'filetype'] ]
+            \}
+let g:lightline#ale#indicator_checking = "\uf110 "
+let g:lightline#ale#indicator_infos = "\uf129 "
+let g:lightline#ale#indicator_warnings = "\uf071 "
+let g:lightline#ale#indicator_errors = "\uf05e "
+let g:lightline#ale#indicator_ok = "\uf00c "
+
+
 " Iconos.
-""Plugin 'ryanoasis/vim-devicons'
+Plugin 'ryanoasis/vim-devicons'
 ""let g:webdevicons_conceal_nerdtree_brackets = 0
 ""exec 'autocmd filetype nerdtree syntax match hideBracketsInNerdTree "[\]|\[]*" contained conceal cchar=_ containedin=ALL'
 ""exec 'autocmd filetype nerdtree set conceallevel=3'
