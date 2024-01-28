@@ -507,6 +507,16 @@ let g:ale_completion_enabled = 1
 let g:ale_linters_explicit = 0
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
+nmap gr :ALEFindReferences<CR>
+nmap gd :ALEGoToDefinition<CR> " because I prefer tabs
+
+"" call ale#linter#Define('php', {
+""     \   'name': 'phpstan_propio',
+""     \   'lsp': 'stdio',
+""     \   'executable': './phpstan',
+""     \   'command': '%e run',
+""     \   'project_root': './',
+"" \})
 
 """ Barra de estado.
 " Mostrar rama de git en barra de estado.
