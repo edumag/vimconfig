@@ -492,7 +492,10 @@ Plugin 'andymass/vim-matchup'
 "
 " https://github.com/dense-analysis/ale
 Plugin 'dense-analysis/ale'
-let g:ale_fix_on_save = 1
+let g:ale_lint_on_text_changed=0
+let g:ale_lint_on_insert_leave=0
+let g:ale_lint_on_save=1
+let g:ale_fix_on_save = 0
 let g:ale_sign_error = '>'
 let g:ale_sign_warning = '-'
 " let g:ale_echo_msg_error_str = 'E'
@@ -507,6 +510,18 @@ let g:ale_completion_enabled = 1
 let g:ale_linters_explicit = 0
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_delay = 5000
+let g:ale_lint_on_enter = 0
+let g:ale_lint_on_filetype_changed = 0
+let g:ale_disable_lsp = 1
+
+" PHP
+let g:ale_linters = {
+    \ 'php': ['phpcs', 'phpstan'],
+    \ 'javascriptreact': ['eslint'],
+\}
+let g:ale_fixers = {'php': ['phpcbf']}
 nmap gr :ALEFindReferences<CR>
 nmap gd :ALEGoToDefinition<CR> " because I prefer tabs
 
