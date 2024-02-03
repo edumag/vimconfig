@@ -532,6 +532,7 @@ nmap gd :ALEGoToDefinition<CR> " because I prefer tabs
 ""     \   'command': '%e run',
 ""     \   'project_root': './',
 "" \})
+let g:ale_php_phpstan_executable = './vendor/phpstan/phpstan/phpstan analyse --ansi -l 4 --memory-limit 512M '
 
 """ Barra de estado.
 " Mostrar rama de git en barra de estado.
