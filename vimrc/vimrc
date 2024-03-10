@@ -615,3 +615,57 @@ nmap <leader>pa :let &errorformat = '%f:%l:%m'<cr>:cexpr system('./phpstan ' . e
 nmap <leader>pt :let &errorformat = '%f:%l:%m'<cr>:cexpr system('./phpstan ')<cr>:copen<cr>
 
 
+""" TYPESCRIPT
+" autocomplete list
+set wildmenu
+set wildmode=list:full
+
+" ALE
+let g:ale_emit_conflict_warnings = 0
+let g:ale_linters = {
+      \'javascript': ['eslint'],
+      \'typescript': ['eslint', 'tsserver', 'prettier'],
+      \}
+let g:ale_sign_column_always = 1
+let g:ale_completion_enabled = 0
+let g:ale_completion_tsserver_autoimport = 0
+let g:ale_fixers = {
+      \'javascript': ['eslint'],
+      \'json': ['prettier'],
+      \'typescript': ['eslint', 'prettier'],
+      \'ruby': ['rubocop'],
+      \'markdown': ['prettier'],
+      \}
+
+" asyncomplete
+" preferred keyboard mappings for navigating autocomplete menu
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <cr>    pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
+inoremap <expr> <Esc>   pumvisible() ? "\<C-y>\<Esc>" : "\<Esc>"
+imap <c-space> <Plug>(asyncomplete_force_refresh)
+
+" autocomplete
+set completeopt+=menuone,preview
+
+""call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+""    \ 'name': 'buffer',
+""    \ 'whitelist': ['*'],
+""    \ 'completor': function('asyncomplete#sources#buffer#completor'),
+""    \ 'config': {
+""    \    'max_buffer_size': 5000000,
+""    \  },
+""    \ }))
+
+" need to do
+" npm install -g javascript-typescript-langserver
+" for this to work
+if executable('javascript-typescript-stdio')
+  au User lsp_setup call lsp#register_server({
+    \ 'name': 'javascript-typescript-stdio',
+    \ 'cmd': {server_info->['javascript-typescript-stdio']},
+    \ 'whitelist': ['typescript', 'javascript', 'typescript.tsx'],
+    \ })
+endif
+
+set omnifunc=ale#completion#OmniFunc
