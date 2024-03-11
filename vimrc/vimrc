@@ -77,7 +77,7 @@ set secure
 set colorcolumn=80
 set background=dark
 "set background=light
-colorscheme onedark                " Colores personalizados
+colorscheme edumag2                " Basado en onedark
 set sm                             " Visualización de modos
 set showcmd                        " Visualización de comandos mientras vamos escribiendo
 set showmatch                      " Indica cierre de llaves
@@ -159,9 +159,9 @@ hi SpellBad cterm=underline
 """ SANGRADO, SALTOS DE LINEA Y TABULADORES
 
 " setlocal textwidth=80          " Limita el ancho a 80 caracteres.
-set tabstop=4                    " ancho de tabulador estandar
-set softtabstop=4                " ancho que deseamos
-set shiftwidth=4                 " ancho del sangrado
+set tabstop=2                    " ancho de tabulador estandar
+set softtabstop=2                " ancho que deseamos
+set shiftwidth=2                 " ancho del sangrado
 "set foldmethod=marker           " Plegar por marcas
 set foldmarker={,}               " Marcas con las que plegar
 set foldmethod=indent            " Plegar por indent
@@ -353,7 +353,8 @@ function Sh()
     " Con Ctrl-T comentamos la linea y la copiamos abajo
     map <C-T> <Esc>yyg^i# <Esc>pi
     " Ejecutar el script editado con ALT-e, sirve para scripts bash
-    noremap! å :w :!% i
+    noremap! å :w :!% 
+i
 endfunction
 
 " python
@@ -517,18 +518,21 @@ let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_delay = 5000
 let g:ale_lint_on_enter = 0
 let g:ale_lint_on_filetype_changed = 0
-let g:ale_disable_lsp = 0
 let g:ale_set_balloons=1
 set omnifunc=ale#completion#OmniFunc
 let g:ale_virtualtext_cursor = 'current'
 let g:ale_set_highlights = 0
+let g:ale_disable_lsp = 1
 
 " PHP
 let g:ale_linters = {
     \ 'php': ['phpcs', 'phpstan', 'phpactor'],
     \ 'javascriptreact': ['eslint'],
+    \ 'markdown': ['mdl'],
 \}
-let g:ale_fixers = {'php': ['phpcbf']}
+let g:ale_fixers = {
+    \ 'php': ['phpcbf'],
+\}
 nmap gr :ALEFindReferences<CR>
 nmap gd :ALEGoToDefinition<CR> " because I prefer tabs
 
@@ -539,7 +543,7 @@ nmap gd :ALEGoToDefinition<CR> " because I prefer tabs
 ""     \   'command': '%e run',
 ""     \   'project_root': './',
 "" \})
-let g:ale_php_phpstan_executable = './vendor/phpstan/phpstan/phpstan analyse --ansi -l 4 --memory-limit 512M '
+let g:ale_php_phpstan_executable = './vendor/phpstan/phpstan/phpstan analyse --ansi --memory-limit 512M '
 
 """ Barra de estado.
 " Mostrar rama de git en barra de estado.
