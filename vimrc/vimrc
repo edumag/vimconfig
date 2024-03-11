@@ -353,8 +353,8 @@ function Sh()
     " Con Ctrl-T comentamos la linea y la copiamos abajo
     map <C-T> <Esc>yyg^i# <Esc>pi
     " Ejecutar el script editado con ALT-e, sirve para scripts bash
-    noremap! å :w :!% 
-i
+    noremap! å :w :!%
+
 endfunction
 
 " python
@@ -575,6 +575,7 @@ function! LightLineFilename()
 	endfor
   return name
 endfunction
+
 let g:lightline.component_expand = {
       \ 'linter_checking': 'lightline#ale#checking',
       \ 'linter_infos': 'lightline#ale#infos',
