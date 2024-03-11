@@ -674,3 +674,24 @@ if executable('javascript-typescript-stdio')
 endif
 
 set omnifunc=ale#completion#OmniFunc
+
+" vimexecutor
+" Executeu codi, compileu, maximitzeu les finestres, canvieu el nom de les
+" finestres, feu zoom, canvieu la mida de finestres/terminals, executeu ordres
+" i molt més amb només 1 clic!
+" "Plugin 'mctechnology17/vim-executor'
+
+" Depuración
+Plugin 'puremourning/vimspector'
+let g:vimspector_enable_mappings = 'HUMAN'
+""nnoremap <Leader>dd :call vimspector#Launch()<CR>
+""nnoremap <Leader>de :call vimspector#Reset()<CR>
+""nnoremap <Leader>dc :call vimspector#Continue()<CR>
+""
+""nnoremap <Leader>dt :call vimspector#ToggleBreakpoint()<CR>
+""nnoremap <Leader>dT :call vimspector#ClearBreakpoints()<CR>
+""
+""nmap <Leader>dk <Plug>VimspectorRestart
+""nmap <Leader>dh <Plug>VimspectorStepOut
+""nmap <Leader>dl <Plug>VimspectorStepInto
+""nmap <Leader>dj <Plug>VimspectorStepOver
