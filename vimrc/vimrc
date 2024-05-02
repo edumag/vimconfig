@@ -34,7 +34,7 @@
 
 set nonumber                   " Ocultamos número de linea en archivo.
 " set number
-" set rnu                      " Numero de lineas respecto a la actual.
+set rnu                      " Numero de lineas respecto a la actual.
 " set cursorline               " Linea actual subrayada.
 set clipboard=unnamed          " Copias de vim a fuera.
 set nowrap                     " Evitamos lineas partidas.
@@ -529,6 +529,7 @@ let g:ale_linters = {
     \ 'php': ['phpcs', 'phpstan', 'phpactor'],
     \ 'javascriptreact': ['eslint'],
     \ 'markdown': ['mdl'],
+    \ 'sh': ['shellcheck'],
 \}
 let g:ale_fixers = {
     \ 'php': ['phpcbf'],
