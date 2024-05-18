@@ -503,8 +503,6 @@ let g:ale_lint_on_text_changed=0
 let g:ale_lint_on_insert_leave=0
 let g:ale_lint_on_save=1
 let g:ale_fix_on_save = 0
-let g:ale_sign_error = '>'
-let g:ale_sign_warning = '-'
 " let g:ale_echo_msg_error_str = 'E'
 " let g:ale_echo_msg_warning_str = 'W'
 let g:ale_sign_error = ' '
@@ -525,7 +523,7 @@ let g:ale_set_balloons=1
 set omnifunc=ale#completion#OmniFunc
 let g:ale_virtualtext_cursor = 'current'
 let g:ale_set_highlights = 0
-let g:ale_disable_lsp = 1
+let g:ale_disable_lsp = 0
 
 " PHP
 let g:ale_linters = {
@@ -533,10 +531,19 @@ let g:ale_linters = {
     \ 'javascriptreact': ['eslint'],
     \ 'markdown': ['mdl'],
     \ 'sh': ['shellcheck'],
+    \'javascript': ['eslint'],
+    \'typescript': ['eslint', 'tsserver', 'prettier'],
 \}
 let g:ale_fixers = {
     \ 'php': ['phpcbf'],
+    \'javascript': ['eslint'],
+    \'json': ['prettier'],
+    \'typescript': ['eslint', 'prettier'],
+    \'markdown': ['prettier'],
 \}
+
+let g:ale_linters_ignore = []
+
 nmap gr :ALEFindReferences<CR>
 nmap gd :ALEGoToDefinition<CR> " because I prefer tabs
 
@@ -631,20 +638,9 @@ nmap <leader>pt :let &errorformat = '%f:%l:%m'<cr>:cexpr system('./phpstan ')<cr
 ""
 """ ALE
 ""let g:ale_emit_conflict_warnings = 0
-""let g:ale_linters = {
-""      \'javascript': ['eslint'],
-""      \'typescript': ['eslint', 'tsserver', 'prettier'],
-""      \}
 ""let g:ale_sign_column_always = 1
 ""let g:ale_completion_enabled = 0
 ""let g:ale_completion_tsserver_autoimport = 0
-""let g:ale_fixers = {
-""      \'javascript': ['eslint'],
-""      \'json': ['prettier'],
-""      \'typescript': ['eslint', 'prettier'],
-""      \'ruby': ['rubocop'],
-""      \'markdown': ['prettier'],
-""      \}
 ""
 """ asyncomplete
 """ preferred keyboard mappings for navigating autocomplete menu
