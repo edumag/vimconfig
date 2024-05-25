@@ -704,3 +704,44 @@ Plugin 'Exafunction/codeium.vim'
 ""| Previous suggestion         | `codeium#CycleCompletions(-1)` | `<M-[>`         |
 ""| Insert suggestion           | `codeium#Accept()`             | `<Tab>`         |
 ""| Manually trigger suggestion | `codeium#Complete()`           | `<M-Bslash>`    |
+
+" https://github.com/kristijanhusak/vim-project-lint?tab=readme-ov-file
+Plugin 'kristijanhusak/vim-project-lint'
+"Styling
+let g:project_lint#error_icon = ''
+let g:project_lint#warning_icon = '⚠'
+let g:project_lint#error_icon_color = 'guifg=#fb4934 ctermfg=167'
+let g:project_lint#warning_icon_color = 'ctermfg=214 guifg=#fabd2f'
+
+"Linter settings
+"example:
+" let g:project_lint#enabled_linters = {'javascript': ['eslint'], 'python': ['mypy']}
+" If there's no setting provided for filetype, all available linters are used.
+" If provided an empty array fora filetype, no linting is done for it.
+let g:project_lint#enabled_linters = {}
+
+"example:
+"let g:project_lint#linter_args = {'mypy': '--ignore-missing-imports'}
+let g:project_lint#linter_args = {}
+
+"Folder settings
+"Lint status is cached for each project in this folder.
+let g:project_lint#cache_dir = '~/.cache/vim-project-lint'
+
+" When this is left empty, all folders from $HOME and above are ignored and not linted:
+" example of empty value: `['/home/kristijan', '/home', '/']`
+" To allow linting these folders (not recommended), set this value to `v:false`
+" Or use your own list of folders. When non-empty value is provided, above defaults are not added.
+let g:project_lint#ignored_folders = []
+
+"Other
+" Echo linting progress in command line. Another way to get the progress info is to use statusline.
+" example:
+" set statusline+=project_lint#statusline()
+let g:project_lint#echo_progress = v:true
+
+" Prints all calls to linter commands and their responses. Mostly useful for development.
+let g:project_lint#debug = v:false
+
+"NERDTree
+nnoremap <Leader>n :NERDTree<CR>
