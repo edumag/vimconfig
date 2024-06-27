@@ -32,9 +32,9 @@
 
 """ FUNCIONAMIENTO GENERAL
 
-set nonumber                   " Ocultamos número de linea en archivo.
-" set number
-set rnu                      " Numero de lineas respecto a la actual.
+" set nonumber                   " Ocultamos número de linea en archivo.
+" set rnu                        " Numero de lineas respecto a la actual.
+set number relativenumber      " Relativo a la linea actual, y numero actual.
 " set cursorline               " Linea actual subrayada.
 set clipboard=unnamed          " Copias de vim a fuera.
 set nowrap                     " Evitamos lineas partidas.
@@ -123,8 +123,8 @@ hi StatusLine ctermfg=15 cterm=bold ctermbg=8
 " comentarios correspondientes).
 
 if has("gui_running")
-" colorscheme edumag
-colorscheme onedark
+    " colorscheme edumag
+    colorscheme onedark
 endif
 
 if has("syntax") || has("gui_running")
@@ -159,9 +159,9 @@ hi SpellBad cterm=underline
 """ SANGRADO, SALTOS DE LINEA Y TABULADORES
 
 " setlocal textwidth=80          " Limita el ancho a 80 caracteres.
-set tabstop=2                    " ancho de tabulador estandar
-set softtabstop=2                " ancho que deseamos
-set shiftwidth=2                 " ancho del sangrado
+set tabstop=4                    " ancho de tabulador estandar
+set softtabstop=4                " ancho que deseamos
+set shiftwidth=4                 " ancho del sangrado
 "set foldmethod=marker           " Plegar por marcas
 set foldmarker={,}               " Marcas con las que plegar
 set foldmethod=indent            " Plegar por indent
@@ -708,8 +708,8 @@ Plugin 'Exafunction/codeium.vim'
 " https://github.com/kristijanhusak/vim-project-lint?tab=readme-ov-file
 Plugin 'kristijanhusak/vim-project-lint'
 "Styling
-let g:project_lint#error_icon = ''
-let g:project_lint#warning_icon = '⚠'
+let g:project_lint#error_icon = ' '
+let g:project_lint#warning_icon = '⚠ '
 let g:project_lint#error_icon_color = 'guifg=#fb4934 ctermfg=167'
 let g:project_lint#warning_icon_color = 'ctermfg=214 guifg=#fabd2f'
 
@@ -718,7 +718,13 @@ let g:project_lint#warning_icon_color = 'ctermfg=214 guifg=#fabd2f'
 " let g:project_lint#enabled_linters = {'javascript': ['eslint'], 'python': ['mypy']}
 " If there's no setting provided for filetype, all available linters are used.
 " If provided an empty array fora filetype, no linting is done for it.
-let g:project_lint#enabled_linters = {}
+" let g:project_lint#enabled_linters = {}
+let g:project_lint#enabled_linters = {
+      \ 'javascript': ['eslint'],
+      \ 'typescript': ['tslint'],
+      \ 'json': ['jq'],
+      \ 'python': ['mypy']
+      \ }
 
 "example:
 "let g:project_lint#linter_args = {'mypy': '--ignore-missing-imports'}
@@ -745,3 +751,21 @@ let g:project_lint#debug = v:false
 
 "NERDTree
 nnoremap <Leader>n :NERDTree<CR>
+
+" Colores
+highlight Comment ctermfg=Blue
+
+" https://github.com/mbbill/undotree
+Plugin 'mbbill/undotree'
+if has("persistent_undo")
+   let target_path = expand('~/.local/state/vim/undodir')
+
+    " create the directory and any parent directories
+    " if the location does not exist.
+    if !isdirectory(target_path)
+        call mkdir(target_path, "p", 0700)
+    endif
+
+    let &undodir=target_path
+    set undofile
+endif
