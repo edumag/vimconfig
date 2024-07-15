@@ -240,6 +240,12 @@ au BufRead,BufNewFile *.txt :setlocal spell
 au BufRead,BufNewFile *.md :setlocal spell
 au BufRead,BufNewFile *.rst :setlocal spell
 
+" Guardar sesión.
+au VimLeavePre * if v:this_session != '' | exec "mks! " . v:this_session | endif
+
+" Abrimos nerdtree al inicio.
+autocmd VimEnter * NERDTree
+
 """ TEMPLATES
 inoreabbrev <h. <Esc>:r ~/.vim/templates/skeleton.html<cr><Esc>ggdd
 inoreabbrev <d. <LT>div><cr><LT>/div><Esc>O
