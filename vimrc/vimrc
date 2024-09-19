@@ -244,7 +244,7 @@ au BufRead,BufNewFile *.rst :setlocal spell
 au VimLeavePre * if v:this_session != '' | exec "mks! " . v:this_session | endif
 
 " Abrimos nerdtree al inicio.
-autocmd VimEnter * NERDTree
+autocmd VimEnter * NERDTreeFind
 
 """ TEMPLATES
 inoreabbrev <h. <Esc>:r ~/.vim/templates/skeleton.html<cr><Esc>ggdd
