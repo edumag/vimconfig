@@ -527,10 +527,12 @@ let g:ale_lint_on_filetype_changed = 0
 let g:ale_set_balloons=1
 set omnifunc=ale#completion#OmniFunc
 let g:ale_virtualtext_cursor = 'current'
-let g:ale_set_highlights = 0
+let g:ale_set_highlights = 1
 let g:ale_disable_lsp = 0
 
 " PHP
+" Linter para json.
+" npm install -g @biomejs/biome
 let g:ale_linters = {
     \ 'php': ['phpcs', 'phpstan', 'phpactor'],
     \ 'javascriptreact': ['eslint'],
