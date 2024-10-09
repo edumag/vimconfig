@@ -245,6 +245,9 @@ au VimLeavePre * if v:this_session != '' | exec "mks! " . v:this_session | endif
 
 " Abrimos nerdtree al inicio.
 " autocmd VimEnter * NERDTreeFind
+" Toggle NERDTree
+map <F2> :NERDTreeToggle<CR>
+imap <F2> <Esc>:NERDTreeToggle<CR>
 
 """ TEMPLATES
 inoreabbrev <h. <Esc>:r ~/.vim/templates/skeleton.html<cr><Esc>ggdd
