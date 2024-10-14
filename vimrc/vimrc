@@ -548,9 +548,14 @@ let g:ale_fixers = {
     \ 'php': ['phpcbf'],
     \'javascript': ['eslint'],
     \'json': ['prettier'],
+    \'yaml': ['prettier'],
     \'typescript': ['eslint', 'prettier'],
     \'markdown': ['prettier'],
 \}
+
+" yaml
+autocmd FileType yaml setlocal ts=4 sts=4 sw=4 expandtab
+
 
 let g:ale_linters_ignore = []
 
@@ -795,6 +800,9 @@ let g:project_lint#echo_progress = v:true
 
 " Prints all calls to linter commands and their responses. Mostly useful for development.
 let g:project_lint#debug = v:false
+
+noremap <silent><F4> :ALEGoToDefinition<CR>
+noremap <silent><F5> :ALEPopulateQuickfix<CR>:copen<CR>
 
 "NERDTree
 nnoremap <Leader>n :NERDTree<CR>
