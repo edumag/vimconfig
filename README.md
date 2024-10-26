@@ -62,15 +62,24 @@ Nos muestra una barra con el indice de clases y metodos del fichero.
 
 ### Mapeo de teclas:
 
-Añadimos:
+- C: Ctrl.
+- L: Tecla leader.
+- F: Teclas de función.
+
 
 ```
-" Lista errores
-map <F7> :cp<CR>
-map <F8> :cn<CR>
+<F1>     Abrir Readme.md de carpeta de la carpeta .vim.
+<F2>     Abrir/Cerrar nerdtree.
+<F3>     Maximiza/Desmaximiza ventana actual.
+<F4>     Ir a definición del simbolo en que estamos.
+<F5>     Abrir quickfix con los errores.
+<F6>     Mostrar información del simbolo.
+<F7>     Buscar palabra actual.
+<F8>     Buscar referencias.
+<F11>    Ir a error anterior.
+<F12>    Ir a error siguiente.
+<C-f>    Buscar ficheros.
+<L-f>    Buscar dentro de ficheros.
+<C-T>    Comentar linea y copiar una debajo.
+
 ```
-
-Esto nos permite movernos por la lista de errores o quickfix de forma comoda
-con las teclas F7 y F8.
-
-

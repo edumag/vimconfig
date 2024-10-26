@@ -38,7 +38,6 @@
 
 " set cursorline               " Linea actual subrayada.
 set clipboard=unnamed          " Copias de vim a fuera.
-set nowrap                     " Evitamos lineas partidas.
 set virtualedit=block          " Permite moverse al cursor por toda la pantalla.
 set encoding=utf-8
 set helplang=es
@@ -84,12 +83,14 @@ set showcmd                        " Visualización de comandos mientras vamos e
 set showmatch                      " Indica cierre de llaves
 " set novisualbell
 set noerrorbells
-set showbreak=->                   " Shows this string before broken lines
+" "set nowrap                      " Evitamos lineas partidas.
+set wrap                           " Evitamos lineas partidas.
+set showbreak=\|                   " Shows this string before broken lines
 syntax on
 
 """ StatusLine
-" set ruler                          " visualizar numero de linea y columna
-set laststatus=2                     " Mostramos statusline siempre.
+" set ruler                        " visualizar numero de linea y columna
+set laststatus=2                   " Mostramos statusline siempre.
 let g:gitparsedbranchname = ' '
 function! UpdateGitBranch()
   let l:string = system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
@@ -243,6 +244,8 @@ au BufRead,BufNewFile *.rst :setlocal spell
 " Guardar sesión.
 au VimLeavePre * if v:this_session != '' | exec "mks! " . v:this_session | endif
 
+map <F1> :new $HOME/.vim/README.md<CR>
+
 " Abrimos nerdtree al inicio.
 " autocmd VimEnter * NERDTreeFind
 " Toggle NERDTree
@@ -259,8 +262,8 @@ inoreabbrev <d. <LT>div><cr><LT>/div><Esc>O
 let Tlist_Use_Right_Window = 1
 
 " Lista errores
-map <F7> :cp<CR>
-map <F8> :cn<CR>
+map <F11> :cp<CR>
+map <F12> :cn<CR>
 
 " Ver documentación de php.
 " Con ponerte sobre una función y pulsar ‘K’ mayúscula tendrás la documentación
@@ -803,6 +806,9 @@ let g:project_lint#debug = v:false
 
 noremap <silent><F4> :ALEGoToDefinition<CR>
 noremap <silent><F5> :ALEPopulateQuickfix<CR>:copen<CR>
+noremap <silent><F6> :ALEHover<CR>
+noremap <silent><F7> :ALESymbolSearch<CR>
+noremap <silent><F8> :ALEFindReferences<CR>
 
 "NERDTree
 nnoremap <Leader>n :NERDTree<CR>
