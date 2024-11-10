@@ -81,5 +81,8 @@ Nos muestra una barra con el indice de clases y metodos del fichero.
 <C-f>    Buscar ficheros.
 <L-f>    Buscar dentro de ficheros.
 <C-T>    Comentar linea y copiar una debajo.
+<C-c>    Siguiente sugerencia de codeium.
+<C-x>    Desactivar sugerencia de codeium.
+<C-z>    Anterior sugerencia de codeium.
 
 ```

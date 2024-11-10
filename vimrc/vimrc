@@ -752,13 +752,19 @@ nmap <leader>pt :let &errorformat = '%f:%l:%m'<cr>:cexpr system('./phpstan ')<cr
 """"nmap <Leader>dj <Plug>VimspectorStepOver
 
 Plugin 'Exafunction/codeium.vim'
-""| Action                      | Function                       | Default Binding |
-""| --------------------------- | ------------------------------ | --------------- |
-""| Clear current suggestion    | `codeium#Clear()`              | `<C-]>`         |
-""| Next suggestion             | `codeium#CycleCompletions(1)`  | `<M-]>`         |
-""| Previous suggestion         | `codeium#CycleCompletions(-1)` | `<M-[>`         |
-""| Insert suggestion           | `codeium#Accept()`             | `<Tab>`         |
-""| Manually trigger suggestion | `codeium#Complete()`           | `<M-Bslash>`    |
+" Codeium provides the following functions to control suggestions:
+" Clear current suggestion	codeium#Clear()	<C-]>
+" Next suggestion	codeium#CycleCompletions(1)	<M-]>
+" Previous suggestion	codeium#CycleCompletions(-1)	<M-[>
+" Insert suggestion	codeium#Accept()	<Tab>
+" Manually trigger suggestion	codeium#Complete()	<M-Bslash>
+" Accept word from suggestion	codeium#AcceptNextWord()	<C-k>
+" Accept line from suggestion	codeium#AcceptNextLine()	<C-l>
+" Codeium's default keybindings can be disabled by setting
+let g:codeium_disable_bindings = 0
+imap <C-c>   <Cmd>call codeium#CycleCompletions(1)<CR>
+imap <C-z>   <Cmd>call codeium#CycleCompletions(-1)<CR>
+imap <C-x>   <Cmd>call codeium#Clear()<CR>
 
 " https://github.com/kristijanhusak/vim-project-lint?tab=readme-ov-file
 Plugin 'kristijanhusak/vim-project-lint'
