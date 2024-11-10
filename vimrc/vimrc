@@ -368,6 +368,9 @@ function Sh()
 
 endfunction
 
+" yaml
+autocmd FileType yaml setlocal ts=4 sts=4 sw=4 expandtab
+
 " python
 autocmd FileType python set sw=4
 autocmd FileType python set ts=4
@@ -535,6 +538,11 @@ set omnifunc=ale#completion#OmniFunc
 let g:ale_virtualtext_cursor = 'current'
 let g:ale_set_highlights = 1
 let g:ale_disable_lsp = 0
+let g:ale_hover_cursor = 1
+let g:ale_hover_to_preview = 1
+let g:ale_hover_to_floating_preview = 1
+let g:ale_floating_window_border = ['│', '─', '╭', '╮', '╯', '╰', '│', '─']
+
 
 " PHP
 " Linter para json.
@@ -556,22 +564,15 @@ let g:ale_fixers = {
     \'markdown': ['prettier'],
 \}
 
-" yaml
-autocmd FileType yaml setlocal ts=4 sts=4 sw=4 expandtab
-
+" Keybindings para ALE.
+noremap <silent><F4> :ALEGoToDefinition<CR>
+noremap <silent><F5> :ALEPopulateQuickfix<CR>:copen<CR>
+noremap <silent><F6> :ALEHover<CR>
+noremap <silent><F7> :ALESymbolSearch<CR>
+noremap <silent><F8> :ALEFindReferences<CR>
 
 let g:ale_linters_ignore = []
 
-nmap gr :ALEFindReferences<CR>
-nmap gd :ALEGoToDefinition<CR> " because I prefer tabs
-
-"" call ale#linter#Define('php', {
-""     \   'name': 'phpstan_propio',
-""     \   'lsp': 'stdio',
-""     \   'executable': './phpstan',
-""     \   'command': '%e run',
-""     \   'project_root': './',
-"" \})
 let g:ale_php_phpstan_executable = './vendor/phpstan/phpstan/phpstan analyse --ansi --memory-limit 512M '
 
 """ Barra de estado.
@@ -809,12 +810,6 @@ let g:project_lint#echo_progress = v:true
 
 " Prints all calls to linter commands and their responses. Mostly useful for development.
 let g:project_lint#debug = v:false
-
-noremap <silent><F4> :ALEGoToDefinition<CR>
-noremap <silent><F5> :ALEPopulateQuickfix<CR>:copen<CR>
-noremap <silent><F6> :ALEHover<CR>
-noremap <silent><F7> :ALESymbolSearch<CR>
-noremap <silent><F8> :ALEFindReferences<CR>
 
 "NERDTree
 nnoremap <Leader>n :NERDTree<CR>
