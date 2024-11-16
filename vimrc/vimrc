@@ -87,6 +87,9 @@ set noerrorbells
 set wrap                           " Evitamos lineas partidas.
 set showbreak=\|                   " Shows this string before broken lines
 syntax on
+" Colores
+highlight Comment ctermfg=Blue
+
 
 """ StatusLine
 " set ruler                        " visualizar numero de linea y columna
@@ -547,10 +550,10 @@ let g:ale_echo_delay = 1000
 set updatetime=3000
 
 " Mostramos información del símbolo en el cursor automáticamente.
-augroup ale_hover_cursor
-  autocmd!
-  autocmd CursorHold * ALEHover
-augroup END
+" augroup ale_hover_cursor
+"   autocmd!
+"   autocmd CursorHold * ALEHover
+" augroup END
 
 " PHP
 " Linter para json.
@@ -677,8 +680,8 @@ let g:lightline#ale#indicator_ok = "\uf00c "
 
 " Iconos.
 Plugin 'ryanoasis/vim-devicons'
-""let g:webdevicons_conceal_nerdtree_brackets = 0
-""exec 'autocmd filetype nerdtree syntax match hideBracketsInNerdTree "[\]|\[]*" contained conceal cchar=_ containedin=ALL'
+" let g:webdevicons_conceal_nerdtree_brackets = 1
+exec 'autocmd filetype nerdtree syntax match hideBracketsInNerdTree "[\]|\[]*" contained conceal cchar=_ containedin=ALL'
 ""exec 'autocmd filetype nerdtree set conceallevel=3'
 ""exec 'autocmd filetype nerdtree set concealcursor=nvic'
 
@@ -775,55 +778,48 @@ imap <C-c>   <Cmd>call codeium#CycleCompletions(1)<CR>
 imap <C-z>   <Cmd>call codeium#CycleCompletions(-1)<CR>
 imap <C-x>   <Cmd>call codeium#Clear()<CR>
 
+"" Project lint (nerdtree)
 " https://github.com/kristijanhusak/vim-project-lint?tab=readme-ov-file
 Plugin 'kristijanhusak/vim-project-lint'
-"Styling
 let g:project_lint#error_icon = ' '
 let g:project_lint#warning_icon = '⚠ '
 let g:project_lint#error_icon_color = 'guifg=#fb4934 ctermfg=167'
 let g:project_lint#warning_icon_color = 'ctermfg=214 guifg=#fabd2f'
-
+" Echo linting progress in command line. Another way to get the progress info is to use statusline.
+" example:
+" set statusline+=project_lint#statusline()
+let g:project_lint#echo_progress = v:true
 "Linter settings
 "example:
 " let g:project_lint#enabled_linters = {'javascript': ['eslint'], 'python': ['mypy']}
 " If there's no setting provided for filetype, all available linters are used.
 " If provided an empty array fora filetype, no linting is done for it.
 " let g:project_lint#enabled_linters = {}
+" Para que funcione con typescript hay que instalar tslint.
+" Y ejecutar tslint --init.
 let g:project_lint#enabled_linters = {
       \ 'javascript': ['eslint'],
       \ 'typescript': ['tslint'],
       \ 'json': ['jq'],
       \ 'python': ['mypy']
       \ }
-
-"example:
 "let g:project_lint#linter_args = {'mypy': '--ignore-missing-imports'}
-let g:project_lint#linter_args = {}
-
+let g:project_lint#linter_args = {'tslint': '-p .'}
 "Folder settings
 "Lint status is cached for each project in this folder.
 let g:project_lint#cache_dir = '~/.cache/vim-project-lint'
-
 " When this is left empty, all folders from $HOME and above are ignored and not linted:
 " example of empty value: `['/home/kristijan', '/home', '/']`
 " To allow linting these folders (not recommended), set this value to `v:false`
 " Or use your own list of folders. When non-empty value is provided, above defaults are not added.
-let g:project_lint#ignored_folders = []
-
+let g:project_lint#ignored_folders = ['node_modules', '.git', '.mypy_cache', 'venv', 'dist', 'docs', 'build']
 "Other
 " Echo linting progress in command line. Another way to get the progress info is to use statusline.
 " example:
 " set statusline+=project_lint#statusline()
 let g:project_lint#echo_progress = v:true
-
 " Prints all calls to linter commands and their responses. Mostly useful for development.
-let g:project_lint#debug = v:false
-
-"NERDTree
-nnoremap <Leader>n :NERDTree<CR>
-
-" Colores
-highlight Comment ctermfg=Blue
+let g:project_lint#debug = v:true
 
 " https://github.com/mbbill/undotree
 Plugin 'mbbill/undotree'
