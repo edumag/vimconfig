@@ -835,3 +835,7 @@ if has("persistent_undo")
     let &undodir=target_path
     set undofile
 endif
+
+" Terminal in vim
+" nmap <leader>t :below horizontal terminal<CR>
+nmap <leader>t :let $VIM_DIR=expand('%:p:h')<CR>:below horizontal terminal<CR>cd $VIM_DIR<CR>
