@@ -214,6 +214,8 @@ inoremap ` ``<Esc>ha
 " These are files we are not likely to want to edit or read.
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 command Incloura !$HOME/desarrollo/magtrabajos/magtrabajos -a %
+command Console grep -r 'console\.' src/
+command TODO grep -r -E "@todo\|@bug" src/ test/
 
 " AUTOCOMMAND
 " En Vim se pueden definir comandos que se ejecutan automáticamente cuando
@@ -258,6 +260,7 @@ imap <F2> <Esc>:NERDTreeToggle<CR>
 """ TEMPLATES
 inoreabbrev <h. <Esc>:r ~/.vim/templates/skeleton.html<cr><Esc>ggdd
 inoreabbrev <d. <LT>div><cr><LT>/div><Esc>O
+inoreabbrev __CD console.dir({ data: data }, { depth: null })<Esc>26h
 
 """ PROGRAMACIÓN
 
@@ -534,7 +537,7 @@ let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 0
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_delay = 1000
-let g:ale_lint_on_enter = 0
+let g:ale_lint_on_enter = 1
 let g:ale_lint_on_filetype_changed = 0
 let g:ale_set_balloons=1
 set omnifunc=ale#completion#OmniFunc
@@ -812,7 +815,7 @@ let g:project_lint#cache_dir = '~/.cache/vim-project-lint'
 " example of empty value: `['/home/kristijan', '/home', '/']`
 " To allow linting these folders (not recommended), set this value to `v:false`
 " Or use your own list of folders. When non-empty value is provided, above defaults are not added.
-let g:project_lint#ignored_folders = ['node_modules', '.git', '.mypy_cache', 'venv', 'dist', 'docs', 'build']
+let g:project_lint#ignored_folders = ['node_modules/', '.git/', '.mypy_cache', 'venv/', 'dist/', 'docs/', 'build/']
 "Other
 " Echo linting progress in command line. Another way to get the progress info is to use statusline.
 " example:
