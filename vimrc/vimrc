@@ -215,6 +215,7 @@ inoremap ` ``<Esc>ha
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 command Incloura !$HOME/desarrollo/magtrabajos/magtrabajos -a %
 command Console grep -r 'console\.' src/
+command OnlyThis grep -r '@onlyThis' test/
 command TODO grep -r -E "@todo\|@bug" src/ test/
 
 " AUTOCOMMAND
