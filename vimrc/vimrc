@@ -271,6 +271,14 @@ let Tlist_Use_Right_Window = 1
 " Lista errores
 map <F11> :cp<CR>
 map <F12> :cn<CR>
+map <C-W><Right> :vertical resize +5<CR>
+map <C-W><Left> :vertical resize -5<CR>
+map <C-W><Up> :horizontal resize -5<CR>
+map <C-W><Down> :horizontal resize +5<CR>
+map <C-W><S-Right> :vertical resize +15<CR>
+map <C-W><S-Left> :vertical resize -15<CR>
+map <C-W><S-Up> :horizontal resize -15<CR>
+map <C-W><S-Down> :horizontal resize +15<CR>
 
 " Ver documentación de php.
 " Con ponerte sobre una función y pulsar ‘K’ mayúscula tendrás la documentación
@@ -823,7 +831,7 @@ let g:project_lint#ignored_folders = ['node_modules/', '.git/', '.mypy_cache', '
 " set statusline+=project_lint#statusline()
 let g:project_lint#echo_progress = v:true
 " Prints all calls to linter commands and their responses. Mostly useful for development.
-let g:project_lint#debug = v:true
+" let g:project_lint#debug = v:true
 
 " https://github.com/mbbill/undotree
 Plugin 'mbbill/undotree'
