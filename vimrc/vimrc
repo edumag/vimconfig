@@ -37,7 +37,7 @@
 :set nu
 
 " set cursorline               " Linea actual subrayada.
-set clipboard=unnamed          " Copias de vim a fuera.
+set clipboard=unnamedplus      " Copias de vim a PORTAPAPELES
 set virtualedit=block          " Permite moverse al cursor por toda la pantalla.
 set encoding=utf-8
 set helplang=es
@@ -51,15 +51,13 @@ set ttyfast
 set backup
 " Directorio para las copias de seguridad
 set backupdir=/tmp
-" Enviar al portapapeles todo lo que copiemos
-set clipboard=unnamed
 " Activamos los plugins
 filetype plugin on
 " Carácter comodín que utilizan algunos plugins por defecto es la barra
 " invertida pero este es más cómodo
 let mapleader = ","
 " Opciones al guardar sessiones para que no funcione lento al cargarlas
-set sessionoptions=buffers,curdir,folds,options
+set sessionoptions=blank,buffers,curdir,folds,help,tabpages,winsize
 " Linea de estado siempre activada
 " ! Cuidado: paste hace que no funcionen las "abbrev".
 " set paste	" Compartir porta papeles entre ventanas de vim.
@@ -271,10 +269,10 @@ let Tlist_Use_Right_Window = 1
 " Lista errores
 map <F11> :cp<CR>
 map <F12> :cn<CR>
-map <C-W><Right> :vertical resize +5<CR>
-map <C-W><Left> :vertical resize -5<CR>
-map <C-W><Up> :horizontal resize -5<CR>
-map <C-W><Down> :horizontal resize +5<CR>
+map <C-W><A-Right> :vertical resize +5<CR>
+map <C-W><A-Left> :vertical resize -5<CR>
+map <C-W><A-Up> :horizontal resize -5<CR>
+map <C-W><A-Down> :horizontal resize +5<CR>
 map <C-W><S-Right> :vertical resize +15<CR>
 map <C-W><S-Left> :vertical resize -15<CR>
 map <C-W><S-Up> :horizontal resize -15<CR>
