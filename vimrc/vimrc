@@ -87,7 +87,7 @@ set showbreak=\|                   " Shows this string before broken lines
 syntax on
 " Colores
 highlight Comment ctermfg=Blue
-
+hi Normal guibg=NONE ctermbg=NONE  " Background transparent.
 
 """ StatusLine
 " set ruler                        " visualizar numero de linea y columna
@@ -255,6 +255,9 @@ map <F1> :new $HOME/.vim/README.md<CR>
 " Toggle NERDTree
 map <F2> :NERDTreeToggle<CR>
 imap <F2> <Esc>:NERDTreeToggle<CR>
+
+" Cerrar nerdtree automáticamente al abrir fichero.
+let NERDTreeQuitOnOpen=1
 
 """ TEMPLATES
 inoreabbrev <h. <Esc>:r ~/.vim/templates/skeleton.html<cr><Esc>ggdd
@@ -849,3 +852,7 @@ endif
 " Terminal in vim
 " nmap <leader>t :below horizontal terminal<CR>
 nmap <leader>t :let $VIM_DIR=expand('%:p:h')<CR>:below horizontal terminal<CR>cd $VIM_DIR<CR>
+
+" Repetir cualquier comando.
+Plugin 'tpope/vim-repeat'
+silent! call repeat#set("\<Plug>MyWonderfulMap", v:count)
