@@ -859,3 +859,7 @@ silent! call repeat#set("\<Plug>MyWonderfulMap", v:count)
 
 " Logs view.
 autocmd BufNewFile,BufRead *.txt set filetype=json
+
+" vimserver
+Plugin 'https://github.com/wolandark/vim-live-server.git'
+Plugin 'nikvdp/ejs-syntax'
