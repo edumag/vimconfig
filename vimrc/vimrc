@@ -65,6 +65,9 @@ set sessionoptions=curdir,folds,help,tabpages,winsize,winpos
 set exrc
 set secure
 
+" Activamos mouse
+set mouse=a
+"
 " Guardamos historial de cambios.
 " Desactivo por crear confusión.
 " set undofile
@@ -557,16 +560,25 @@ let g:ale_disable_lsp = 0
 let g:ale_hover_cursor = 1
 let g:ale_hover_to_preview = 1
 let g:ale_hover_to_floating_preview = 1
-let g:ale_floating_window_border = ['│', '─', '╭', '╮', '╯', '╰', '│', '─']
+let g:ale_floating_window_border = ['│', '─', '╭', 'Z', '╯', '╰', '│', '─']
+let g:ale_floating_window_position = 'topright'
 let g:ale_echo_delay = 1000
+let g:ale_completion_autoimport = 1
+let g:ale_set_balloons = 1
+
+" Color hover
+hi ALEErrorSign ctermbg=NONE ctermfg=1
+hi ALEWarningSign ctermbg=NONE ctermfg=3
+hi ALEInfoSign ctermbg=NONE ctermfg=4
+highlight Pmenu ctermbg=black ctermfg=white
 
 set updatetime=3000
 
 " Mostramos información del símbolo en el cursor automáticamente.
-" augroup ale_hover_cursor
-"   autocmd!
-"   autocmd CursorHold * ALEHover
-" augroup END
+augroup ale_hover_cursor
+  autocmd!
+  autocmd CursorHold * ALEHover
+augroup END
 
 " PHP
 " Linter para json.
