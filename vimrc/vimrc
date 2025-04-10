@@ -567,18 +567,18 @@ let g:ale_completion_autoimport = 1
 let g:ale_set_balloons = 1
 
 " Color hover
-hi ALEErrorSign ctermbg=NONE ctermfg=1
-hi ALEWarningSign ctermbg=NONE ctermfg=3
-hi ALEInfoSign ctermbg=NONE ctermfg=4
+""hi ALEErrorSign ctermbg=NONE ctermfg=1
+""hi ALEWarningSign ctermbg=NONE ctermfg=3
+""hi ALEInfoSign ctermbg=NONE ctermfg=4
 highlight Pmenu ctermbg=black ctermfg=white
 
 set updatetime=3000
 
 " Mostramos información del símbolo en el cursor automáticamente.
-augroup ale_hover_cursor
-  autocmd!
-  autocmd CursorHold * ALEHover
-augroup END
+""augroup ale_hover_cursor
+""  autocmd!
+""  autocmd CursorHold * ALEHover
+""augroup END
 
 " PHP
 " Linter para json.
