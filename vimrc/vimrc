@@ -877,3 +877,123 @@ Plugin 'https://github.com/wolandark/vim-live-server.git'
 Plugin 'nikvdp/ejs-syntax'
 
 Plugin 'https://github.com/airblade/vim-gitgutter.git'
+
+" https://github.com/madox2/vim-ai
+Plugin 'madox2/vim-ai'
+
+" This prompt instructs model to be consise in order to be used inline in editor
+let s:initial_complete_prompt =<< trim END
+>>> system
+
+You are a general assistant.
+Answer shortly, consisely and only what you are asked.
+Do not provide any explanantion or comments if not requested.
+If you answer in a code, do not wrap it in markdown code block.
+END
+
+let g:vim_ai_complete = {
+\  "prompt": "",
+\  "options": {
+\    "model": "deepseek-coder-v2-lite-instruct",
+\    "endpoint_url": "http://192.168.100.149:1234/v1/chat/completions",
+\    "auth_type": "none",
+\    "max_tokens": 0,
+\    "max_completion_tokens": 0,
+\    "temperature": 0.1,
+\    "request_timeout": 20,
+\    "stream": 1,
+\    "selection_boundary": "#####",
+\    "initial_prompt": s:initial_complete_prompt,
+\  },
+\  "ui": {
+\    "paste_mode": 1,
+\  },
+\}
+
+let g:vim_ai_edit = {
+\  "prompt": "",
+\  "options": {
+\    "model": "deepseek-coder-v2-lite-instruct",
+\    "endpoint_url": "http://192.168.100.149:1234/v1/chat/completions",
+\    "auth_type": "none",
+\    "max_tokens": 0,
+\    "max_completion_tokens": 0,
+\    "temperature": 0.1,
+\    "request_timeout": 20,
+\    "stream": 1,
+\    "selection_boundary": "#####",
+\    "initial_prompt": s:initial_complete_prompt,
+\  },
+\  "ui": {
+\    "paste_mode": 1,
+\  },
+\}
+
+
+" This prompt instructs model to work with syntax highlighting
+let s:initial_chat_prompt =<< trim END
+>>> system
+
+You are a general assistant.
+If you attach a code block add syntax type after ``` to enable syntax highlighting.
+END
+
+" :AIChat
+" - provider: AI provider
+" - prompt: optional prepended prompt
+" - options: openai config (see https://platform.openai.com/docs/api-reference/chat)
+" - options.initial_prompt: prompt prepended to every chat request (list of lines or string)
+" - options.temperature: use -1 to disable this parameter
+" - options.request_timeout: request timeout in seconds
+" - options.auth_type: API authentication method (bearer, api-key, none)
+" - options.token_file_path: override global token configuration
+" - options.token_load_fn: expression/vim function to load token
+" - options.selection_boundary: selection prompt wrapper (eliminates empty responses, see #20)
+" - ui.open_chat_command: preset (preset_below, preset_tab, preset_right) or a custom command
+" - ui.populate_options: dump [chat] config to the chat header
+" - ui.scratch_buffer_keep_open: re-use scratch buffer within the vim session
+" - ui.force_new_chat: force new chat window (used in chat opening roles e.g. `/tab`)
+" - ui.paste_mode: use paste mode (see more info in the Notes below)
+let g:vim_ai_chat = {
+\  "prompt": "",
+\  "options": {
+\    "model": "lmstudio-community/DeepSeek-Coder-V2-Lite-Instruct-GGUF",
+\    "endpoint_url": "http://192.168.100.149:1234/v1/chat/completions",
+\    "max_tokens": 0,
+\    "max_completion_tokens": 0,
+\    "temperature": 1,
+\    "request_timeout": 20,
+\    "stream": 1,
+\    "auth_type": "none",
+\    "token_file_path": "",
+\    "token_load_fn": "",
+\    "selection_boundary": "",
+\    "initial_prompt": s:initial_chat_prompt,
+\  },
+\  "ui": {
+\    "open_chat_command": "preset_below",
+\    "scratch_buffer_keep_open": 0,
+\    "populate_options": 0,
+\    "force_new_chat": 0,
+\    "paste_mode": 1,
+\  },
+\}
+
+let g:vim_ai_image = {
+\  "provider": "openai",
+\  "prompt": "",
+\  "options": {
+\    "model": "dall-e-3",
+\    "endpoint_url": "http://192.168.100.149:1234/v1/images/generations",
+\    "quality": "standard",
+\    "size": "1024x1024",
+\    "style": "vivid",
+\    "request_timeout": 40,
+\    "auth_type": "bearer",
+\    "token_file_path": "",
+\    "token_load_fn": "",
+\  },
+\  "ui": {
+\    "download_dir": "",
+\  },
+\}

@@ -1,0 +1,361 @@
+*usr_toc.esx*	Para Vim versión 7.3.  Último cambio: 20/6/2010
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+			  Tabla de contenidos		*manual-de-usuario* *user-manual*
+
+==============================================================================
+Vista general ~
+
+Empezar
+|usr_01.esx| Acerca de los manuales
+|usr_02.esx| Primeros pasos en Vim
+|usr_03.esx| Desplazamiento
+|usr_04.esx| Hacer cambios pequeños
+|usr_05.esx| Configuración
+|usr_06.esx| Uso del resaltado de sintaxis
+|usr_07.esx| Editar más de un archivo
+|usr_08.esx| Dividir en ventanas
+|usr_09.esx| Uso de la interfaz gráfica
+|usr_10.esx| Realizar grandes cambios
+|usr_11.esx| Restaurar después de un fallo
+|usr_12.esx| Trucos
+
+Editar con efectividad ~
+|usr_20.esx| Ser eficaz en la línea de órdenes
+|usr_21.esx| Abandonar el editor y volver
+|usr_22.esx| Encontrar el archivo a editar
+|usr_23.esx| Editar otros archivos
+|usr_24.esx| Insertar con rapidez
+|usr_25.esx| Editar texto con formato
+|usr_26.esx| Repetir
+|usr_27.esx| Órdenes y patrones de búsqueda
+|usr_28.txt| Plegar
+|usr_29.txt| Moverse a través de programas
+|usr_30.txt| Editar programas
+|usr_31.txt| Aprovechar la interfaz gráfica
+|usr_32.txt| El árbol de deshacer
+
+Configurar Vim ~
+|usr_40.txt| Crear órdenes nuevas
+|usr_41.txt| Crear un Vim script
+|usr_42.txt| Añadir menús nuevos
+|usr_43.txt| Usar tipos de archivo
+|usr_44.txt| Su propio resaltado de sintaxis
+|usr_45.txt| Seleccionar su idioma
+
+Iniciar Vim ~
+|usr_90.txt| Instalar Vim
+
+
+Manual de referencia
+|reference_toc|     Más información detallada de todas las órdenes
+
+El manual de usuario está disponible en un único archivo listo para su
+impresión, en formato PDF y HTML, en está ubicación:
+	http://vimdoc.sf.net
+
+==============================================================================
+Empezar ~
+
+Lea esto de principio a final para aprender las órdenes esenciales.
+
+|usr_01.esx|  Acerca de los manuales
+		|01.1|	Dos manuales
+		|01.2|	Vim instalado
+		|01.3|	Usar el tutor de Vim
+		|01.4|	Copyright
+
+|usr_02.esx|  Primeros pasos en Vim
+		|02.1|	Ejecutar Vim por primera vez
+		|02.2|	Insertar texto
+		|02.3|	Movimiento
+		|02.4|	Eliminar caracteres
+		|02.5|	Deshacer y rehacer
+		|02.6|	Otras órdenes de edición
+		|02.7|	Salir
+		|02.8|	Encontrar ayuda
+
+|usr_03.esx|  Desplazamiento
+		|03.1|	Desplazarse sobre palabras
+		|03.2|	Desplazarse al principio o al final de la línea
+		|03.3|	Desplazarse a un carácter
+		|03.4|	Emparejar un paréntesis
+		|03.5|	Desplazarse a una línea específica
+		|03.6|	Indicar dónde estás
+		|03.7|	Desplazar el texto
+		|03.8|	Búsquedas simples
+		|03.9|	Patrones sencillos de búsqueda
+		|03.10|	Uso de marcadores o marcas
+
+|usr_04.esx|  Making small changes
+		|04.1|	Operadores y movimiento
+		|04.2|	Cambiar texto
+		|04.3|	Repetir un cambio
+		|04.4|	Modo Visual
+		|04.5|	Mover texto
+		|04.6|	Copiar texto
+		|04.7|	Uso del portapapeles
+		|04.8|	Objetos de texto
+		|04.9|	Modo reemplazar
+		|04.10|	Conclusión
+
+|usr_05.esx|  Configuración
+		|05.1|	El archivo vimrc
+		|05.2|	El archivo vimrc de ejemplo, explicado
+		|05.3|	Macros sencillas
+		|05.4|	Añadir una extensión
+		|05.5|	Añadir un archivo de ayuda
+		|05.6|	La ventana de opciones
+		|05.7|	Opciones más comunes
+
+|usr_06.esx|  Uso del resaltado de sintaxis
+		|06.1|	Activar
+		|06.2|	¿Colores incorrectos o ausentes?
+		|06.3|	Diferentes colores
+		|06.4|	Con colores o sin colores
+		|06.5|	Imprimir con colores
+		|06.6|	Más información
+
+|usr_07.esx|  Editar más de un archivo
+		|07.1|	Editar otro archivo
+		|07.2|	Una lista de archivos
+		|07.3|	Pasar de archivo a archivo
+		|07.4|	Copias de seguridad
+		|07.5|	Copiar texto entre archivos
+		|07.6|	Ver un archivo
+		|07.7|	Cambiar el nombre de archivo
+
+|usr_08.esx|  Dividir en ventanas
+		|08.1|	Dividir una ventana
+		|08.2|	Dividir una ventana con otro archivo
+		|08.3|	Tamaño de ventana
+		|08.4|	Divisiones verticales
+		|08.5|	Mover ventanas
+		|08.6|	Órdenes sobre todas las ventanas
+		|08.7|	Ver las diferencias con «vimdiff»
+		|08.8|	Varios
+
+|usr_09.esx|  Uso de la interfaz gráfica (GUI)
+		|09.1|	Partes de la interfaz gráfica
+		|09.2|	Uso del ratón
+		|09.3|	El portapapeles
+		|09.4|	Modo Seleccionar
+
+|usr_10.esx|  Realizar cambios grandes
+		|10.1|	Órdenes de grabación y reproducción
+		|10.2|	Sustitución
+		|10.3|	Rangos de aplicación
+		|10.4|	Las órdenes globales
+		|10.5|	El modo de bloque Visual
+		|10.6|	Leer y escribir parte de un archivo
+		|10.7|	Formatear texto
+		|10.8|	Cambiar mayúsculas y minúsculas
+		|10.9|	Uso de un programa externo
+
+|usr_11.esx|  Recuperarse de un fallo
+		|11.1|  Recuperación básica
+		|11.2|  ¿Dónde está el archivo de recuperación?
+		|11.3|  ¿Se ha colgado o no?
+		|11.4|  Más información
+
+|usr_12.esx|  Trucos
+		|12.1|	Reemplazar una palabra
+		|12.2|	Cambiar «Último, Primero» a «Primero Último»
+		|12.3|	Ordenar una lista
+		|12.4|	Invertir el orden de las líneas
+		|12.5|	Contar palabras
+		|12.6|	Encontrar una página de manual
+		|12.7|	Eliminar espacios en blanco sobrantes
+		|12.8|	Buscar dónde se emplea una palabra
+
+==============================================================================
+Editar con efectividad ~
+
+Temas que se pueden leer independientemente.
+
+|usr_20.esx|  Ser eficaz en la línea de órdenes
+		|20.1|	Edición en línea de órdenes
+		|20.2|	Abreviaturas en línea de órdenes
+		|20.3|	Autocompletado en la línea de órdenes
+		|20.4|	Histórico de la línea de órdenes
+		|20.5|	Ventana de la línea de órdenes
+
+|usr_21.esx|  Abandonar el editor y volver
+		|21.1|	Suspender y continuar
+		|21.2|	Ejecutar órdenes de consola
+		|21.3|	Recordar información; viminfo
+		|21.4|	Sesiones
+		|21.5|	Vistas
+		|21.6|	«Modelines»
+
+|usr_22.esx| Encontrar el archivo a editar
+		|22.1|	El explorador de archivos
+		|22.2|	El directorio actual
+		|22.3|	Encontrar un archivo
+		|22.4|	La lista de búfers
+
+|usr_23.esx|  Editar otros archivos
+		|23.1|	Archivos de DOS, Mac y Unix
+		|23.2|	Archivos en Internet
+		|23.3|	Cifrado
+		|23.4|	Archivos binarios
+		|23.5|	Archivos comprimidos
+
+|usr_24.esx|  Insertar con rapidez
+		|24.1|	Corregir
+|		24.2|	Mostrar coincidencias
+		|24.3|	Autocompletado
+		|24.4|	Repetir una inserción
+		|24.5|	Copiar desde otra línea
+		|24.6|	Insertar un registro
+		|24.7|	Abreviaturas
+		|24.8|	Introducir caracteres especiales
+		|24.9|	Dígrafos
+		|24.10|	Órdenes del modo Normal
+
+|usr_25.txt|  Editar texto con formato
+		|25.1|	Dividir líneas
+		|25.2|	Alinear texto
+		|25.3|	Sangrado y tabulación
+		|25.4|	Tratar líneas largas
+		|25.5|	Editar tablas
+
+|usr_26.txt|  Repetición
+		|26.1|	Repetir en modo Visual
+		|26.2|	Sumar y restar
+		|26.3|	Realizar un cambio en varios archivos
+		|26.4|	Usar Vim desde un script de intérprete de órdenes
+
+		|usr_27.esx| Órdenes y patrones de búsqueda
+		|27.1|	Ignorar la distinción entre mayúsculas y minúsculas
+		|27.2|	Justificar el fin del archivo
+		|27.3|	Dirección relativa («offsets»)
+		|27.4|	Emparejar varios elementos
+		|27.5|	Alternativas
+		|27.6|	Rangos de caracteres
+		|27.7|	Clases de caracteres
+		|27.8|	Coincidir con un salto de línea
+		|27.9|	Ejemplos
+
+|usr_28.txt|  Plegar
+		|28.1|	¿Qué es plegar?
+		|28.2|	Plegar manualmente
+		|28.3|	Trabajar con pliegues
+		|28.4|	Guardar y restaurar pliegues
+		|28.5|	Plegar por sangrado
+		|28.6|	Plegar con marcadores
+		|28.7|	Plegar por sintaxis
+		|28.8|	Plegar por expresión
+		|28.9|	Plegar líneas sin cambios
+		|28.10¿| ¿Qué método de plegar debería usar?
+
+|usr_29.txt|  Moverse a través de programas
+		|29.1|	Usar etiquetas
+		|29.2|	La ventana de previsualización
+		|29.3|	Moverse a través de un programa
+		|29.4|	Buscar identificadores globales
+		|29.5|	Buscar identificadores locales
+
+|usr_30.txt|  Editar programas
+		|30.1|	Compilar
+		|30.2|	Sangrado en archivos C
+		|30.3|	Sangrado automático
+		|30.4|	Otros sangrados
+		|30.5|	Tabulados y espacios
+		|30.6|	Formatear comentarios
+
+|usr_31.txt|  Sacar partido a la interfaz gráfica
+		|31.1|	El explorador de archivos
+		|31.2|	Confirmación
+		|31.3|	Atajos de teclado para menús
+		|31.4|	Posición y tamaño de la ventana de Vim
+		|31.5|	Varios
+
+|usr_32.txt|  El árbol de deshacer
+		|32.1|Volver a un punto de edición anterior
+		|32.2|Numerar los cambios
+		|32.3|Desplazarse en el árbol
+		|32.4|Viajar en el tiempo
+
+==============================================================================
+Configurar Vim ~
+
+Ajuste Vim a sus necesidades.
+
+|usr_40.txt|  Crear órdenes nuevas
+		|40.1|Macros de teclado
+		|40.2|Definir órdenes de línea de órdenes
+		|40.3|Órdenes automáticas
+
+|usr_41.txt|  Escribir scripts para Vim
+		|41.1|	Introducción
+		|41.2|	Variables
+		|41.3|	Expresiones
+		|41.4|	Estructuras de decisión
+		|41.5|	Ejecución de expresiones
+		|41.6|	Funciones
+		|41.7|	Definición de funciones
+		|41.8|	Listas y Diccionarios
+		|41.9|	Excepciones
+		|41.10|	Observaciones
+		|41.11|	Escribir extensiones
+		|41.12|	Escribir extensiones para tipo de archivo
+		|41.13|	Escribir extensiones para compiladores
+		|41.14|	Escribir extensiones que carguen rápidamente
+		|41.15|	Escribir bibliotecas
+		|41.16|	Distribuir scripts de Vim
+
+|usr_42.txt|  Añadir nuevos menús
+		|42.1|	Introducción
+		|42.2|	Órdenes para menús
+		|42.3|	Varios
+		|42.4|	Barra de herramientas y menús contextuales
+
+|usr_43.txt|  Uso de tipos de archivo
+		|43.1|	Extensiones para un tipo de archivo
+		|43.2|	Añadir un tipo de archivo
+
+|usr_44.txt|  Your own syntax highlighted
+		|44.1|	Basic syntax commands
+		|44.2|	Keywords
+		|44.3|	Matches
+		|44.4|	Regions
+		|44.5|	Nested items
+		|44.6|	Following groups
+		|44.7|	Other arguments
+		|44.8|	Clusters
+		|44.9|	Including another syntax file
+		|44.10|	Synchronizing
+		|44.11|	Installing a syntax file
+		|44.12|	Portable syntax file layout
+
+|usr_45.txt|  Select your language
+		|45.1|	Language for Messages
+		|45.2|	Language for Menus
+		|45.3|	Using another encoding
+		|45.4|	Editing files with a different encoding
+		|45.5|	Entering language text
+
+==============================================================================
+Iniciar Vim ~
+
+Antes de poder usar Vim.
+
+|usr_90.txt|  Instalar Vim
+		|90.1|	Unix
+		|90.2|	MS-Windows
+		|90.3|	Actualizar
+		|90.4|	Problemas de instalación habituales
+		|90.5|	Desinstalar Vim
+
+==============================================================================
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Omar Campagne Polaino
+
+Proyecto: |vim-doc-es|
+

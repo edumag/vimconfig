@@ -1,0 +1,2648 @@
+*usr_41.esx*	Para Vim versión 7.3.  Último cambio: 20/7/2010
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+			     Escribir scripts para Vim
+
+
+El lenguaje de programación de Vim se usa en el archivo de arranque vimrc,
+los archivos de sintaxis, y muchas otras cosas. Este capítulo presenta y
+explica en detalle los elementos que componen un script de Vim. Hay muchos
+de ellos, por lo que éste es un capítulo largo.
+
+|41.1|	Introducción
+|41.2|	Variables
+|41.3|	Expresiones
+|41.4|	Estructuras de decisión
+|41.5|	Ejecución de expresiones
+|41.6|	Funciones
+|41.7|	Definición de funciones
+|41.8|	Listas y Diccionarios
+|41.9|	Excepciones
+|41.10|	Observaciones
+|41.11|	Escribir extensiones
+|41.12|	Escribir extensiones para tipo de archivo
+|41.13|	Escribir extensiones para compiladores
+|41.14|	Escribir extensiones que carguen rápidamente
+|41.15|	Escribir bibliotecas
+|41.16|	Distribuir scripts de Vim
+
+ Capítulo siguiente: |usr_42.esx|  Añadir menús nuevos
+  Capítulo anterior: |usr_40.esx|  Crear órdenes nuevas
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*41.1*	Introducción				*vim-script-intro* *script*
+
+Su primer acercamiento a los scripts de Vim es el archivo vimrc. Vim lo lee en
+el arranque y ejecuta las órdenes que se encuentren ahí. En este archivo puede
+dar el valor que prefiera a las opciones existentes, así como usar
+cualquier orden (algunas veces se hace referencia a las órdenes que empiezan
+con «:» como órdenes Ex, o simplemente órdenes).
+   Los archivos de sintaxis también son scripts de Vim, porque son archivos en
+los que se configuran opciones para un tipo de archivo particular. Es posible
+definir una macro complicada en un archivo Vim separado. También puede
+idear otros usos.
+
+Empecemos con un ejemplo sencillo: >
+
+	:let i = 1
+	:while i < 5
+	:  echo "cuenta es" i
+	:  let i += 1
+	:endwhile
+<
+	Nota:
+	En realidad en el ejemplo de arriba los caracteres «:» no son
+	necesarios. Sólo es necesario su uso al escribir una orden. En los
+	archivos de script de Vim es posible omitirlos. Aquí se muestran para
+	evidenciar que son órdenes de la línea de órdenes, y no órdenes del
+	modo Normal.
+	Nota:
+	Puede probar los ejemplos que se muestran aquí copiando el texto
+	correspondiente, y ejecutándolo con la orden «:@"»
+
+La salida generada por el ejemplo tiene el siguiente aspecto:
+
+	cuenta es 1 ~
+	cuenta es 2 ~
+	cuenta es 3 ~
+	cuenta es 4 ~
+
+En la primera línea la orden «:let» le asigna un valor a una variable. La
+forma genérica de hacerlo es: >
+
+	:let {variable} = {expresión}
+
+En este caso el nombre de la variable es «i» y la expresión es simplemente un
+valor, el número uno.
+   La orden «:while» inicia un ciclo. La forma genérica de esta orden es: >
+
+	:while {condicion}
+	:  {instrucciones}
+	:endwhile
+
+Las instrucciones hasta el «:endwhile» correspondiente se ejecutan mientras
+que la {condicion} se siga cumpliendo. La condición aquí es la expresión
+«i < 5».  Ésta es verdadera cuando la variable i es menor a cinco.
+	Nota:
+	Si llega a escribir un ciclo «while» que nunca termina de ejecutarse,
+	puede interrumpirlo presionando CTRL-C (o CTRL-Break en MS-Windows).
+
+La orden «:echo» imprime en pantalla los argumentos que se le
+introduzcan. En este caso son la cadena «cuenta es» y el valor de la
+variable i. Como i vale uno, se imprimirá:
+
+	cuenta es 1 ~
+
+Luego está la orden «:let i += 1». Ésta tiene el mismo efecto que «:let i =
+i + 1». Le añade uno a la variable i y asigna el resultado a la misma
+variable.
+
+El ejemplo se dio para ilustrar las órdenes usadas; si se quisiera un ciclo
+con la funcionalidad mostrada, se puede escribir algo mucho más compacto: >
+
+	:for i in range(1, 4)
+	:  echo "cuenta es" i
+	:endfor
+
+El funcionamiento de |:for| y |range()| se explicará después. Siga los
+enlaces si no desea esperar.
+
+
+TRES CLASES DE NÚMEROS
+
+Los números pueden ser decimales, hexadecimales, u octales. Un número
+hexadecimal empieza con «0x» o «0X». Por ejemplo, «0x1f» es 31 en decimal. Un
+número octal empieza con cero. «017» es 15 en decimal. Tenga cuidado: no ponga
+ceros al comienzo de un número decimal, ¡será interpretado como un octal!
+   La orden «:echo» siempre muestra los números como decimales. Ejemplo: >
+
+	:echo 0x7f 036
+<	127 30 ~
+
+Se pueden obtener números negativos añadiéndoles un signo de resta. Esto
+funciona también para números octales y hexadecimales. El signo menos también
+se usa para la substracción. Compare lo siguiente con el ejemplo anterior: >
+
+	:echo 0x7f -036
+<	97 ~
+
+En las expresiones se ignoran los espacios en blanco. Sin embargo, es
+recomendable usarlo para separar elementos, para hacer que las expresiones
+sean más legibles. Por ejemplo, para evitar confundir el ejemplo anterior
+con un número negativo, ponga un espacio entre el signo de resta y el número
+que lo sigue: >
+
+	:echo 0x7f - 036
+
+==============================================================================
+*41.2*	Variables
+
+Los nombres de variables pueden consistir de las letras del código ASCII,
+dígitos, y el guión bajo. No pueden empezar con dígitos. Los siguientes son
+nombres válidos de variables:
+
+	contador
+	_aap3
+	nombre_de_variable_largo_con_guion_bajo
+	FuncLongitud
+	LONGITUD
+
+«foo+bar» y «6var» no son nombres válidos.
+   Estas variables son globales. Para ver un listado de las variables
+definidas actualmente, use la siguiente orden: >
+
+	:let
+
+Puede usar variables globales en cualquier parte. Esto implica que cuando
+usa la variable «cuenta» en un archivo, ésta también puede ser usada en otro
+archivo, lo que al menos crea confusión, y en el peor de los casos genera
+problemas reales. Para evitar este problema, puede declarar variables como
+locales respecto al archivo del script, anteponiendo «s:» a su nombre. Por
+ejemplo, considere un script con las siguientes instrucciones: >
+
+	:let s:cuenta = 1
+	:while s:cuenta < 5
+	:  source otro.vim
+	:  let s:cuenta += 1
+	:endwhile
+
+Ya que el ámbito de «s:cuenta» es local al script, puede estar seguro de que
+cargar el archivo «otro.vim» no hará cambios a dicha variable. Si «otro.vim»
+también usa una variable «s:cuenta», será una copia distinta, local al
+ámbito de ese script. Puede encontrar más información acerca de las
+variables locales a un script en |script-variable|.
+
+Existen más clases de variables, consulte |internal-variables|. Las que se
+usan más frecuentemente son:
+
+	b:nombre		variable local a un búfer
+	w:nombre		variable local a una ventana
+	g:nombre		variable global (incluso dentro de funciones)
+	v:nombre		variable predeterminada por Vim
+
+
+ELIMINAR VARIABLES
+
+Las variables que aparecen en el listado que genera la orden «:let» consumen
+recursos de memoria. Para eliminar una variable use la orden
+«:unlet». Ejemplo: >
+
+	:unlet s:cuenta
+
+Esta orden elimina la variable «s:count», local al script actual, para
+liberar la memoria que ésta usa. Si no está seguro de que una variable
+exista, y no quiere obtener mensajes de error si no existe, añada ! a la
+orden: >
+
+	:unlet! s:cuenta
+
+Cuando la ejecución de un script termina, no se liberan automáticamente los
+recursos usados por sus variables locales. La próxima vez que se ejecute el
+script, los valores antiguos estarán disponibles. Ejemplo: >
+
+	:if !exists("s:cuenta_llamadas")
+	:  let s:cuenta_llamadas = 0
+	:endif
+	:let s:cuenta_llamadas = s:cuenta_llamadas + 1
+	:echo "llamado" s:cuenta_llamadas "veces"
+
+La función «exists()» comprueba la existencia de una variable. Recibe como
+argumento el nombre de la variable a comprobar. ¡No la variable como tal! Si
+intenta esto: >
+
+	:if !exists(s:cuenta_llamadas)
+
+El valor de «s:cuenta_llamadas» se usará como el nombre de variable que
+exists() revisará. Ése no es el efecto esperado.
+   El símbolo de exclamación ! niega un valor. Cuando un valor es verdadero,
+se vuelve falso. Cuando es falso, se vuelve verdadero. Puede leer este símbolo
+como «not» (negación lógica). Así, «if !exists()» se lee como «if not
+exists()».
+   Vim considera como verdadero cualquier valor distinto de cero. Cero
+equivale a falso.
+	Nota:
+	Vim convierte las cadenas de texto a números de manera automática
+	cuando se espera un número. Cuando se hace esta conversión con una
+	cadena que no empieza con un dígito el número resultante es cero.
+	Debido a esto, tenga cuidado con instrucciones como: >
+		:if "verdadero"
+<	en este caso, la cadena «verdadero» será interpretada como un cero, ¡y
+	por tanto como falso!
+
+
+VARIABLES CADENAS DE TEXTO Y CONSTANTES CADENAS DE TEXTO
+
+Hasta ahora sólo se han usado números como valores de variables. También es
+posible usar cadenas de texto. Los tipos básicos de variables que Vim soporta
+son números y cadenas. El tipo de cada variable es dinámico, y se fija cada
+vez que se asigna un valor a una variable mediante «:let». Refiérase a |41.8|
+para más información acerca de tipos.
+   Para asignar un valor de tipo cadena a una variable, debe usar una
+constante de cadena. Hay dos tipos de estas constantes. El primero es la
+cadena con comillas dobles: >
+
+	:let nombre = "pedro"
+	:echo nombre
+<	pedro ~
+
+Si quiere incluir una comilla doble en el contenido de la cadena, ponga una
+barra inversa antes de la misma: > 
+
+	:let nombre = "\"pedro\""
+	:echo nombre
+<	"pedro" ~
+
+Para evitar el uso de la barra inversa, puede usar una cadena con comillas
+sencillas: >
+
+	:let nombre = '"pedro"'
+	:echo nombre
+<	"pedro" ~
+
+En una cadena de comillas sencillas todos los caracteres tienen solamente su
+significado literal. Sólo la comilla sencilla es especial: debe usar dos
+seguidas para obtener una dentro de una cadena. La barra inversa se considera
+literalmente, por lo que no es posible usarla para cambiar el significado del
+carácter después de ella.
+   En las cadenas de comillas dobles es posible usar caracteres especiales. A
+continuación algunos de los más usados:
+
+	\t		<Tab>
+	\n		<NL>, salto de línea
+	\r		<CR>, <Enter>
+	\e		<Esc>
+	\b		<BS>, retroceso
+	\"		"
+	\\		\, barra inversa
+	\<Esc>		<Esc>
+	\<C-W>		CTRL-W
+
+Los últimos dos sólo son ejemplos. Se puede usar la forma «\<nombre>» para
+incluir la tecla «nombre».
+   Consulte |expr-quote| para ver la lista completa de elementos especiales
+en una cadena de texto.
+
+==============================================================================
+*41.3*	Expresiones
+
+Vim tiene una forma expresiva, pero sencilla, de manejar expresiones. Puede
+leer la definición aquí: |expression-syntax|. A continuación mostraremos
+algunos de los elementos más comunes.
+   Los números, cadenas, y las variables mencionadas anteriormente son
+expresiones por sí mismas. Así que, en donde sea que se espere una expresión,
+puede usar un número, una cadena, o una variable. Otros de los elementos
+comunes en una expresión son:
+
+	$NOMBRE		variable de entorno
+	&nombre		opción
+	@r		registro
+
+Ejemplos: >
+
+	:echo "El valor de 'tabstop' es" &ts
+	:echo "Su directorio personal es" $HOME
+	:if @a > 5
+
+Puede usar la forma «&nombre» para guardar el valor de una opción, fijarla a
+un nuevo valor, hacer algo, y restaurar el valor original. Por ejemplo: >
+
+	:let ic_orig = &ic
+	:set noic
+	:/El Principio/,$delete
+	:let &ic = ic_orig
+
+Con esto se asegura que el patrón «El Principio» se buscará con la opción
+'ignorecase' desactivada. Sin embargo, se conserva y restaura el valor que
+el usuario definió para la opción. (Otra forma de hacer esta búsqueda es
+añadir «\C» al patrón, consulte |/\C|.)
+
+
+MATEMÁTICAS
+
+Las cosas se hacen más interesantes si combinamos estos elementos
+básicos. Empecemos con operaciones matemáticas sobre números:
+
+	a + b		adición
+	a - b		sustracción
+	a * b		multiplicación
+	a / b		división
+	a % b		módulo (residuo)
+
+Se maneja la precendencia de operadores usual. Ejemplo: >
+
+	:echo 10 + 5 * 2
+<	20 ~
+
+Puede cambiar la precendencia de las operaciones usando paréntesis. Esto no
+es nada nuevo.  Ejemplo: >
+
+	:echo (10 + 5) * 2
+<	30 ~
+
+Puede unir cadenas usando «.». Ejemplo: >
+
+	:echo "foo" . "bar"
+<	foobar ~
+
+Cuando recibe varios argumentos, la orden «:echo» los muestra en pantalla
+separados con espacios. En el ejemplo anterior el argumento es una única
+expresión, por lo que no se insertan espacios.
+
+Del lenguaje C se tomó la expresión condicional:
+
+	a ? b : c
+
+Si «a» se evalúa como verdadero, la expresión corresponderá a «b», y en caso
+contrario a «c». Ejemplo: >
+
+	:let i = 4
+	:echo i > 5 ? "i es grande" : "i es pequeño"
+<	i es pequeño ~
+
+Los tres elementos de la expresión condicional siempre son evaluados; es
+conveniente verlos de la siguiente forma:
+
+	(a) ? (b) : (c)
+
+==============================================================================
+*41.4*	Estructuras de decisión
+
+La orden «:if» ejecuta las órdenes a continuación de ella, hasta el «:endif»
+correspondiente, cuando se cumple la condición especificada. La forma
+genérica es:
+
+	:if {condicion}
+	   {instrucciones}
+	:endif
+
+Las {instrucciones} se ejecutan únicamente cuando la expresión {condicion} es
+verdadera, esto es, diferente de cero. Dichas instrucciones deben ser órdenes
+válidas. Si las órdenes tienen errores de sintaxis, Vim no podrá encontrar el
+«:endif» correspondiente.
+   También puede usar «:else». La forma genérica es:
+
+	:if {condicion}
+	   {instrucciones}
+	:else
+	   {instrucciones}
+	:endif
+
+El segundo grupo de {instrucciones} sólo se ejecuta si el primero no lo hace.
+   Finalmente, está «:elseif»
+
+	:if {condicion}
+	   {instrucciones}
+	:elseif {condicion}
+	   {instrucciones}
+	:endif
+
+Esta orden funciona como «:else» seguido de «:if», pero tiene la ventaja de no
+requerir un «:endif» adicional.
+   Un ejemplo útil que podría usar en su archivo vimrc es comprobar la opción
+'term' y ejecutar órdenes diferentes de acuerdo a su valor: >
+
+	:if &term == "xterm"
+	:  " Configuración para xterm
+	:elseif &term == "vt100"
+	:  " Configuración para la terminal vt100
+	:else
+	:  " Configuración para otras terminales
+	:endif
+
+
+OPERACIONES LÓGICAS
+
+Ya hemos usado algunas de ellas en los ejemplos anteriores. A continuación
+listamos las más utilizadas:
+
+	a == b		igual a
+	a != b		diferente de
+	a >  b		mayor que
+	a >= b		mayor o igual a
+	a <  b		menor que
+	a <= b		menor o igual a
+
+El resultado es uno si la condición se cumple, y cero en caso contrario. Por
+ejemplo: >
+
+	:if v:version >= 700
+	:  echo "felicitaciones"
+	:else
+	:  echo "¡está usando una versión vieja, actualícese!"
+	:endif
+
+La variable «v:version» es definida por Vim, y contiene el número de versión
+de Vim. 600 corresponde a la versión 6.0. La versión 6.1 tiene el valor
+601. Esta variable es útil para escribir scripts que funcionen con distintas
+versiones de Vim. |v:version|
+
+Los operadores lógicos funcionan con números y con cadenas de texto. Al
+comparar dos cadenas, se trabaja con la diferencia matemática de las mismas.
+Esto compara valores de bytes, lo que para algunos idiomas puede no entregar
+resultados correctos.
+   Al comparar cadenas con números, la cadena es convertida a un número antes
+de hacer la comparación. Debe tener en cuenta que, cuando el contenido de una
+cadena no se asemeja a un número, se usa el número cero. Ejemplo: >
+
+	:if 0 == "uno"
+	:  echo "sí"
+	:endif
+
+El ejemplo mostrará «sí», porque «uno» no puede ser convertido a un número,
+por lo que se lo convierte al número cero.
+
+Hay dos operadores más para cadenas de texto:
+
+	a =~ b		coincide con
+	a !~ b		no coincide con
+
+El operando de la izquierda, «a», se trata como una cadena. El operando de
+la derecha, «b», se trata como un patrón para una búsqueda de
+texto. Ejemplo: >
+
+	:if str =~ " "
+	:  echo "str contiene un espacio"
+	:endif
+	:if str !~ '\.$'
+	:  echo "str no termina con punto final"
+	:endif
+
+Tenga en cuenta el uso de una cadena de comillas sencillas como patrón de
+búsqueda. En este caso es útil porque las barras inversas tendrían que
+insertarse por partida doble en una cadena de comillas dobles, y los
+patrones de búsqueda suelen contener muchas barras inversas.
+
+Al comparar cadenas se tiene en cuenta la opción 'ignorecase'. Si no desea
+este comportamiento, añada un «#» para diferenciar mayúsculas de minúsculas,
+o «?» para ignorar dicha diferencia. Así, «==?» compara dos cadenas sin
+diferenciar mayúsculas de minúsculas. «!~#» revisa la no coincidencia de un
+patrón, teniendo en cuenta diferencias de mayúsculas y minúsculas. Puede
+consultar la tabla completa de operadores de comparación en |expr-==|.
+
+
+MÁS SOBRE CICLOS
+
+Ya hemos mencionado la orden «:while». Hay dos instrucciones adicionales que
+pueden usarse entre «:while» y el «:endwhile» correspondiente:
+
+	:continue		Salta hasta el inicio del ciclo «while»; el
+				ciclo continúa.
+	:break			Salta hasta después del «:endwhile»; provoca
+				la terminación del ciclo.
+
+Ejemplo: >
+
+	:while contador < 40
+	:  call hacer_algo()
+	:  if opción_omitir
+	:    continue
+	:  endif
+	:  if opción_terminado
+	:    break
+	:  endif
+	:  sleep 50m
+	:endwhile
+
+La orden «:sleep» hace que Vim tome una pausa. El argumento «50m» especifica
+una duración de 50 milisegundos. Otro ejemplo es «:sleep 4», que especifica
+una pausa de cuatro segundos.
+
+La orden «:for» es otra estructura de control para iteración, consulte la
+sección |41.8|.
+
+==============================================================================
+*41.5*	Ejecución de expresiones
+
+Hasta ahora, todas las órdenes mostradas han sido ejecutadas directamente por
+Vim. La orden «:execute» permite ejecutar el resultado de una expresión. Ésta
+es una forma poderosa de construir y ejecutar órdenes.
+   Un ejemplo es saltar a una etiqueta, cuyo nombre está almacenado en una
+variable: >
+
+	:execute "tag " . nombre_etiqueta
+
+El «.» se usa para concatenar la cadena «tag » con el valor de la variable
+«nombre_etiqueta». Si suponemos que «nombre_etiqueta» tiene el contenido
+«obtener_orden», entonces la orden que se ejecutará es: >
+
+	:tag obtener_orden
+
+La orden «:execute» sólo puede ejecutar órdenes de la línea de órdenes
+(órdenes Ex, que empiezan con «:»). La orden «:normal» ejecuta órdenes del
+modo Normal. Sin embargo, su argumento no es una expresión, sino los
+caracteres literales de la orden. Ejemplo: >
+
+	:normal gg=G
+
+Se mueve hasta la primera línea y formatea todas las líneas usando el operador
+«=».
+   Para usar «:normal» con el resultado de una expresión, debe combinar
+«:execute» con dicha orden. Ejemplo: >
+
+	:execute "normal " . ordenes_modo_normal
+
+La variables «ordenes_modo_normal» debe contener órdenes para el modo Normal.
+   Asegúrese de que el argumento para «:normal» es una orden completa. En caso
+contrario, Vim llegará al final del argumento e interrumpirá la orden. Por
+ejemplo, si inicia el modo Insertar, debe salir del mismo. Lo siguiente
+funciona adecuadamente: >
+
+	:execute "normal Itexto nuevo \<Esc>"
+
+Esta orden inserta «texto nuevo» en la línea actual. Observe el uso de la
+tecla especial «\<Esc>». Así se evita la necesidad de escribir un <Esc> real
+en el script.
+
+Si lo que quiere es no ejecutar una cadena de texto, sino evaluarla para
+obtener el valor de la expresión que contiene, use la función eval(): >
+
+	:let nomopcion = "path"
+	:let valopcion = eval('&' . nomopcion)
+
+Se antepone un «&» a «path», y así el argumento para eval() es «&path». El
+resultado será el valor de la opción 'path'.
+   Puede obtener el mismo resultado con: >
+	:exe 'let optval = &' . optname
+
+==============================================================================
+*24.1*	Funciones
+
+Vim define muchas funciones y provee bastante funcionalidad a través de este
+mecanismo. Aquí daremos algunos ejemplos. La referencia para la lista
+completa se encuentra en |functions|.
+
+Las funciones se llaman con la orden «:call». Los parámetros se introducen
+entre paréntesis, separados por comas. Ejemplo: >
+
+	:call search("Fecha: ", "W")
+
+Se invoca a la función search(), con los argumentos «Fecha: » y «W». La
+función search() usa su primer argumento como patrón de búsqueda y el
+segundo como una serie de opciones. La opción «W» hace que la búsqueda
+termine al alcanzar el final del archivo.
+
+También es posible invocar funciones en expresiones.  Ejemplo: >
+
+	:let linea = getline(".")
+	:let reempl = substitute(linea, '\a', "*", "g")
+	:call setline(".", reempl)
+
+La función getline() extrae una línea del búfer actual. Su argumento
+especifica un número de línea. En este caso se usa «.», que se interpreta como
+la línea en la que se encuentra el cursor.
+   La función substitute() tiene un comportamiento similar al de la orden
+«:substitute». El primer argumento es la cadena de texto sobre la cual operar,
+el segundo es el patrón de búsqueda, el tercero la cadena de reemplazo. El
+último argumento se corresponde con las opciones de búsqueda.
+   La función setline() reemplaza la línea que se especifique en el primer
+argumento, con la cadena que se pase en el segundo argumento. En este ejemplo
+se reemplaza a la línea bajo el cursor con el resultado de substitute(). El
+efecto de las tres instrucciones equivale a: >
+
+	:substitute/\a/*/g
+
+Usar estas funciones tiene efectos más interesantes cuando el procesamiento
+se realiza antes y después de invocar substitute().
+
+
+FUNCIONES						*function-list*
+
+Vim cuenta con muchas funciones. Las mencionaremos aquí, agrupadas de
+acuerdo a su funcionalidad. En |functions| se encuentra una lista de ellas
+ordenada alfabéticamente. Puede ubicar el cursor sobre el nombre de una
+función y pulsar CTRL-] para ver documentación más detallada sobre ella.
+
+Manipulación de cadenas:				*string-functions*
+	nr2char()		obtiene un carácter dado su valor ASCII
+	char2nr()		obtiene el número ASCII del carácter dado
+	str2nr()		convierte una cadena a Número
+	str2float()		convierte una cadena a Flotante
+	printf()		formatea una cadena de acuerdo a elementos %
+	escape()		escapa caracteres en una cadena con '\'
+	shellescape()		escapa una cadena para usarse una orden de
+				consola
+	fnameescape()		escapa un nombre de archivo para usar en una
+				orden Vim
+	tr()			traduce caracteres de un conjunto a otro
+	strtrans()		traduce una cadena para que se pueda imprimir
+	tolower()		convierte una cadena a minúsculas
+	toupper()		convierte una cadena a mayúsculas
+	match()			posición en la que un patrón coincide en una
+				cadena
+	matchend()		posición en la que un patrón termina en una
+				cadena
+	matchstr()		coincidencia de un patrón en una cadena
+	matchlist()		similar a matchstr() y retorna
+				subcoincidencias
+	stridx()		primer índice de una cadena corta dentro de
+				una larga
+	strridx()		último índice de una cadena corta dentro de
+				una larga
+	strlen()		longitud de una cadena
+	substitute()		sustituye la coincidencia de un patrón con una
+				cadena
+	submatch()		obtiene una subcoincidencia específica en un
+				«:substitute»
+	strpart()		obtiene parte de una cadena
+	expand()		expande palabras clave
+	iconv()			convierte texto entre distintas codificaciones
+	byteidx()		índice de byte de un carácter en una cadena
+	repeat()		repite una cadena múltiples veces
+	eval()			evalúa una cadena como expresión
+
+Manipulación de Listas:					*list-functions*
+	get()			obtiene un elemento sin generar error al usar
+				índices erróneos
+	len()			número de elementos en una Lista
+	empty()			comprueba si una Lista está vacía
+	insert()		inserta un elemento en una Lista
+	add()			añade un elemento a una Lista
+	extend()		añade los contenidos de una Lista a otra Lista
+	remove()		elimina uno o más elementos de una lista
+	copy()			hace una copia superficial de una Lista
+	deepcopy()		hace una copia completa de una Lista
+	filter()		elimina elementos particulares de una Lista
+	map()			cambia cada elemento de una Lista
+	sort()			ordena una Lista
+	reverse()		invierte el orden de una Lista
+	split()			divide una cadena en una Lista
+	join()			une los elementos de una Lista en una cadena
+	range()			retorna una Lista con una secuencia de números
+	string()		representación de una Lista en una cadena
+	call()			invoca una función con una Lista como
+				argumentos
+	index()			índice de un valor en una Lista
+	max()			valor máximo en una Lista
+	min()			valor mínimo en una Lista
+	count()			cuenta la cantidad de veces que un valor
+				aparece en una Lista
+	repeat()		repite una Lista múltiples veces
+
+Manipulación de Diccionarios:				*dict-functions*
+	get()			obtiene una entrada sin generar error al usar
+				claves erróneas
+	len()			número de entradas en un Diccionario
+	has_key()		comprueba si una clave aparece en un
+				Diccionario
+	empty()			comprueba si un Diccionario está vacío
+	remove()		elimina una entrada de un Diccionario
+	extend()		añade las entradas de un Diccionario a otro
+	filter()		elimina entradas particulares de un
+				Diccionario
+	map()			cambia cada entrada de un Diccionario
+	keys()			devuelve una Lista con las claves de un
+				Diccionario
+	values()		devuelve una Lista con los valores de un
+				Diccionario
+	items()			devuelve una Lista de pares clave-valor de un
+				Diccionario
+	copy()			hace una copia superficial de un Diccionario
+	deepcopy()		hace una copia completa de un Diccionario
+	string()		representación de cadena de un Diccionario
+	max()			valor máximo en un Diccionario
+	min()			valor mínimo en un Diccionario
+	count()			cuenta la cantidad de veces que un valor
+				aparece en un Diccionario
+
+Operaciones de punto flotante:				*float-functions*
+	float2nr()		convertir Flotante a Número
+	abs()			valor absoluto (también funciona para Números)
+	round()			redondear
+	ceil()			redondear hacia arriba (techo)
+	floor()			redondear hacia abajo (piso)
+	trunc()			eliminar valores después del punto decimal
+	log10()			logaritmo en base 10
+	pow()			valor de x elevado a la y potencia
+	sqrt()			raíz cuadrada
+	sin()			seno
+	cos()			coseno
+	atan()			arcotangente
+
+Variables:						*var-functions*
+	type()			tipo de una variable
+	islocked()		comprueba si una variable ha sido bloqueada
+	function()		obtiene una referencia a función para el
+				nombre de función dado
+	getbufvar()		obtiene una variable de un búfer específico
+	setbufvar()		define una variable en un búfer específico
+	getwinvar()		obtiene una variable de una ventana específica
+	gettabvar()		obtiene una variable de una pestaña específica
+	gettabwinvar()		obtiene una variable de una ventana y pestaña
+				específicas
+	setwinvar()		define una variable en una ventana
+				específica
+	settabvar()		define una variable en una pestaña
+				específica
+	settabwinvar()		define una variable en una ventana y pestaña
+				específicas
+	garbagecollect()	potencialmente libera memoria
+
+Posición de marcas y del cursor:	*cursor-functions* *mark-functions*
+	col()			número de columna del cursor o de una marca
+	virtcol()		número de columna en pantalla del cursor o de
+				una marca
+	line()			número de línea del cursor o de una marca
+	wincol()		número de columna de ventana del cursor
+	winline()		número de línea de ventana del cursor
+	cursor()		ubica el cursor en una linea/columna
+	getpos()		obtiene la posición del cursor, marca, etc.
+	setpos()		define la posición del cursor, marca, etc.
+	byte2line()		obtiene el número de línea correspondiente a
+				un índice en bytes
+	line2byte()		índice en bytes correspondiente a una línea
+				específica
+	diff_filler()		obtiene la cantidad de líneas de relleno
+				encima de una línea
+
+Manipulación de texto en el búfer actual:		*text-functions*
+	getline()		obtiene una línea o lista de líneas del búfer
+	setline()		reemplaza una línea del búfer
+	append()		añade una línea o lista de líneas al búfer
+	indent()		sangrado de una línea específica
+	cindent()		sangrado de una línea de acuerdo al estilo
+				para C
+	lispindent()		sangrado de una línea de acuerdo al estilo
+				para Lisp
+	nextnonblank()		ubica la siguiente línea no vacía
+	prevnonblank()		ubica la anterior línea no vacía
+	search()			ubica una coincidencia para un patrón
+	searchpos()		ubica una coincidencia para un patrón
+	searchpair()		ubica la parte correspondiente a un
+				inicio/medio/final
+	searchpairpos()	ubica la parte correspondiente a un
+				inicio/medio/final
+	searchdecl()		busca la declaración de un nombre
+
+					*system-functions* *file-functions*
+Funciones del sistema y manipulación de archivos:
+	glob()			expande comodines
+	globpath()	expande comodines en múltiples directorios
+	findfile()		ubica un archivo en una lista de directorios
+	finddir()		ubica un directorio en una lista de
+				directorios
+	resolve()		determina a dónde apunta un acceso o enlace
+				directo
+	fnamemodify()		modifica un nombre de archivo
+	pathshorten()		abrevia nombres de directorio en una ruta
+	simplify()		simplifica una ruta sin cambiar su significado
+	executable()		comprueba si un programa ejecutable existe
+	filereadable()		comprueba si se puede leer un archivo
+	filewritable()		comprueba si se puede escribir a un archivo
+	getfperm()		obtiene los permisos para un archivo
+	getftype()		obtiene el tipo de un archivo
+	isdirectory()		comprueba si un directorio existe
+	getfsize()		obtiene el tamaño de un archivo
+	getcwd()		obtiene el directorio de trabajo actual
+	haslocaldir()		comprueba si se ha usado |:lcd| en la ventana
+				actual
+	tempname()		obtiene un nombre para un archivo temporal
+	mkdir()			crea un nuevo directorio
+	delete()		borra un archivo
+	rename()		renombra un archivo
+	system()		obtiene el resultado de una orden de consola
+	hostname()		nombre del sistema
+	readfile()		lee un archivo y devuelve una Lista de líneas
+	writefile()		escribe una Lista de líneas a un archivo
+
+Fecha y Hora:				*date-functions* *time-functions*
+	getftime()		obtiene la hora de la última modificación de
+				un archivo
+	localtime()		obtiene la hora actual en segundos
+	strftime()		convierte la hora a una cadena
+	reltime()		devuelve la hora actual o el tiempo
+				transcurrido desde una hora
+	reltimestr()		convierte el resultado de reltime() a una
+				cadena
+
+			*buffer-functions* *window-functions* *arg-functions*
+Búferes, ventanas, y la lista de argumentos:
+	argc()			número de entradas en la lista de argumentos
+	argidx()		posición actual en la lista de argumentos
+	argv()			obtiene un elemento de la lista de argumentos
+	bufexists()		comprueba si un búfer existe
+	buflisted()		comprueba si un búfer existe y está listado
+	bufloaded()		comprueba si un búfer existe y está cargado
+	bufname()		obtiene el nombre de un búfer específico
+	bufnr()			obtiene el número de búfer de un búfer
+				específico
+	tabpagebuflist()	devuelve la Lista de búfers de una pestaña
+	tabpagenr()		obtiene el número de una pestaña
+	tabpagewinnr()		similar a winnr(), pero especificando la
+				pestaña
+	winnr()			obtiene el número de ventana de la ventana
+				actual
+	bufwinnr()		obtiene el número de ventana del búfer
+				especificado
+	winbufnr()		obtiene el número de búfer de una ventana
+				específica
+	getbufline()		obtiene una lista de líneas del búfer
+				especificado
+
+Línea de órdenes:				*command-line-functions*
+	getcmdline()		obtiene la línea de órdenes actual
+	getcmdpos()		obtiene la posición del cursor en la línea de
+				órdenes
+	setcmdpos()		cambia la posición del cursor en la línea de
+				órdenes
+	getcmdtype()		devuelve el tipo de la línea de órdenes actual
+
+Listas de corrección rápida y de ubicación:		*quickfix-functions*
+	getqflist()		obtiene una lista de errores de corrección
+				rápida
+	setqflist()		modifica una lista de corrección rápida
+	getloclist()	obtiene la lista de elementos de una lista de
+				ubicación
+	setloclist()		modifica una lista de ubicación
+
+Completado automático en modo Insertar:		*completion-functions*
+	complete()		define coincidencias encontradas
+	complete_add()		añade elementos a la lista de coincidencias
+				encontradas
+	complete_check()	comprueba si debería interrumpir el
+				completado
+	pumvisible()		comprueba si se está mostrando el menú
+				contextual
+
+Plegado:					*folding-functions*
+	foldclosed()		comprueba si hay un pliegue cerrado en una
+				línea específica
+	foldclosedend()	similar a foldclosed() pero devuelve la última
+				línea
+	foldlevel()		obtiene el nivel de plegado de la línea
+				especificada
+	foldtext()		genera el texto mostrado en un pliegue cerrado
+	foldtextresult()	obtiene el texto mostrado en un pliegue
+				cerrado
+
+Sintaxis y resaltado:	  *syntax-functions* *highlighting-functions*
+	clearmatches()	elimina las coincidencias definidas por
+				|matchadd()| y las órdenes |:match|
+	getmatches()		obtiene todas las coincidencias definidas por
+				|matchadd()| y las órdenes |:match|
+	hlexists()		comprueba la existencia de un grupo de
+				resaltado
+	hlID()			obtiene el ID de un grupo de resaltado
+	synID()			obtiene el ID de sintaxis en una posición
+				específica
+	synIDattr()		obtiene un atributo específico correspondiente
+				a un ID de sintaxis
+	synIDtrans()		obtiene un ID de sintaxis traducido
+	diff_hlID()		obtiene el ID de resaltado para el modo diff
+				en una posición dada
+	matchadd()		define un patrón a resaltar (una
+				«coincidencia»)
+	matcharg()		obtiene información acerca de los argumentos
+				para |:match|
+	matchdelete()		borra una coincidencia definida por
+				|matchadd()| o una orden |:match|
+	setmatches()		restaura una lista de coincidencias guardada
+				por |getmatches()|
+
+Corrección ortográfica:					*spell-functions*
+	spellbadword()		ubica palabras mal escritas a partir de la
+				posición actual del cursor
+	spellsuggest()		devuelve las correcciones ortográficas
+				sugeridas
+	soundfold()		retorna el homófono de una palabra
+
+Historial:					*history-functions*
+	histadd()		añade un elemento a la historial
+	histdel()		elimina un elemento al historial
+	histget()		obtiene un elemento al historial
+	histnr()		obtiene el índice más grande de la lista de un
+				historial
+
+Interacción:					*interactive-functions*
+	browse()		despliega un diálogo de selección de archivos
+	browsedir()		despliega un diálogo de selección de
+				directorios
+	confirm()		solicita al usuario hacer una elección
+	getchar()		solicita un carácter al usuario
+	getcharmod()		obtiene los modificadores usados en el último
+				carácter digitado
+	feedkeys()		inserta caracteres en la cola de inserción
+	input()			solicita una línea de texto al usuario
+	inputlist()		permite al usuario elegir un elemento de una
+				lista
+	inputsecret()		solicita una línea de texto al usuario, sin
+				mostrarla
+	inputdialog()		solicita una línea de texto al usuario usando
+				un diálogo
+	inputsave()		guarda y limpia el búfer de cola de inserción
+	inputrestore()		restaura el búfer de la línea de inserción
+
+Interfaz gráfica:					*gui-functions*
+	getfontname()		obtiene el nombre del tipo de letra actual
+	getwinposx()		posición X de la ventana gráfica de Vim
+	getwinposy()		posición Y de la ventana gráfica de Vim
+
+Servidor Vim:					*server-functions*
+	serverlist()		devuelve una lista con nombres de servidores
+	remote_send()		envía órdenes (caracteres) a un servidor Vim
+	remote_expr()		evalúa una expresión en un servidor Vim
+	server2client()		envía una respuesta a un cliente de un
+				servidor Vim
+	remote_peek()		comprueba si hay respuestas de un servidor Vim
+	remote_read()		lee una respuesta de un servidor Vim
+	foreground()		desplaza la ventana de Vim a primer plano
+	remote_foreground()	desplaza la ventana de un servidor Vim a
+				primer plano
+
+Tamaño y posición de ventanas:			*window-size-functions*
+	winheight()		obtiene la altura de una ventana específica
+	winwidth()		obtiene el ancho de una ventana específica
+	winrestcmd()		devuelve una orden para restaurar los tamaños
+				de ventana
+	winsaveview()		obtiene una vista de la ventana actual
+	winrestview()		devuelve una vista almacenada en la ventana
+				actual
+
+Varios:					*various-functions*
+	mode()			obtiene el modo de edición actual
+	visualmode()		último modo visual usado
+	hasmapto()		comprueba la existencia de una macro
+	mapcheck()		comprueba la existencia de una macro que
+				coincida con el argumento dado
+	maparg()		obtiene el rhs de una macro
+	exists()		comprueba si la variable, función, etc.,
+				existe
+	has()			comprueba si Vim cuenta con la característica
+				dada
+	changenr()		devuelve el número correspondiente al cambio
+				más reciente
+	cscope_connection()	comprueba si hay una conexión a cscope
+	did_filetype()		comprueba si se ha usado una orden automática
+				FileType
+	eventhandler()		comprueba si se ha sido invocado desde un
+				manejador de eventos
+	getpid()		obtiene el ID de proceso de Vim
+
+	libcall()		llama a una función en una biblioteca externa
+	libcallnr()		idéntica, pero devuelve un número en vez de
+				una cadena
+
+	getreg()		obtiene el contenido de un registro
+	getregtype()		obtiene el tipo de un registro
+	setreg()		asigna el tipo y contenido de un registro
+
+	taglist()		obtiene una lista de etiquetas coincidentes
+	tagfiles()		obtiene una lista de archivos de etiquetas
+
+	mzeval()		evalúa una expresión |MzScheme|
+
+==============================================================================
+*41.7*	Definición de funciones
+
+Vim permite definir nuevas funciones. La definición básica de una función
+corresponde a lo siguiente: >
+
+	:function {nombre}({var1}, {var2}, ...)
+	:  {instrucciones}
+	:endfunction
+<
+	Nota:
+	Los nombres de funciones deben empezar con una letra mayúscula.
+
+Vamos a definir una función pequeña que retorne el más pequeño de dos
+números. Su definición empieza con esta línea: >
+
+	:function Min(num1, num2)
+
+Ésta le indica a Vim que la función se llama «Min» y que recibe dos
+argumentos: «num1» y «num2».
+   El primer paso es comprobar qué número es el más pequeño:
+   >
+	:   if a:num1 < a:num2
+
+El prefijo especial «a:» le indica a Vim que la variable es un argumento de
+la función. Asignemos ahora a la variable «menor» el valor del menor número:
+>
+
+	:  if a:num1 < a:num2
+	:    let menor = a:num1
+	:  else
+	:    let menor = a:num2
+	:  endif
+
+La variable «menor» es una variable local. Las variables usadas dentro de
+una función son locales a menos que tengan un prefijo como «g:», «a:», o
+«s:».
+
+	Nota:
+	Para usar una variable global dentro de una función debe anteponer
+	«g:» a su nombre. Dentro de una función, «g:hoy» corresponde a la
+	variable global «hoy», y «hoy» es otra variable, local respecto a la
+	función.
+
+Ahora usamos la instrucción «:return» para devolver el menor de los dos
+números al usuario. Finalmente, terminamos la función: >
+
+	:  return menor
+	:endfunction
+
+La función completa es la siguiente: >
+
+	:function Min(num1, num2)
+	:  if a:num1 < a:num2
+	:    let menor = a:num1
+	:  else
+	:    let menor = a:num2
+	:  endif
+	:  return menor
+	:endfunction
+
+Para los aficionados a las funciones cortas, lo siguiente es equivalente: >
+
+	:function Min(num1, num2)
+	:  if a:num1 < a:num2
+	:    return a:num1
+	:  endif
+	:  return a:num2
+	:endfunction
+
+Las funciones definidas por el usuario se invocan exactamente de la misma
+forma que las funciones internas. La única diferencia es el nombre. Puede
+usar la función Min como sigue: >
+
+	:echo Min(5, 8)
+
+Sólo en este momento se ejecutará la función y Vim interpretará las
+instrucciones que la componen. Si hay errores, como usar una variable o
+función no definida, se mostrará un mensaje de error. Al definir una función
+estos errores no son detectados.
+
+Cuando una función llega a «:endfunction» o cuando se usa «:return» sin un
+argumento, se retorna cero.
+
+Para redefinir una función existente, use ! en la orden «:function»: >
+
+	:function!  Min(num1, num2, num3)
+
+
+USO DE RANGOS
+
+La orden «:call» puede recibir un rango de líneas. Este rango puede tener dos
+significados. Cuando la definición de una función tiene la palabra clave
+«range», ésta se hará cargo del rango de líneas.
+   La función recibirá las variables «a:firstline» y «a:lastline». Éstas
+contendrán los números de línea del rango con el cual se invoca la función.
+Ejemplo: >
+
+	:function Contar_palabras() range
+	:  let lnum = a:firstline
+	:  let n = 0
+	:  while lnum <= a:lastline
+	:    let n = n + len(split(getline(lnum)))
+	:    let lnum = lnum + 1
+	:  endwhile
+	:  echo "encontradas " . n . " palabras"
+	:endfunction
+
+Puede invocar la función con: >
+
+	:10,30call Contar_palabras()
+
+La función se ejecutará una vez, y mostrará en la pantalla el número de
+palabras.
+   La otra forma de usar un rango de líneas es definiendo una función sin la
+palabra clave «range». Se invocará la función una vez por cada línea en el
+rango, y el cursor estará en la línea correspondiente a cada invocación.
+Ejemplo: >
+
+	:function  Numero()
+	:  echo "la línea " . line(".") . " contiene: " . getline(".")
+	:endfunction
+
+Si invoca esta función con: >
+
+	:10,15call Numero()
+
+Se invocará la función seis veces.
+
+
+NÚMERO VARIABLE DE ARGUMENTOS
+
+Vim permite la definición de funciones que reciben una cantidad variable de
+argumentos. Por ejemplo, la siguiente orden define una función que debe
+recibir un argumento (inicio) y puede recibir hasta 20 argumentos
+adicionales: >
+
+	:function Mostrar(inicio, ...)
+
+La variable «a:1» contiene el primer argumento opcional, «a:2» contiene el
+segundo, y así sucesivamente. La variable «a:0» contiene la cantidad de
+argumentos adicionales.
+   Por ejemplo: >
+
+	:function Mostrar(inicio, ...)
+	:  echohl Title
+	:  echo "inicio es " . a:inicio
+	:  echohl None
+	:  let indice = 1
+	:  while indice <= a:0
+	:    echo "  Arg " . indice . " is " . a:{indice}
+	:    let indice = indice + 1
+	:  endwhile
+	:  echo ""
+	:endfunction
+
+Aquí se usa la orden «:echohl», que especifica el resaltado a usar en la
+siguiente orden «:echo». «:echohl None» hace que no se use resaltado
+alguno. La orden  «:echon» es similar a «:echo» pero no imprime el cambio de
+línea final.
+
+También puede usar la variable a:000. Es una Lista de todos los argumentos
+opcionales («...»). Consulte |a:000|.
+
+
+LISTAR FUNCIONES
+
+La orden «:function» muestra una lista con los nombres y argumentos de todas
+las funciones definidas por el usuario (esto incluye funciones de scripts y
+extensiones instalados).
+
+	:function
+<	function Mostrar(inicio, ...) ~
+	function ObtenerSangradoVim() ~
+	function DefinirSintaxis(nombre) ~
+
+Para ver la definición de una función, introduzca su nombre como argumento a
+la orden «:function»: >
+
+	:function DefinirSintaxis
+<	1     if &syntax == '' ~
+	2       let &syntax = a:nombre ~
+	3     endif ~
+	   endfunction ~
+
+
+DEPURACIÓN
+
+El número de línea de una instrucción es información útil cuando aparece un
+mensaje de error o al depurar scripts. Acerca del modo de depurado,
+consulte |debug-scripts|.
+   Puede darle un valor de 12 o más a la opción 'verbose' para ver todas las
+invocaciones a funciones. Con un valor de 15 o más verá cada línea ejecutada.
+
+
+ELIMINAR FUNCIONES
+
+Para eliminar la función Mostrar(): >
+
+	:delfunction Mostrar
+
+Si la función no existe obtendrá un error al usar esta orden.
+
+
+REFERENCIAS A FUNCIONES
+
+En ocasiones es útil que una variable pueda hacer referencia a una u otra
+función . Puede hacerlo usando la función function(). Ésta función convierte
+el nombre de una función en una referencia a la misma: >
+
+	:let resultado = 0		" o 1
+	:function! Bien()
+	:  return '¡Bien!'
+	:endfunc
+	:function! Mal()
+	:  return '¡Mal!'
+	:endfunc
+	:
+	:if resultado == 1
+	:  let Unafunc = function('Bien')
+	:else
+	:  let Unafunc = function('Mal')
+	:endif
+	:echo call(Unafunc, [])
+<	¡Mal! ~
+
+Tenga en cuenta que el nombre de la variable que contiene la referencia a la
+función debe empezar con una letra mayúscula. En caso contrario, es posible
+que se confunda con el nombre de una de las funciones integradas de Vim.
+   Para invocar una función usando una variable con una referencia a función
+se usa la función call(). Como primer argumento recibe la referencia a la
+función, y como segundo argumento una Lista con los argumentos para la función
+a invocar.
+
+Las referencias a funciones son particularmente útiles usadas con
+Diccionarios, como se muestra en la siguiente sección.
+
+==============================================================================
+*41.8*	Listas y Diccionarios
+
+Hasta ahora hemos usado los tipos básicos, Cadena de texto y Número. Vim
+también ofrece otros dos: Lista y Diccionario.
+
+Una Lista es una secuencia ordenada de elementos. Los elementos pueden ser
+de cualquier tipo, así que puede crear una Lista de números, una Lista de
+Listas e incluso una Lista de elementos de tipos diferentes. Para crear una
+Lista con tres cadenas de texto: >
+
+	:let lista = ['aap', 'mies', 'noot']
+
+Los elementos de la Lista se rodean con corchetes y se separan con
+comas. Para crear una Lista vacía: >
+
+	:let lista = []
+
+Puede añadir elementos a una lista mediante la función add(): >
+
+	:let lista = []
+	:call add(lista, 'foo')
+	:call add(lista, 'bar')
+	:echo lista
+<	['foo', 'bar'] ~
+
+El operador de concatenación de Listas es «+»: >
+
+	:echo lista + ['foo', 'bar']
+<	['foo', 'bar', 'foo', 'bar'] ~
+
+O, si lo que desea es extender una Lista directamente: >
+
+	:let lista = ['uno']
+	:call extend(lista, ['dos', 'tres'])
+	:echo lista
+<	['uno', 'dos', 'tres'] ~
+
+Observe que usar add() tendrá un resultado diferente: >
+
+	:let lista = ['uno']
+	:call add(lista, ['dos', 'tres'])
+	:echo lista
+<	['uno', ['dos', 'tres']] ~
+
+El segundo argumento de add() se añade a la lista como un único elemento.
+
+
+CICLO FOR
+
+Una de las cosas interesantes de las Listas es iterar sobre sus elementos: >
+
+	:let lista = ['uno', 'dos', 'tres']
+	:for n in lista
+	:  echo n
+	:endfor
+<	uno ~
+	dos ~
+	tres ~
+
+El código mostrado iterará sobre cada elemento en la Lista «lista»,
+asignando el valor del elemento a la variable «n». La forma genérica de un
+ciclo «for» es: >
+
+	:for {nombrevar} in {expresiónlista}
+	:  {instrucciones}
+	:endfor
+
+Para iterar una cantidad determinada de veces necesita una Lista con una
+longitud específica. La función range() puede crearla por usted: >
+
+	:for a in range(3)
+	:  echo a
+	:endfor
+<	0 ~
+	1 ~
+	2 ~
+
+Observe que el primer elemento de la Lista creada por range() es cero, y por
+tanto el último elemento tiene un valor de uno menos que la longitud de la
+lista.
+   También puede especificar el valor máximo, y el incremento o decremento
+deseado: >
+
+	:for a in range(8, 4, -2)
+	:  echo a
+	:endfor
+<	8 ~
+	6 ~
+	4 ~
+
+Ahora un ejemplo más útil, iterar sobre las líneas de un búfer: >
+
+	:for line in getline(1, 20)
+	:  if line =~ "Fecha: "
+	:    echo matchstr(line, 'Fecha: \zs.*')
+	:  endif
+	:endfor
+
+Este ejemplo examina las líneas 1 a 20 (inclusive) y muestra en pantalla las
+fechas encontradas en ellas.
+
+
+DICCIONARIOS
+
+Un Diccionario almacena pares clave-valor. Esto le permite obtener un valor
+almacenado de manera rápida, si conoce la clave del mismo. Los Diccionarios
+se crean usando llaves: >
+
+	:let es2nl = {'uno': 'een', 'dos': 'twee', 'tres': 'drie'}
+
+Ahora puede buscar palabras usando la clave, poniéndola entre corchetes: >
+
+	:echo es2nl['dos']
+<	twee ~
+
+La manera genérica de definir un Diccionario es: >
+
+	{<clave> : <valor>, ...}
+
+Un Diccionario vacío se define como carente de claves: >
+
+	{}
+
+Los Diccionarios ofrecen numerosas posibilidades. También dispone de varias
+funciones para operar sobre ellos. Por ejemplo, puede obtener una lista de
+las claves e iterar sobre ellas: >
+
+	:for clave in keys(es2nl)
+	:  echo clave
+	:endfor
+<	tres ~
+	uno ~
+	dos ~
+
+Habrá notado que las claves no están ordenadas. Puede ordenar la lista para
+obtener un orden específico: >
+
+	:for clave in sort(keys(es2nl))
+	:  echo clave
+	:endfor
+<	dos ~
+	tres ~
+	uno ~
+
+No es posible recuperar el orden en el cual se definieron los elementos del
+Diccionario. Para eso necesita una Lista, que almacena los elementos en una
+secuencia ordenada.
+
+
+FUNCIONES PARA DICCIONARIOS
+
+Habitualmente, puede acceder a los elementos de un Diccionario usando el
+índice correspondiente entre corchetes: >
+
+	:echo es2nl['uno']
+<	een ~
+
+Una forma de hacer lo mismo, sin tantos caracteres: >
+
+	:echo es2nl.uno
+<	een ~
+
+Esto sólo funciona con claves compuestas de caracteres ASCII, dígitos, y el
+guión bajo. También puede usar esta notación para asignar valores: >
+
+	:let es2nl.cuatro = 'vier'
+	:echo es2nl
+<	{'tres': 'drie', 'cuatro': 'vier', 'uno': 'een', 'dos': 'twee'} ~
+
+Y ahora, algo especial: puede definir directamente una función y almacenar
+una referencia a la misma en un diccionario: >
+
+	:function es2nl.traducir(linea) dict
+	:  return join(map(split(a:linea), 'get(self, v:val, "???")'))
+	:endfunction
+
+Primero probémosla: >
+
+	:echo es2nl.traducir('tres dos cinco uno')
+<	drie twee ??? een ~
+
+Lo que habrá notado primero es el «dict» al final de la línea «:function».
+Así se indica que la función será usada desde un Diccionario. La variable
+local «self» se referirá a dicho diccionario.
+   Ahora, dividamos esa compleja instrucción de retorno: >
+
+	split(a:linea)
+
+La función split() toma una cadena, la divide en palabras separadas por
+espacios en blanco, y entrega una lista con estas palabras. En el ejemplo
+previo, entrega: >
+
+	:echo split('tres dos cinco uno')
+<	['tres', 'dos', 'cinco', 'uno'] ~
+
+Esta lista es el primer argumento para la función map(). Dicha función
+analizará la lista, evaluando su segundo argumento con la variable «v:val»
+definida con el valor de cada elemento en la lista. Es una abreviación de un
+ciclo for. Esta instrucción: >
+
+	:let lista = map(split(a:linea), 'get(self, v:val, "???")')
+
+Equivale a: >
+
+	:let lista = split(a:linea)
+	:for ind in range(len(lista))
+	:  let lista[ind] = get(self, lista[ind], "???")
+	:endfor
+
+La función get() comprueba si una clave existe en un Diccionario. Si existe,
+devuelve el valor asociado a la clave. Si no existe, devuelve el valor
+definido como predeterminado, que en el ejemplo es '???'. Esto permite
+manejar de una forma conveniente las situaciones en que una clave no existe
+y no desea hacer el manejo del error que provocaría dicha situación.
+
+La función join() es el complemento de split(): une una lista de palabras,
+separándolas con un espacio.
+   La combinación de split(), map(), y join() es una forma elegante de filtrar
+una cadena de palabras de manera sucinta.
+
+
+PROGRAMACIÓN ORIENTADA A OBJETOS
+
+Ahora que podemos guardar valores y funciones en un Diccionario, podemos usar
+un Diccionario como un objeto.
+   Anteriormente hicimos uso de un Diccionario para traducir texto de Holandés
+a Español. Querríamos hacer lo mismo para otros idiomas. Primero crearemos un
+objeto (esto es, un Diccionario) que tenga la función traducir, pero no tenga
+palabras para traducir: >
+
+	:let dicctraductor = {}
+	:function dicctraductor.traducir(linea) dict
+	:  return join(map(split(a:linea),
+			\ 'get(self.palabras, v:val, "???")'))
+	:endfunction
+
+La definición es ligeramente diferente de la función anterior, ya que usa
+'self.words' para buscar las traducciones de palabras. Pero no hay un
+self.words. Por esto decir que el Diccionario es una clase abstracta.
+
+Ahora podemos instanciar un objeto para traducción al Holandés: >
+
+	:let es2nl = copy(dicctraductor)
+	:let es2nl.words = {'uno': 'een', 'dos': 'twee', 'tres': 'drie'}
+	:echo es2nl.translate('tres uno')
+<	drie een ~
+
+Y un traductor al alemán: >
+
+	:let es2de = copy(dicctraductor)
+	:let es2de.words = {'uno': 'ein', 'dos': 'zwei', 'tres': 'drei'}
+	:echo es2de.translate('tres uno')
+<	drei ein ~
+
+Puede ver que la función copy() se usa para crear una copia del Diccionario
+«dicctraductor» y luego se cambia la copia, añadiendo las palabras. El
+original, por supuesto, permanece intacto.
+
+Ahora puede ir un paso más allá, y usar su traductor preferido: >
+
+	:if $LANG =~ "de"
+	:  let trad = es2de
+	:else
+	:  let trad = es2nl
+	:endif
+	:echo trad.traducir('uno dos tres')
+<	een twee drie ~
+
+Aquí «trad» se refiere a uno de dos posibles objetos (Diccionarios). No se
+hace ninguna copia. Puede encontrar más información acerca de la identidad
+de Listas y Diccionarios en |list-identity| y |dict-identity|.
+
+Puede que use un idioma que aún no esté incluido. Para este caso, puede
+redefinir la función traducir() para que no haga nada: >
+
+	:let es2es = copy(dicctraductor)
+	:function! es2es.traducir(linea)
+	:  return a:linea
+	:endfunction
+	:echo es2es.traducir('tres one wladiwostok')
+<	tres uno wladiwostok ~
+
+Note el «!» utilizado para redefinir la referencia a función
+existente. Ahora puede usar «es2es» cuando no se encuentra ningún idioma
+reconocido: >
+
+	:if $LANG =~ "de"
+	:  let trad = es2de
+	:elseif $LANG =~ "nl"
+	:  let trad = es2nl
+	:else
+	:  let trad = es2es
+	:endif
+	:echo trad.traducir('uno dos tres')
+<	uno dos tres ~
+
+Para más detalles consulte |Lists| y |Dictionaries|.
+
+==============================================================================
+*41.9*	Excepciones
+
+Empecemos con un ejemplo: >
+
+	:try
+	:   read ~/plantillas/pascal.tmpl
+	:catch /E484:/
+	:   echo «Lo siento, no encuentro el archivo plantilla para Pascal.»
+	:endtry
+
+La orden «:read» (leer) fallará si el archivo no existe. En vez de mostrar
+un mensaje de error, este código atrapa el error y le muestra al usuario un
+mensaje más agradable.
+
+Para las instrucciones entre «:try» y «:endtry» los errores se convierten en
+excepciones. Una excepción es una cadena de texto. Cuando aparece un error
+esta cadena contiene el mensaje de error. Y cada mensaje de error tiene un
+número. En este caso, el error que atrapamos contiene «E484:». Vim garantiza
+que este número permanece inalterado (el texto del mensaje de error puede
+cambiar, por ejemplo, puede haber sido traducido.)
+
+Cuando la orden «:read» genera un error distinto, el patrón «E484:» no
+coincidirá con él. La excepción no será atrapada y aparecerá el mensaje de
+error habitual en esos casos.
+
+Puede sentirse tentado a hacer lo siguiente:: >
+
+	:try
+	:   read ~/plantillas/pascal.tmpl
+	:catch
+	:   echo «Lo siento, no encuentro el archivo plantilla para Pascal.»
+	:endtry
+
+De esta forma se atrapan todos los errores. Pero al hacerlo no verá errores
+que son útiles, como por ejemplo «E21: No se pudo modificar, 'modifiable'
+está desactivado»
+
+La orden «:finally» es otro mecanismo útil: >
+
+	:let tmp = tempname()
+	:try
+	:   exe ".,$write " . tmp
+	:   exe "!filter " . tmp
+	:   .,$delete
+	:   exe "$read " . tmp
+	:finally
+	:   call delete(tmp)
+	:endtry
+
+Aquí se filtran las líneas desde el cursor hasta el final del archivo usando
+la orden «filter», que toma como argumento un nombre de archivo. No importa
+si el filtrado funciona, si algo sale mal entre «:try» y «:finally», o si el
+usuario cancela el filtrado presionando CTRL-C, la instrucción «call
+delete(tmp)» siempre se ejecuta. Así se asegura de que no queden archivos
+temporales al acabar el proceso.
+
+Puede encontrar más información acerca del manejo de excepciones en el
+manual de referencia: |exception-handling|.
+
+==============================================================================
+*41.10*	Observaciones
+
+A continuación tiene un resumen de los elementos relevantes para escribir
+scripts de Vim. También se los menciona en otros lugares de la
+documentación, pero aquí se presentan como una conveniente lista.
+
+El carácter de fin de línea usado depende del sistema. En sistemas Unix se
+usa <NL>. En MS-DOS, Windows, OS/2 y similares, se usa <CR><LF>. Éste es un
+detalle importante a considerar al usar macros que terminan en
+<CR>. Consulte |:source_crnl|.
+
+
+ESPACIO EN BLANCO
+
+Las líneas en blanco están permitidas, y son ignoradas.
+
+Los espacios en blanco al principio de cada línea (espacios y tabulados)
+siempre se ignoran. Los espacios en blanco entre parámetros (por ejemplo,
+entre 'set' y 'cpoptions' en el ejemplo a continuación) se reducen a un solo
+espacio blanco que actúa como separador, los espacios en blanco después del
+último carácter (visible) se pueden o no ignorar dependiendo del caso, véase
+a continuación.
+
+Para una orden «:set» que incluye el símbolo «=» (igual), como en: >
+
+	:set cpoptions    =aABceFst
+
+se ignora el espacio en blanco inmediatamente antes del símbolo «=». ¡Pero
+no puede haber espacios a continuación del símbolo «=»!
+
+Para incluir un espacio en blanco como valor de una opción, hay que
+escaparlo usando una «\» (barra inversa) como en el siguiente ejemplo: >
+
+	:set tags=mi\ lindo\ archivo
+
+Al escribir el ejemplo como: >
+
+	:set tags=mi lindo archivo
+
+se obtendría un error, porque se interpreta como: >
+
+	:set tags=mi
+	:set lindo
+	:set archivo
+
+
+COMENTARIOS
+
+El carácter " (comilla doble) marca el inicio de un comentario. Todo lo que
+aparece a continuación de éste carácter hasta el fin de línea, e
+incluyéndola, se considera un comentario y es ignorado, a excepción de las
+órdenes que no tienen en cuenta los comentarios, como se puede ver en
+ejemplos de esta sección. Un comentario puede empezar en cualquier punto de
+una línea de texto.
+
+Hay un pequeño «pero» con los comentarios y ciertas órdenes. Ejemplos: >
+
+	:abbrev des desarrollo		" abreviación
+	:map <F3> o#include		" insertar directiva include
+	:execute orden			" ejecutar
+	:!ls *.c			" listar archivos C
+
+La abreviación 'dev' se expandirá a 'desarrollo     " abreviación'. La
+macro <F3> constará en realidad de toda la línea desde 'o# ....' incluyendo
+'" insertar directiva include'. La orden «execute» provocará un error. La
+orden «!» enviará todos los caracteres a continuación al intérprete de
+órdenes, provocando un error debido al carácter '"' sin la comilla de cierre
+correspondiente.
+   No pueden existir comentarios a continuación de las órdenes «:map»,
+«:abbreviate», «:execute», ni «!» (hay algunas órdenes más con esta
+restricción). Para el caso de las órdenes «:map», «:abbreviate», y «:execute»
+hay un truco disponible: >
+
+	:abbrev des desarrollo|" abreviación
+	:map <F3> o#include|" insertar directiva include
+	:execute orden			|" ejecutar
+
+El carácter «|» permite separar órdenes. En este caso, la siguiente orden es
+simplemente un comentario. Para la última orden hay que hacer dos cosas:
+|:execute| y usar «|»: >
+	:exe '!ls *.c'			|" listar archivos C
+
+Observe que no hay espacios en blanco antes de «|» en la abreviación ni en
+la macro. En estas órdenes, se incluye cualquier carácter hasta el fin de
+línea o hasta «|». Como consecuencia de este comportamiento, no siempre es
+visible cuándo se incluyen espacios en blanco al final del a línea: >
+
+	:map <F4> o#include  
+
+Para ver estos problemas de forma más fácil, puede activar la opción 'list'
+al editar archivos vimrc.
+
+En Unix hay una forma especial de hacer un comentario, que permite hacer que
+un script de Vim sea ejecutable: >
+	#!/usr/bin/env vim -S
+	echo "este es un script de Vim"
+	quit
+
+Por sí misma, la orden «#» muestra una línea junto con su número de
+línea. Al añadirle un símbolo de exclamación su comportamiento cambia y no
+tiene efecto, así que puede añadir la orden de intérprete de órdenes para
+ejecutar el resto del archivo. |:#!| |-S|
+
+
+PROBLEMAS
+
+En el siguiente ejemplo aparecen problemas aún más grandes: >
+
+	:map ,ab o#include
+	:unmap ,ab 
+
+Aquí la orden unmap no funcionará, porque trata de eliminar la macro «,ab
+». Ésta no existe como secuencia de ninguna macro. Se mostrará un error, que
+es muy difícil de identificar, porque el carácter de espacio final en
+«:unmap ,ab» no es visible.
+
+Lo mismo sucede cuando se pone un comentario a conti de una orden 'unmap': >
+
+	:unmap ,ab     " comentario
+
+La parte correspondiente al comentario será ignorada. Sin embargo, Vim tratará
+de eliminar la macro ',ab     ', que no existe. Debe reescribir la orden como:
+>
+
+	:unmap ,ab|    " comentario
+
+
+RESTAURAR LA VISTA
+
+En ocasiones es deseable hacer un cambio y volver al sitio en que el cursor se
+encontraba inicialmente. Recuperar la posición relativa también sería
+agradable, de tal forma que la misma línea inicial aparezca al inicio de la
+ventana.
+   Este ejemplo copia la línea actual, la inserta antes de la primera línea en
+el archivo y después restaura la vista original: >
+
+	map ,p ma"aYHmbgg"aP`bzt`a
+
+Esto es lo que hace: >
+	ma"aYHmbgg"aP`bzt`a
+<	ma			pone una marca en la posición actual del
+				cursor
+	  "aY			copia la línea actual al registro a
+	     Hmb		va hasta la primera línea que se ve en la
+				ventana y pone la marca b allí
+		gg		va a la primera línea del archivo
+		  "aP		pega la línea copiada por encima de la línea
+		     `b		vuelve a la línea superior de la vista inicial
+		       zt	ubica dicha línea como la primera de la
+				ventana
+			 `a	vuelve a la posición del cursor almacenada
+				originalmente
+
+
+EMPAQUETAR
+
+Para evitar que los nombres de funciones que defina interfieran con
+otras funciones, use el siguiente esquema:
+- Anteponga una cadena única a cada nombre de función. A menudo uso una
+  abreviatura. Por ejemplo, uso «OV» para las funciones relacionadas con
+  opciones de ventana.
+- Ponga todas las definiciones de sus funciones en un mismo archivo. Cree una
+  variable global para indicar que las funciones ya fueron cargadas. Cuando
+  cargue el archivo de nuevo, elimine antes las definiciones de las funciones.
+Ejemplo: >
+
+	" Este es el paquete XXX
+
+	if exists("XXX_cargado")
+	  delfun XXX_uno
+	  delfun XXX_dos
+	endif
+
+	function XXX_uno(a)
+		... cuerpo de la función ...
+	endfun
+
+	function XXX_dos(b)
+		... cuerpo de la función ...
+	endfun
+
+	let XXX_loaded = 1
+
+==============================================================================
+*41.11*	Escribir extensiones				*write-plugin*
+
+Puede crear un script de Vim de tal forma que lo puedan usar varias
+personas. Esto se llama una extensión. Los usuarios de Vim pueden copiar el
+script en su directorio «plugin/», y utilizarlo en el momento con
+|add-plugin|.
+
+Existen dos tipos de extensiones:
+
+          Extensiones globales: Empleadas con todos los tipos de archivo.
+Extensiones de tipo de archivo: Empleadas con tipos de archivo específicos.
+
+En esta sección se describirán las extensiones globales («global
+plugins»). La mayoría de elementos también son necesarios para escribir
+extensiones de tipo de archivo («filetype plugins»). La sección a
+continuación, |write-filetype-plugin|, detalla las extensiones de tipo de
+archivo.
+
+
+NOMBRE
+
+Primero, debe elegir un nombre para su extensión. El nombre debería mostrar
+las funcionalidades ofrecidas por la extensión. Así mismo, debería ser poco
+probable que alguien escriba una extensión con el mismo nombre pero otras
+funcionalidades. Por último, limite el nombre a ocho caracteres para evitar
+problemas en antiguos sistemas de Windows.
+
+Un script que corrige errores tipográficos se podría llamar
+«correccort.vim». Lo usaremos como ejemplo.
+
+Para que funcione en cualquier sistema, la extensión debería seguir algunas
+normas, las cuales se detallarán paso a paso. La extensión de ejemplo
+completa se encuentra al final de la sección.
+
+
+CUERPO
+
+Vamos a comenzar con el cuerpo de la extensión, las líneas que realmente
+hacen el trabajo: >
+
+ 14	iabbrev csaa casa
+ 15	iabbrev ootr otro
+ 16	iabbrev qeu que
+ 17	iabbrev sicronizacion
+ 18		\ sincronización
+ 19	let s:cuenta = 4
+
+Por supuesto, la lista debería ser mucho más larga.
+
+Los números de línea se han añadido en pro de la claridad. ¡No los incluya
+en su archivo de extensión!
+
+
+CABECERA
+
+Lo más probable es que añada nuevas correcciones a la extensión, y tenga en
+poco tiempo varias versiones de ésta. Cuando distribuya el archivo, la gente
+querrá saber quién escribió esta maravillosa extensión, y dónde pueden
+enviar comentarios. Por ello, incluya un encabezado al principio de su
+extensión: >
+
+  1	" Extensión global de Vim para la corrección de errores
+  2	" Último cambio:	15 de octubre de 2000
+  3	" Desarrollador:	Bram Moolenaar <Bram@vim.org>
+
+Derechos de autor y licencias: Debido a que las extensiones son útiles, y
+que no merece la pena restringir su distribución, considere que su extensión
+sea de dominio público, o use la licencia de Vim (|license|). Una breve nota
+cerca del inicio de la extensión debería servir. Ejemplo: >
+
+  4	" Licencia:	Este fichero pertenece al dominio público.
+
+
+CONTINUACIÓN DE LÍNEA, EVITAR EFECTOS SECUNDARIOS	*use-cpo-save*
+
+En la línea 18 del ejemplo anterior se usa el mecanismo |line-continuation|,
+continuación de línea. Los usuarios que definan 'compatible' pueden
+encontrar problemas con esto, y se les mostraría un mensaje de error. No
+podemos simplemente reiniciar 'compatible' porque tiene muchos efectos
+secundarios. Para evitarlo, definimos la opción 'cpoptions' con el valor
+predeterminado de Vim para restaurarlo más tarde. Esto permite el uso de
+«line-continuation» y que el script funcione en la mayoría de sistemas. Se
+hace de la siguiente forma: >
+
+ 11	let s:save_cpo = &cpo
+ 12	set cpo&vim
+ ..
+ 42	let &cpo = s:save_cpo
+
+Primero almacenamos el valor antiguo de 'cpoptions'  en la variable
+«s:save_cpo». El valor se restaurará al final de la extensión.
+
+Tenga en cuenta que se usa una variable local de script, |s:var|. Puede que
+se esté utilizando una variable global para otra cosa. Use siempre variables
+locales en el script para aquello que se usa sólo en el script.
+
+
+EVITAR LA CARGA DE LA EXTENSIÓN
+
+Es posible que el usuario no desee cargar la extensión en cada momento. O
+que el administrador del sistema lo haya copiado al directorio de
+extensiones del sistema, pero el usuario quiere usar el suyo propio. En ese
+caso, el usuario debe tener la posibilidad de desactivar cargar esta
+extensión en particular. Lo siguiente lo hace posible: >
+
+  6	if exists("g:loaded_correccort")
+  7	  finish
+  8	endif
+  9	let g:loaded_correccort = 1
+
+También evita cargar el script dos veces, lo que provocaría mensajes de
+error al redefinir las funciones, y provocar problemas con las órdenes
+automáticas que se cargan por duplicado.
+
+Se recomienda que el nombre empiece con «loaded_» y, a continuación, el
+nombre literal de la extensión. La «g:» se añade para evitar errores al usar
+la variable en una función (sin la «g:», sería una variable local a la
+función).
+
+Usar «finish» impide que Vim lea el resto del archivo, lo cual es mucho más
+rápido que usar «if-endif» a lo largo del archivo.
+
+
+MACROS
+
+Ahora, vamos a hacer que la extensión sea más interesante: vamos a añadir
+una macro que añade una corrección para la palabra bajo el cursor. Podríamos
+escoger una secuencia de teclas para esta macro, pero puede que el usuario
+la esté usando para otra cosa. Puede usar el elemento <Leader> para permitir
+que el usuario pueda definir las teclas que utiliza la macro de una
+extensión: >
+
+ 22	  map <unique> <Leader>a  <Plug>CorreccortAñadir
+
+El elemento «<Plug>CorreccortAñadir» daría un buen resultado, a continuación
+dispone de más información.
+
+El usuario puede definir la variable «mapleader» con la secuencia de teclas
+con la que desea iniciar esta macro. Por lo tanto, si el usuario define: >
+
+	let mapleader = "_"
+
+la macro se definirá como «_a». En caso contrario se usará el valor
+predeterminado, que es una barra inversa. Por ello, se definiría una macro
+como «\a».
+
+Tenga en cuenta se usa <unique>, lo que provocaría un mensaje de error si la
+macro ya existe.  |:map-<unique>|
+
+Puede usar el siguiente mecanismo para permitir que el usuario defina su
+propia secuencia de teclas si así lo desea: >
+
+ 21	if !hasmapto('<Plug>CorreccortAñadir')
+ 22	  map <unique> <Leader>a  <Plug>CorreccortAñadir
+ 23	endif
+
+Esto comprueba si ya existe una macro para «<Plug>CorrecortAñadir», y sólo
+define la macro de «<Leader>a» si no existe. Así, el usuario tiene la
+posibilidad de insertar esto en su archivo «vimrc»: >
+
+	map ,c  <Plug>CorreccortAñadir
+
+Así, la secuencia de teclas asignada sería «,c» en lugar de «_a» o «\a».
+
+
+SEGMENTOS
+
+Habitualmente querrá dividir un script en segmentos cuando es demasiado
+largo. Para ello, puede usar funciones o macros, pero no desea que estas
+funciones y macros interfieran con los presentes en otros scripts. Por
+ejemplo, podría definir la función «Anadir()» pero otro script podría
+intentar definir la misma función. Para evitar esto, definimos la función
+como local al script anteponiendo a este «s:».
+
+A continuación definimos una función que añade una nueva corrección
+ortográfica: >
+
+ 30	function s:Anadir(desde, correccion)
+ 31	  let a = input("Introduzca la corrección para " . a:desde . ": ")
+ 32	  exe ":iabbrev " . a:desde . " " . a
+ ..
+ 36	endfunction
+
+Ahora invocamos la función «s:Anadir()» desde el mismo script. Si otro
+script también define «s:Anadir()», será local a ese script y solo se
+invocará desde el script en el que se define. También puede existir una
+función global «Anadir()» (sin la «s:»), que es otra función distinta.
+
+Puede usar <SID> en una macro. Genera un identificador de script, que
+identifica al script actual. En nuestra extensión de corrección usaremos
+algo similar a esto: >
+
+ 24	noremap <unique> <script> <Plug>CorreccortAñadir  <SID>Añadir
+ ..
+ 28	noremap <SID>Añadir  :call <SID>Anadir(expand("<cword>"), 1)<CR>
+
+Así, cuando el usuario teclea «\a», se invoca esta secuencia: >
+
+	\a -> <Plug>CorreccortAñadir -> <SID>Añadir -> :call <SID>Anadir()
+
+Si otro script asigna <SID>Añadir a una macro, tendría otro identificador de
+script y por ello definiría otra macro.
+
+Tenga en cuenta que se usó «<SID>Anadir()» en lugar de «s:Anadir()»
+aquí. Eso es porque la macro es tecleada por el usuario, y por ello, se hace
+desde fuera del script. <SID> se expande al identificador del script, de
+forma que Vim sabe en qué script buscar la función «Anadir()».
+
+Es un poco complicado, pero es necesario para que la extensión funcione
+adecuadamente con otras. La norma básica es que debe usar <SID>Anadir() en
+las macros y s:Anadir() en otros sitios (el mismo script, órdenes
+automáticas, órdenes de usuario).
+
+También podemos añadir una entrada de menú para que haga lo mismo que la
+macro: >
+
+ 26	noremenu <script> Plugin.Añadir\ Corrección      <SID>Añadir
+
+Se recomienda el menú «Plugin» para añadir elementos de menú de
+extensiones. En este caso, sólo se usa un elemento. Recomendamos crear un
+menú secundario si añade más elementos. Por ejemplo, podría usar
+«Plugin.CVS» para una extensión que ofrezca operaciones CVS como
+«Plugin.CVS.checkin», «Plugin.CVS.checkout», etc.
+
+Tenga en cuenta que «:noremap» se usa en la línea 28 para evitar problemas
+con otras macros. Puede que alguien haya asignado otra macro a «:call», por
+ejemplo. En la línea 24 también usamos «:noremap», pero queremos reasignar
+«<SID>Añadir». Por ello usamos aquí «<script>». Esto solo permite el uso de
+macros locales al script; para más información consulte |:map-<script>|. Se
+realiza la misma acción en la línea 26 con «:noremenu»; para más información
+consulte  |:menu-<script>|.
+
+
+<SID> Y <Plug>						*using-<Plug>*
+
+<SID> y <Plug> se usan para evitar que las macros de las teclas pulsadas
+interfieran con macros sólo usadas desde otras macros. Note la diferencia
+entre <SID> y <Plug>:
+
+<Plug>	es visible fuera del script. Se usa para macros que el usuario
+	pueda querer ligar a un secuencia de teclas. <Plug> es un código
+	especial que una tecla nunca podrá producir.
+	Para evitar que otras extensiones usen la misma secuencia de
+	caracteres, use la estructura: <Plug> nombre-script nombre-macro
+	En nuestro ejemplo, el nombre del script es «Correccort», y el nombre
+	de la macro es «Añadir».
+	El resultado es «<Plug>CorreccortAñadir». Solo el primer carácter de
+	los nombres es mayúscula, facilitando ver el principio del nombre de
+	la macro.
+
+<SID>	es el identificador (ID) del script, un número único.
+	Internamente, Vim traduce <SID> como «<SNR>123_», donde «123» puede
+	ser cualquier número. Por ello, la función «<SID>Anadir()» tendría el
+	nombre «<SNR>11_Anadir()» en un script, y «<SNR>22_Anadir()» en otro.
+	Puede verlo si usa la orden «:function» para obtener la lista de
+	funciones.
+	La traducción de <SID> en las macros es idéntica, y así puede invocar
+	una función local de un script mediante una macro.
+
+
+ORDEN DE USUARIO
+
+Vamos a añadir una orden de usuario para añadir una corrección: >
+
+ 38	if !exists(":Corregir")
+ 39	  command -nargs=1  Corregir  :call s:Anadir(<q-args>, 0)
+ 40	endif
+
+La orden de usuario se define únicamente si no existe una orden con el mismo
+nombre. En caso contrario, provocaría un error. Sobrescribir la orden de
+usuario existente con «:command!» no es una buena idea, ya que haría que el
+usuario se pregunte porqué no funciona la orden que ha definido. |:command|
+
+
+VARIABLES DE SCRIPT
+
+Cuando una variable comienza con «s:», es una variable de script. Sólo se
+puede usar dentro de un script, y no es visible desde fuera. Esto evita
+problemas al usar el mismo nombre de variable en diferentes scripts. Las
+variables se preservarán durante la ejecución de Vim, y se usan al cargar el
+mismo script otra vez. |s:var|
+
+Lo interesante es que estas variables se pueden usar en funciones, órdenes
+automáticas y órdenes de usuario definidas en el script. En nuestro ejemplo,
+añadimos unas pocas líneas para contar el número de correcciones: >
+
+ 19	let s:cuenta = 4
+ ..
+ 30	function s:Anadir(desde, correccion)
+ ..
+ 34	  let s:cuenta = s:cuenta + 1
+ 35	  echo s:cuenta . " correcciones en este punto"
+ 36	endfunction
+
+Al principio, «s:cuenta» se inicializa en el mismo script con un valor de
+4. Al invocar la función «Anadir()» posteriormente, incrementa la variable
+«s:cuenta». No importa desde dónde se ha invocado la función, ya que está
+definida en el script, y usará las variables locales al script.
+
+
+EL RESULTADO
+
+Aquí tiene el ejemplo completo finalizado: >
+
+  1 " Extensión global de Vim para la corrección de errores
+  2	" Último cambio:	15 de Octubre de 2000
+  3	" Desarrollador:	Bram Moolenaar <Bram@vim.org>
+  5
+  6	if exists("g:loaded_correccort")
+  7	  finish
+  8	endif
+  9	let g:loaded_correccort = 1
+ 10
+ 11	let s:save_cpo = &cpo
+ 12	set cpo&vim
+ 13
+ 14	iabbrev csaa casa
+ 15	iabbrev ootr otro
+ 16	iabbrev qeu que
+ 17	iabbrev sicronizacion
+ 18		\ sincronización
+ 19	let s:cuenta = 4
+ 20
+ 21	if !hasmapto('<Plug>CorreccortAñadir')
+ 22	  map <unique> <Leader>a  <Plug>CorreccortAñadir
+ 23	endif
+ 24	noremap <unique> <script> <Plug>CorreccortAñadir  <SID>Añadir
+ 25
+ 26	noremenu <script> Plugin.Añadir\ Corrección      <SID>Añadir
+ 27
+ 28	noremap <SID>Añadir  :call <SID>Anadir(expand("<cword>"), 1)<CR>
+ 29
+ 30	function s:Anadir(desde, correccion)
+ 31	  let a = input("introduce la corrección de " . a:desde . ": ")
+ 32	  exe ":iabbrev " . a:desde . " " . a
+ 33	  if a:correccion | exe "normal viws\<C-R>\" \b\e" | endif
+ 34	  let s:cuenta = s:cuenta + 1
+ 35	  echo s:cuenta . " correcciones en este punto"
+ 36	endfunction
+ 37
+ 38	if !exists(":Corregir")
+ 39	  command -nargs=1  Corregir  :call s:Anadir(<q-args>, 0)
+ 40	endif
+ 41
+ 42	let &cpo = s:save_cpo
+
+Aún no hemos explicado la línea 33. Aplica la nueva corrección a la palabra
+bajo el cursor. La orden |:normal| se emplea para usar la nueva
+abreviatura. Tenga en cuenta que aquí se expanden las macros y abreviaturas,
+a pesar de que la función se ha invocado desde una macro definida con
+«:noremap».
+
+Se recomienda usar «unix» como valor para la opción 'fileformat'. De esta
+forma, los scripts de Vim funcionarán en cualquier sistema. Los scripts con
+'fileformat' definido como «dos» no funcionarán en Unix. También puede
+consultar |:source_crnl|. Para asegurar que hace lo correcto, haga lo
+siguiente antes de escribir el archivo: >
+
+	:set fileformat=unix
+
+
+DOCUMENTACIÓN   					*write-local-help*
+
+Es una buena idea crear algo de documentación para su extensión, en
+particular si el usuario puede modificar su comportamiento. Para lo
+referente a la instalación de documentación, consulte |add-local-help|.
+
+Aquí tiene un simple ejemplo para un archivo de ayuda de una extensión,
+llamado «typecorr.txt»: >
+
+  1	*correcort.txt*	Una extensión para corregir errores ortográficos
+  2
+  3	Esta extensión corrige automáticamente cualquier error ortográfico
+  4	que pueda escribir.
+  5
+  6	Solo hay unas pocas correcciones. Puede añadir las suyas.
+  7
+  8	Macros:
+  9	<Leader>a   o   <Plug>CorreccortAñadir
+ 10		Añade una corrección para la palabra bajo el cursor.
+ 11
+ 12	Órdenes:
+ 13	:Corregir {palabra}
+ 14		Añade una corrección para {palabra}.
+ 15
+ 16							*correcort-opciones*
+ 17	Esta extensión no tiene opciones de configuración.
+
+En realidad, la primera línea es la única en la que el formato importa. Se
+extraerá del archivo de ayuda para su ubicación en la sección «LOCAL
+ADDITIONS:» de help.txt |local-additions|. El primer asterisco debe estar en
+la primera columna de la primera línea. Ejecute «:help» después de añadir su
+archivo de ayuda y compruebe que las entradas están alineadas adecuadamente.
+
+Puede añadir más etiquetas entre asteriscos ** en su archivo de ayuda, pero
+tenga la precaución de no usar etiquetas de ayuda existentes. Probablemente
+use el nombre de su extensión en la mayoría de etiquetas, como
+«correccort-opciones» en el ejemplo.
+
+Se recomienda utilizar referencias a otras partes de archivos de ayuda
+mediante barras, ||. Esto facilita que el usuario encuentre ayuda
+relacionada.
+
+
+EXTENSIÓN DE TIPO DE ARCHIVO			*plugin-filetype*
+
+Si Vim no detecta su tipo de archivo, debería crear un fragmento de código
+de detección de tipo de archivo en un archivo separado. Habitualmente, tiene
+la forma de una orden automática que define el tipo de archivo cuando su
+nombre concuerda con un patrón. Ejemplo: >
+
+	au BufNewFile,BufRead *.foo			set filetype=foofoo
+
+Escriba este archivo de una sola línea como «ftdetect/foofoo.vim» en el
+primer directorio que aparece en su 'runtimepath'. En Unix, sería
+«~/.vim/ftdetect/foofoo.vim». La convención es nombrar el script como el
+nombre del tipo de archivo.
+
+Si lo desea, puede hacer comprobaciones más complejas como inspeccionar los
+contenidos de un archivo para reconocer el tipo del mismo. Consulte también
+|new-filetype|.
+
+
+RESUMEN							*plugin-special*
+
+Resumen de los elementos especiales a utilizar en una extensión:
+
+s:nombre		Variables locales al script.
+
+<SID>			El identificador del script (Script-ID), utilizado en
+			macros y funciones locales al script.
+
+hasmapto()		Una función que comprueba si el usuario ya ha definido
+			una macro para la funcionalidad que el script ofrece.
+
+<Leader>		El valor de «mapleader», que el usuario define como
+			las teclas con las que iniciar las macros de
+			extensiones.
+
+::map <unique>		Emite un aviso si la macro ya existe.
+
+:noremap <script>	Sólo usa macros locales al script, no macros globales.
+
+exists(":Orden")	Comprueba la existencia de una orden de usuario.
+
+==============================================================================
+					*write-filetype-plugin* *ftplugin*
+*41.12*	Escribir extensiones de tipo de archivo
+
+Una extensión de tipo de archivo («filetype plugin») es como una extensión
+global, a diferencia de que define opciones y macros que solo afectan al
+búfer local. Para saber más acerca del uso de este tipo de extensión,
+consulte  |add-filetype-plugin|.
+
+En primer lugar, consulte la sección anterior sobre extensiones globales,
+|41.11|. Todo lo detallado ahí también afecta a las extensiones de tipo de
+archivo. Hay algunos elementos adicionales, que se explican aquí. Lo
+esencial es que una extensión de tipo de archivo sólo debe tener efecto en
+el búfer actual.
+
+
+DESACTIVAR
+
+Si esta escribiendo una extensión de tipo de archivo que mucha gente usará,
+necesitarán la capacidad de desactivar su carga. Inserte lo siguiente al
+principio de la extensión: >
+
+	" Solo hace esto cuando aún no ha finalizado con este búfer
+	if exists("b:did_ftplugin")
+	  finish
+	endif
+	let b:did_ftplugin = 1
+
+Esto también sirve para evitar la ejecución de la misma extensión por
+duplicado en el mismo búfer (ocurre al usar la orden «:edit» sin
+argumentos).
+
+Usando este mecanismo, los usuarios pueden evitar cargar la extensión
+predeterminada si así lo desean, creando una extensión de tipo de archivo
+con sólo esta línea: >
+
+	let b:did_ftplugin = 1
+
+Esto requiere que el directorio de extensiones de tipo de archivo aparezca
+antes de $VIMRUNTIME en 'runtimepath'.
+
+Si desea usar la extensión predeterminada, pero cambiar la configuración de
+alguna de sus opciones, puede escribir un valor diferente para ellas en un
+script: >
+
+	setlocal textwidth=70
+
+Escriba esto en el directorio «after», para que se lea después de la
+extensión de tipo de archivo predeterminado distribuido, «vim.vim»
+|after-directory|.  En sistemas Unix, sería
+«~/.vim/after/ftplugin/vim.vim». Tenga en cuenta que la extensión
+predeterminada habrá definido «b:did_ftplugin», pero aquí se ignora.
+
+
+OPCIONES
+
+Para asegurar que la extensión de tipo de archivo solo afecta al búfer
+actual, use la orden >
+
+	:setlocal
+
+para definir opciones, y sólo defina opciones locales al búfer (consulte la
+ayuda para la opción que comprueba esto). Al usar |:setlocal| con opciones
+globales u opciones locales para una ventana, el valor cambiará para muchos
+búfers, y una extensión de tipo de archivo no debería hacer esto.
+
+Cuando una opción tiene un valor que es una lista de opciones o elementos,
+considere usar «+=» y «-=» para conservar el valor existente. Sea consciente
+de que puede que el usuario ya haya cambiado el valor de una opción. Es una
+buena idea restablecer el valor original y después cambiarlo. Ejemplo: >
+
+	:setlocal formatoptions& formatoptions+=ro
+
+
+MACROS
+
+Para asegurar que las macros sólo funcionen en el búfer local use la orden >
+
+	:map <buffer>
+
+Se debe usar en combinación con la macro compuesta de dos pasos explicada
+anteriormente. A continuación una definición de ejemplo para una
+funcionalidad en una extensión de tipo de archivo: >
+
+	if !hasmapto('<Plug>JavaImport')
+	  map <buffer> <unique> <LocalLeader>i <Plug>JavaImport
+	endif
+	noremap <buffer> <unique> <Plug>JavaImport oimport ""<Left><Esc>
+
+|hasmapto()| sirve para comprobar si el usuario ya ha definido una macro
+para «<Plug>JavaImport». Si no ha sido definida, la extensión de tipo de
+archivo define la macro actual. Esta empieza con |<LocalLeader>|, que
+permite al usuario seleccionar una o mas teclas con las que iniciar las
+macros de la extensión de tipo de archivo. El valor predeterminado es una
+barra inversa, «\». «<unique>» sirve para emitir un mensaje de error si la
+macro ya existe o entra en conflicto con otra. |:noremap| sirve para evitar
+que las macros definidas por el usuario interfieran. Puede que desee usar
+«:noremap <script>» para permitir redefinir macros en el script que comienza
+con <SID>.
+
+Tiene que ofrecer al usuario la opción de desactivar macros en una extensión
+de tipo de archivo, sin desactivar el resto. Aquí tiene un ejemplo de como
+hacerlo con una extensión para el tipo de archivo mail: >
+
+	" Añade macros, a menos que el usuario defina lo contrario.
+	if !exists("no_plugin_maps") && !exists("no_mail_maps")
+	  " Cita el texto insertando «> »
+	  if !hasmapto('<Plug>MailQuote')
+	    vmap <buffer> <LocalLeader>q <Plug>MailQuote
+	    nmap <buffer> <LocalLeader>q <Plug>MailQuote
+	  endif
+	  vnoremap <buffer> <Plug>MailQuote :s/^/> /<CR>
+	  nnoremap <buffer> <Plug>MailQuote :.,$s/^/> /<CR>
+	endif
+
+Se utilizan dos variables globales:
+no_plugin_maps		desactiva las macros de todas las extensiones de tipo
+			de archivo
+no_mail_maps		desactiva las macros para un tipo de archivo
+			particular
+
+
+ÓRDENES DE USUARIO
+
+El argumento «-buffer» de |:command| permite añadir una orden de usuario
+para un tipo de archivo específico y que solo afecta al búfer
+local. Ejemplo: >
+
+	:command -buffer  Make  make %:r.s
+
+
+VARIABLES
+
+Las extensiones de tipo de archivo serán cargadas en cada búfer del tipo
+correspondiente. Las variables de script locales |s:var| se compartirán
+entre las diferentes llamadas a una misma extensión (o script en general.)
+Use las variables locales al búfer |b:var| si desea usar una variable local
+a un búfer.
+
+
+FUNCIONES
+
+Cada función necesita ser definida una sola vez. Pero la extensión de tipo
+de archivo se cargará cada vez que se abra un archivo del tipo
+correspondiente. Esta estructura asegura que la función se defina una sola
+vez: >
+
+	:if !exists("*s:Func")
+	:  function s:Func(arg)
+	:    ...
+	:  endfunction
+	:endif
+<
+
+DESHACER 					*undo_ftplugin*
+
+Cuando el usuario hace «:setfiletype xyz», el efecto del tipo de archivo
+anterior debería desaparecer. Defina la variable «b:undo_ftplugin» con las
+órdenes que deshacen los cambios de configuración de su extensión de tipo de
+archivo.  Ejemplo: >
+
+	let b:undo_ftplugin = "setlocal fo< com< tw< commentstring<"
+		\ . "| unlet b:match_ignorecase b:match_words b:match_skip"
+
+Usar «:setlocal» con «<» después del nombre de la opción restablece la
+opción a su valor global. Habitualmente, es la mejor forma de restablecer el
+valor de una opción.
+
+Esto requiere eliminar la opción «C» de 'cpoptions' para permitir la
+continuación de la línea, como se mencionó anteriormente |use-cpo-save|.
+
+
+NOMBRE DE ARCHIVO
+
+El nombre del archivo debe incluir el tipo de archivo |ftplugin-name|. Puede
+usar una de las tres formas a continuación:
+
+	.../ftplugin/algo.vim
+	.../ftplugin/algo_foo.vim
+	.../ftplugin/algo/bar.vim
+
+«algo» es el tipo de archivo, «foo» y «bar» son nombres aleatorios.
+
+
+RESUMEN							*ftplugin-special*
+
+Un resumen de los aspectos a considerar cuando escriba una extensión de tipo
+de archivo:
+
+<LocalLeader>		El valor de «maplocalleader», que el usuario define
+			como la tecla que inicia las macros de extensión de
+			tipo de archivo.
+
+:map <buffer>		Define una macro local al búfer.
+
+:noremap <script>	Sólo modifica macros definidas en el script que
+			comienzan con <SID>.
+
+:setlocal		Define una opción para el búfer actual.
+
+:command -buffer	Define una orden de usuario local al búfer.
+
+exists("*s:Funcion")	Comprueba si una función ya se ha definido
+			anteriormente.
+
+Consulte también |plugin-special|, las cosas especiales utilizadas por todas
+las extensiones.
+
+==============================================================================
+*41.13*	Escribir extensiones para compiladores	*write-compiler-plugin*
+
+Una extensión de compilador define opciones a usar con un compilador
+específico. El usuario puede cargarlo con la orden |:compiler|. El uso
+principal es definir las opciones 'errorformat' y 'makeprg'.
+
+Lo más sencillo es ver unos ejemplos. Esta orden editará todas las
+extensiones de compilador predeterminadas: >
+
+	:next $VIMRUNTIME/compiler/*.vim
+
+Use |:next| para ir al siguiente archivo de extensión.
+
+Hay dos aspectos a tener en cuenta con estas extensiones. En primer lugar,
+deben contar con un mecanismo que permita al usuario anular o añadir cambios
+a la extensión. Las extensiones predeterminadas comienzan con: >
+
+	:if exists("current_compiler")
+	:  finish
+	:endif
+	:let current_compiler = "mine"
+
+Cuando escribe un archivo de compilador, y lo ubica en su directorio de
+ejecución personal (esto es, «~/.vim/compiler» en sistemas Unix), debe definir
+la variable «current_compiler» para que la extensión de compilador
+predeterminada evite hacer cambios en la configuración.
+							*:CompilerSet*
+El segundo mecanismo es usar «:set» con «:compiler!», y «:setlocal» con
+«:compiler». Para ello, Vim define la orden de usuario «:CompilerSet». Por
+otra parte, las versiones anteriores de Vim no cuentan de ella, y por ello su
+extensión debe definirlo. Aquí tiene un ejemplo: >
+
+  if exists(":CompilerSet") != 2
+    command -nargs=* CompilerSet setlocal <args>
+  endif
+  CompilerSet errorformat&		" usa 'errorformat' predeterminado
+  CompilerSet makeprg=nmake
+
+Use el mecanismo mostrado aquí cuando escriba una extensión de compilador
+para la distribución Vim o para un directorio de tiempo de ejecución del
+sistema. No se hará nada si «current_compiler» ya está definido por una
+extensión de usuario.
+
+Cuando escribe una extensión de compilador para cambiar las opciones
+definidas por una extensión predeterminada, evite comprobar
+«current_compiler». Esta extensión se debería cargar al final, y por ello
+debería estar en un directorio al final de 'runtimepath'. En sistemas Unix,
+podría ser «~/.vim/after/compiler».
+
+==============================================================================
+*41.14*	Escribir extensiones que carguen rápidamente  *write-plugin-quickload*
+
+Puede que una extensión crezca, y que sea demasiado larga. Puede que el
+tiempo de carga empiece a hacerse notorio, y además, que usted apenas use la
+extensión. En este caso, hay que usar una extensión de carga rápida
+(«quickload»).
+
+La idea principal es que la extensión se carga dos veces. La primera vez, se
+definen las órdenes de usuario y macros que ofrecen la funcionalidad de la
+extensión. La segunda vez, se definen las funciones que implementan tales
+funcionalidades.
+
+Puede que sorprenda que «carga rápida» signifique cargar una extensión dos
+veces.  Lo que queremos decir es que se carga rápidamente la primera,
+demorando la carga de la mayoría de la extensión a la segunda vez, lo que
+sólo ocurre cuando realmente la usa. ¡Si usa siempre la funcionalidad que
+provee la extensión, no obtendrá ninguna ventaja!
+
+Tenga en cuenta que hay una alternativa a partir de la versión 7 de Vim: use
+la funcionalidad |autoload|, |41.15|.
+
+Los siguientes ejemplos muestran como se hace: >
+
+	" Extensión global de Vim para mostrar la carga rápida
+	" Último cambio:	2005 Feb 25
+	" Desarrollador:	Bram Moolenaar <Bram@vim.org>
+	" Licencia:	Este archivo se encuentra en el dominio público
+
+	if !exists("s:did_load")
+		command -nargs=* BNRead  call BufNetRead(<f-args>)
+		map <F19> :call BufNetWrite('algo')<CR>
+
+		let s:did_load = 1
+		exe 'au FuncUndefined BufNet* source ' . expand('<sfile>')
+		finish
+	endif
+
+	function BufNetRead(...)
+		echo 'BufNetRead(' . string(a:000) . ')'
+		" Funcionalidad de lectura aquí
+	endfunction
+
+	function BufNetWrite(...)
+		echo 'BufNetWrite(' . string(a:000) . ')'
+		" Funcionalidad de escritura aquí
+	endfunction
+
+Cuando el script se carga por primera vez, «s:did_load» no está definida, y
+se ejecutan las órdenes entre «if» y «endif». Se termina con una orden
+|:finish|, impidiendo ejecutar el resto del script.
+
+La segunda vez que se carga, «s:did_load» existe y se ejecutan las órdenes
+después de «endif». Esto define las (posiblemente largas) funciones
+BufNetRead() y BufNetWrite().
+
+Si ubica este script en su directorio «plugin», Vim lo ejecutará al
+inicio. A continuación la secuencia de los eventos:
+
+1. Se define la orden «BNRead» y la tecla <F19> se asigna a una macro al cargar
+el script al inicio. Se define una orden automática |FuncUndefined|. La orden
+  «:finish» hace que el script finalice antes.
+
+2. El usuario introduce la orden «BNRead» o pulsa la tecla <F19>. Se
+  invoca la función «BufNetRead()» o «BufNetWrite()».
+
+3. Vim no puede encontrar la función y ejecuta la orden automática
+  |FuncUndefined|. Ya que el patrón «BufNet*» coincide con la función invocada,
+  se ejecutará la orden «source nombre-archivo». «nombre-archivo» debe ser
+  igual al nombre del script, sin importar su ubicación, ya que procede de
+  expandir «<sfile>» (consulte |expand()|).
+
+4. El script se carga otra vez, la variable «s:did_load» existe, y se
+   definen las funciones.
+
+Tenga en cuenta que las funciones se cargan después de comparar el patrón en
+la orden automática |FuncUndefined|. Debe comprobar que ninguna otra
+extensión define funciones que coincidan con este patrón.
+
+==============================================================================
+*41.15*	Crear bibliotecas				*write-library-script*
+
+Algunas funcionalidades son necesarias en varios lugares. Cuando se trata de
+algo más que unos pocas líneas, querrá ubicarlo en un script, y usarlo desde
+varios otros. Vamos a denominar ese script como biblioteca.
+
+Cargar una biblioteca manualmente es posible, siempre que evite cargarla
+cuando ya lo está. Puede evitarlo con la función |exists()|. Ejemplo: >
+
+	if !exists('*MiFuncionBiblioteca')
+	   runtime library/biblioteca.vim
+	endif
+	call MiFuncionBiblioteca(arg)
+
+Aquí tiene que saber que MiFunciónBiblioteca() se define en el script
+«library/biblioteca.vim», en uno de los directorios de 'runtimepath'.
+
+Para hacer esto más sencillo, Vim ofrece el mecanismo «autoload» (carga
+automática). Así, el ejemplo tendría este aspecto: >
+
+	call mibiblioteca#mifuncion(arg)
+
+Mucho más sencillo, ¿verdad? Vim reconoce el nombre de la función y, cuando
+no esté definida, la buscará el script «autoload/mibiblioteca.vim» en
+'runtimepath'. El script debe definir la función «mibiblioteca#mifuncion()».
+
+Puede almacenar varias funciones en el script mibiblioteca.vim, y puede
+organizar como desee las funciones en sus bibliotecas. Pero debe usar
+nombres de funciones en las que la parte que precede a «#» coincide con el
+nombre del script. En caso contrario, Vim no sabrá qué script cargar.
+
+Si esto le entusiasma, y escribe muchas bibliotecas, puede que quiera usar
+subdirectorios. Ejemplo: >
+
+	call netlib#ftp#read('somefile')
+
+En sistemas Unix, la biblioteca a usar podría ser:
+
+	~/.vim/autoload/netlib/ftp.vim
+
+Donde se define la función así: >
+
+	function netlib#ftp#read(nombre_archivo)
+		"  Lee al archivo mediante FTP
+	endfunction
+
+Tenga en cuenta que el nombre con el que se define la función es idéntico al
+utilizado para invocar la función. Y la parte a continuación del último «#»
+coincide con el subdirectorio y el nombre del script.
+
+Puede utilizar el mismo mecanismo con variables: >
+
+	let dias_semana = colombia#dias_semana
+
+Esto cargará el script «autoload/colombia.vim», que contendría algo similar
+a lo siguiente: >
+
+	let colombia#dias_semana = ['lunes', 'martes', 'miércoles', 'jueves',
+		\ 'viernes', 'sábado', 'domingo']
+
+Lecturas adicionales: |autoload|.
+
+==============================================================================
+*41.16*	Distribuir scripts de Vim			*distribute-script*
+
+Los usuarios de Vim buscarán scripts en el sitio web de Vim:
+http://www.vim.org. Si ha creado algo útil para otros, ¡compártalo!
+
+Los scripts de Vim se pueden usar en cualquier sistema. Las órdenes tar o
+gzip pueden no estar disponibles en dichos sistemas. Si desea empaquetar o
+comprimir los archivos, se recomienda usar la herramienta «zip».
+
+Para obtener la máxima portabilidad use Vim para empaquetar los
+scripts. Puede hacer esto con la herramienta Vimball. Consulte |vimball|.
+
+Es una buena idea añadir una línea para pemitir la actualización
+automática. Consulte |glvs-plugins|.
+
+==============================================================================
+
+Capítulo siguiente: |usr_42.esx| Añadir menús nuevos
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Javier Rojas
+
+Proyecto: |vim-doc-es|
+

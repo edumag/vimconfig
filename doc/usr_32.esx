@@ -1,0 +1,194 @@
+*usr_32.esx*	Para Vim versión 7.3.  Último cambio: 20/6/2010
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+ 			  El árbol de deshacer
+
+
+Vim ofrece varios niveles de deshacer. Si deshace unos cuantos cambios y
+después realiza uno nuevo, creará una rama en el árbol de deshacer. El texto
+a continuación trata acerca de desplazarse por las ramas.
+
+|32.1|	Volver a un punto de edición anterior
+|32.2|	Numerar los cambios
+|32.3|	Desplazarse en el árbol
+|32.4|	Viajar en el tiempo
+
+ Capítulo siguiente: |usr_40.esx|  Crear órdenes nuevas
+  Capítulo anterior: |usr_31.esx|  Aprovechar la interfaz gráfica
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*32.1*	Volver a un punto de edición anterior
+
+A veces realiza una serie de cambios, y se da cuenta que desea volver al
+punto en el que editó el archivo por última vez. Puede hacer esto con la
+siguiente orden: >
+
+	:earlier 1f
+
+La «f» significa «file» (archivo).
+
+Puede repetir esta orden para retroceder aun más. O usar un número diferente
+de 1 para retroceder más rápido.
+
+Si retrocede demasiado, puede ir hacia delante con: >
+
+	:later 1f
+
+Tenga en cuenta que estas órdenes funcionan secuencialmente. Importa si
+realiza cambios después de deshacer otros. Se explica en la siguiente
+sección.
+
+Tenga también en cuenta que nos referimos a ediciones de texto. Para
+escribir la información de deshacer de en un archivo, consulte
+|undo-persistence|.
+
+==============================================================================
+*32.2*	Numerar los cambios
+
+En la sección |02.5| sólo tratamos una línea temporal de deshacer o
+rehacer. Pero también es posible crear una nueva «rama». Ocurre cuando
+deshace algunos cambios y después realiza un nuevo cambio. Los cambios
+nuevos se convierten en una rama del árbol de deshacer.
+
+Empecemos con el texto «one». El primer cambio es añadir «too». Después, ir
+a la primera «o» y cambiarla a «w». Tenemos ahora dos cambios, 1 y 2, y tres
+estados del texto:
+
+		one ~
+		 |
+	      change 1
+		 |
+	      one too ~
+		 |
+	      change 2
+		 |
+	      one two ~
+
+Si ahora deshacemos un cambio, volvemos a «one too» y cambiamos «one» a
+«me», creamos una rama en el árbol de deshacer:
+
+		one ~
+		 |
+	      change 1
+		 |
+	      one too ~
+	      /     \
+	 change 2  change 3
+	    |	      |
+	 one two    me too ~
+
+Ahora puede usar la orden |u| para deshacer. Si lo hace dos veces, obtendrá
+«one». Use |CTRL-R| para rehacer, y obtendrá «one too».  Pulsar |CTRL-R| una
+vez más le lleva a  «me too». Esto es, deshacer y rehacer suben y bajan un
+árbol usando la rama usada por última vez.
+
+Lo que importa es el orden de las cambios. Deshacer y rehacer no se
+consideran cambios en este contexto. Tras cada cambio tiene un nuevo estado
+del texto.
+
+Tenga en cuenta que sólo se enumeran los cambios, y el texto que aparece en
+el árbol anterior no tiene identificador. Se hace referencia a ellos según
+el número del cambio por encima suyo. Pero, a veces, según el número por
+debajo de él, particularmente al subir el árbol, para así saber qué cambio
+se ha deshecho recientemente.
+
+==============================================================================
+*32.3*	Desplazarse en el árbol
+
+¿Cómo podemos obtener «one two» ahora? Puede usar esta orden: >
+
+	:undo 2
+
+Ahora, el texto es «one two», y está bajo el cambio 2. Puede usar la orden
+|:undo| para saltar a cualquier cambio dentro del árbol.
+
+Ahora haga otro cambio: cambie «one» a «not»:
+
+		one ~
+		 |
+	      change 1
+		 |
+	      one too ~
+	      /     \
+	 change 2  change 3
+	    |	      |
+	 one two    me too ~
+	    |
+	 change 4
+	    |
+	 not two ~
+
+Ahora cambia de idea, y desea volver a «me too». Use la orden |g-|. Esto
+vuelve a un momento anterior. No se desplaza por el árbol en una dirección u
+otra, sino que vuelve al último cambio realizado. 
+
+Puede repetir |g-| y ver como cambia el texto:
+	me too ~
+	one two ~
+	one too ~
+	one ~
+
+Use |g+| para ir hacia delante en el tiempo:
+	one ~
+	one too ~
+	one two ~
+	me too ~
+	not two ~
+
+Usar |:undo| es útil si sabe a qué cambio quiere pasar. |g-| y |g+| son
+útiles si no sabe exactamente el número del cambio.
+
+Puede introducir un número antes de |g-| y |g+| para repetirlos.
+
+==============================================================================
+*32.4*	Viajar en el tiempo
+
+Cuando ha estado trabajando en el texto durante un rato el árbol crece hasta
+ser bastante grande. Así, puede que desee volver a como era el texto hace
+unos minutos.
+
+Use la siguiente orden para ver las ramas en el árbol de deshacer: >
+
+	:undolist
+<	número cambios  hora ~
+	     3       2  hace 16 segundos
+	     4       3  hace 5 segundos
+
+Aquí puede ver el número de hojas en cada rama el momento en que se realizó
+el cambio. Suponiendo que estamos bajo el nivel 4, en «not two», puede
+retroceder 10 segundos con la siguiente orden:
+
+	:earlier 10s
+
+Dependiendo del tiempo que le tomó realizar los cambios, acabará en una
+posición determinada del árbol. El argumento de la orden |:earlier| puede
+ser «m», de minutos, «h» de horas y «d» de días. Para volver al principio
+use un número grande: >
+
+	:earlier 100d
+
+Para viajar hacia adelante en el tiempo use la orden |:later|: >
+
+	:later 1m
+
+Los argumentos son «s», «m» y «h», al igual que con |:earlier|.
+
+Si desea más detalles, o manipular la información, puede usar la función
+|undotree()|. Para ver qué devuelve: >
+
+	:echo undotree()
+
+==============================================================================
+
+Capítulo siguiente: |usr_40.esx| Crear órdenes nuevas
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Javier Rojas
+
+Proyecto: |vim-doc-es|
+

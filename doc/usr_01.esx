@@ -1,0 +1,200 @@
+*usr_01.esx*	Para Vim versión 7.3.  Último cambio: 7/6/2008
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+			    Acerca de los manuales
+
+
+Este capítulo le introduce a los manuales disponibles con Vim. Lea esto para
+conocer las condiciones bajo las cuales se explican las órdenes.
+
+|01.1|	Dos manuales
+|01.2|	Vim instalado
+|01.3|	Usar el tutor de Vim
+|01.4|	Copyright
+
+ Capítulo siguiente: |usr_02.esx|  Primeros pasos en Vim
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*01.1*	Dos manuales
+
+La documentación de Vim consiste de dos partes:
+
+1. El manual de usuario
+   Explicaciones orientadas a tareas, de las simples a las más complejas.
+   Se puede leer de principio a fin, como un libro.
+
+2. El manual de referencia
+   Una precisa descripción del funcionamiento de cada elemento dentro
+   de Vim.
+
+La notación usada en estos manuales se explica aqui: |notation|
+
+
+SALTAR DE UN PUNTO A OTRO
+
+El texto contiene hiperenlaces entre las dos partes, lo cual le permite
+saltar rápidamente de la descripción de una tarea de edición a una precisa
+explicación de las órdenes y opciones que se emplean. Use estas dos órdenes:
+
+	Pulse «CTRL-]» para saltar al tema bajo el cursor.
+	Pulse «CTRL-O» para saltar atrás (repita para volver más allá de ese
+	punto).
+
+Hay varios enlaces entre barras verticales, como este: |bars|. También puede
+usar como enlace un nombre de opción, como 'number', una orden
+entrecomillada, como «:write», o cualquier otra palabra. Pruebelo: mueva el
+cursor a «CTRL-]» y pulse «CTRL-]» sobre él.
+
+Puede encontrar otros temas con la orden «:help», consulte |help.esx|.
+
+==============================================================================
+*01.2*	Vim instalado
+
+La mayoría de los manuales suponen que Vim está apropiadamente instalado. Si
+aún no lo hizo, o si Vim no se ejecuta adecuadamente (p. ej., no puede
+encontrar ciertos archivos, o los menús de la interfaz gráfica de usuario
+no aparecen), consulte primero el capítulo relativo a la instalación
+|usr_90.txt|.
+							*not-compatible*
+A menudo, los manuales suponen que ejecuta Vim sin compatibilidad con Vi.
+Esto carece de importancia para la mayoría de las órdenes, pero a veces sí
+importa. Por ejemplo, para deshacer a varios niveles («multi-level undo»).
+Una sencilla manera de estar seguro de que está usando una buena
+configuración es copiar el archivo de ejemplo de «vimrc». Al hacer esto
+desde Vim, no tiene que revisar su ubicación. Como hacer esto depende del
+sistema que usa:
+
+Unix: >
+	:!cp -i $VIMRUNTIME/vimrc_example.vim ~/.vimrc
+MS-DOS, MS-Windows, OS/2: >
+	:!copy $VIMRUNTIME/vimrc_example.vim $VIM/_vimrc
+Amiga: >
+	:!copy $VIMRUNTIME/vimrc_example.vim $VIM/.vimrc
+
+Si el archivo ya existe, probablemente desee guardarlo.
+
+Si inicia ahora Vim, la opción 'compatible' debería estar desactivada. Puede
+asegurarse con esta orden: >
+
+	:set compatible?
+
+Si devuelve "nocompatible", es que todo va bien. Si la respuesta es
+«compatible», tiene un problema. Tendrá que encontrar porqué esta opción
+está aún definida. Puede que no se encontrase el archivo que copió antes.
+Use esta orden para ver el problema: >
+
+	:scriptnames
+
+Si su archivo no se encuentra en la lista, revise su nombre y ubicación. Si
+está en la lista, debe haber algún otro sitio en el que se reactiva la
+opción 'compatible'.
+
+Para más información, consulte |vimrc| y |compatible-default|.
+
+	Nota:
+	Este manual trata acerca del uso de Vim de la manera normal. Existe una
+	alternativa llamada «evim» (easy Vim). Sigue siendo Vim, pero se usa de
+	una manera parecida a un editor como Notepad. Permanece siempre
+	en el modo Insertar, y por ello parece muy distinto. No se explica
+	en el manual de usuario, ya que es bastante sencillo.
+	Véase |evim-keys| para más detalles.
+
+==============================================================================
+*01.3*	Usar el tutor de Vim				*tutor* *vimtutor*
+
+En lugar de leer el texto (¡aburre!), puede usar vimtutor para aprender sus
+primeras órdenes con Vim. Éste es un tutorial de treinta minutos que enseña
+las funcionalidades básicas de Vim a través de la práctica.
+
+En Unix, si Vim se instaló adecuadamente, puede iniciar Vim desde la
+consola:
+>
+	vimtutor
+
+En MS-Windows, lo encontrará en el menú Programas/Vim. O puede ejecutar
+«vimtutor.bat» en el directorio $VIMRUNTIME.
+
+Esto crea una copia del archivo del tutor, para que así pueda editarlo sin
+peligro de dañar el original.
+   Existen unas cuantas versiones traducidas del tutor. Para ver si el suyo
+está disponible, use el código de idioma de dos letras. Para el francés: >
+
+	vimtutor fr
+
+Si prefiere usar la versión de interfaz gráfica de usuario de Vim, use
+«gvimtutor» o «vimtutor -g» en lugar de «vimtutor».
+
+En sistemas OpenVMS, si Vim está adecuadamente instalado, puede iniciar
+vimtutor desde una consola con: >
+
+	@VIM:vimtutor
+
+Tiene la opción de añadir el código de idioma de dos letras tal y se vio
+anteriormente.
+
+
+En otros sistema, tendrá que realizar un poco de trabajo:
+
+1. Copie el archivo del tutor. Puede hacer esto con Vim (sabe donde
+encontrarlo):
+>
+	vim -u NONE -c 'e $VIMRUNTIME/tutor/tutor' -c 'w! TUTORCOPY' -c 'q'
+<
+   Esto copia el archivo «TUTORCOPY» al directorio actual.  Para usar una
+versión traducida del tutor, afije el código de idioma al nombre del
+archivo. Para francés:
+>
+	vim -u NONE -c 'e $VIMRUNTIME/tutor/tutor.fr' -c 'w! TUTORCOPY' -c 'q'
+<
+2. Edite la copia del archivo con Vim:
+>
+	vim -u NONE -c "set nocp" TUTORCOPY
+<
+   Los argumentos extra se aseguran de que Vim se inicie adecuadamente:
+
+3. Borrar el archivo copiado cuando haya acabado con él:
+>
+	del TUTORCOPY
+==============================================================================
+*01.4*	Copyright					*manual-copyright*
+
+El manual de usuario y el manual de referencia están bajo el Copyright (c)
+1988-2003 por Bram Moolenaar. Este material se distribuirá sólo bajo estos
+términos de licencia y condiciones expuestas en la Open Publication License,
+versión 1.0 o posterior. La versión más actual está ahora disponible en:
+	     http://www.opencontent.org/openpub/
+
+Las personas que contribuyan al manual también tienen que aceptar el
+copyright expuesto anteriormente.
+							*frombook*
+Hay partes del manual de usuario que proceden del libro «Vi IMproved - Vim»,
+por Steve Oualline (publicado por New Riders Publishing, ISBN: 0735710015).
+La Open Publication License también cubre a este libro.
+Sólo se incluyen partes seleccionadas, y estas se han modificado (p. ej. se
+eliminaron las fotos, se actualizó el texto para Vim 6.0 y posteriores,
+corrección de errata). La omisión de la etiqueta |frombook| no significa
+que el texto no proceda del libro.
+
+¡Muchas gracias a Steve Oualline y a New Riders por crear este libro, y
+publicarlo bajo la licencia OPL! Ha servido de gran ayuda a la hora de
+escribir este manual. No sólo por el texto literal, sino también al definir
+el tono y estilo.
+
+Si obtiene beneficios mediante la venta de los manuales, le animamos a que
+done parte de los beneficios para ayudar a las victimas del SIDA en Uganda.
+Véase |iccf|.
+
+==============================================================================
+
+Capítulo siguiente: |usr_02.esx| Primeros pasos en Vim
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Omar Campagne Polaino
+
+Proyecto: |vim-doc-es|
+

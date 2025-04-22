@@ -1,0 +1,530 @@
+*usr_21.esx*	Para Vim version 7.3.  Último cambio: 9/11/2008
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+			  Abandonar el editor y volver
+
+
+Esta capítulo versa acerca del uso combinado de otros programas con Vim,
+bien ejecutando el programa desde Vim o bien cerrándolo para volver más
+tarde.  Más aún, esto explica las maneras de recordar el estado de Vim para
+restaurarlo más tarde.
+
+|21.1|	Suspender y continuar
+|21.2|	Ejecutar órdenes de consola
+|21.3|	Recordar información; viminfo
+|21.4|	Sesiones
+|21.5|	Vistas
+|21.6|	«Modelines»
+
+ Capítulo siguiente: |usr_22.esx|  Encontrar el archivo a editar
+  Capítulo anterior: |usr_20.esx|  Teclear con rapidez órdenes de consola
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*21.1*	Suspender y continuar
+
+Al igual que la mayoría de programas Unix, puede suspender Vim pulsando
+CTRL-Z. Esto cierra Vim y le devuelve a la consola desde la cual se
+inicio. Puede entonces ejecutar cualquier número de órdenes hasta que se
+aburra. Una vez que haya acabado, vuelva a Vim con la orden «fg».
+
+	CTRL-Z
+	{cualquier secuencia de órdenes de consola}
+	fg
+
+Ahora está en el punto en que abandonó Vim, nada ha cambiado.
+   En caso de que CTRL-Z no funcione, puede también usar «suspend»
+¡No se olvide de devolver Vim a primer plano, o perderá todos los cambios
+realizados.
+
+Solo Unix es compatible con esta función. Vim iniciará una consola
+en otros sistemas. Esto también tiene la funcionalidad de permitirle
+ejecutar órdenes de consola.
+Pero esta es una nueva consola, no desde la que inició Vim.
+   Cuando está ejecutando la interfaz gráfica no puede volver a la consola
+desde la que se inició Vim. En esta situación, CTRL-Z minimizará la ventana
+de Vim.
+
+==============================================================================
+*21.2*	Ejecutar órdenes de consola
+
+Use «:!{orden}» para ejecutar una sola orden de consola desde Vim.  Por
+ejemplo, para ver el listado de un directorio: >
+
+	:!ls
+	:!dir
+
+El primero es para Unix, el segundo para MS-Windows.
+  Vim ejecutará el programa. Cuando finalice, obtendrá un dialogo para
+pulsar <Intro>. Esto le permite ver la salida de la orden antes de volver
+al texto que estaba editando.
+  El signo «!» también se usa en otros sitios cuando se ejecuta un programa.
+Veamos com funciona esto de una manera general.
+
+	:!{programa}		execute {programa}
+	:r !{programa}		execute {programa} y lea su salida
+	:w !{programa}		execute {programa} y envíe texto a su entrada
+	:[range]!{programa}	filtra texto a través de {programa}
+
+Nótese que la presencia de un rango antes de «!{programa}» marca una gran
+diferencia. Sin él, ejecuta el programa de manera normal, con el rango se
+filtran un número de líneas a través del programa.
+
+Es imposible ejecutar una fila de programas de esta manera. Pero una consola
+es mejor para estas funciones. Puede iniciar una nueva consola de la
+siguiente manera: >
+
+	:shell
+
+Esto es parecido al uso de «CTRL-Z» para suspender Vim. La diferencia es que
+se inicia una nueva consola.
+
+Al usar la GUI, la consola usará la ventana de Vim para entrada y salida. Ya
+que Vim no es una terminal, esto no funcionará perfectamente.
+Si tiene un problema, pruebe a conmutar la opción 'guipty'. Si esto tampoco
+funciona, inicie una nueva terminal para iniciar el intérprete de órdenes.
+Por ejemplo, con:
+>
+	:!xterm&
+
+==============================================================================
+*21.3*	Recordar información; viminfo
+
+Tras llevar un rato editando, tendrá texto en los registros, marcas en
+varios archivos, y un historial de la línea de órdenes con órdenes
+compuestos cuidadosamente. ¡Todo esto se pierde al cerrar Vim, pero puede
+recuperarlo!
+
+El archivo viminfo está diseñado para almacenar información del estado:
+
+	Histórico de la línea de órdenes y patrones de búsqueda
+	Texto en registros
+	Marcas para varios archivos
+	La lista de búfers
+	Variables globales
+
+Cada vez que cierre Vim, este guardará esta información en un archivo, el
+archivo viminfo. Cuando inicie Vim otra vez, leerá el archivo viminfo y
+restaurará la información.
+
+La opción 'viminfo' esta configurada por omisión para almacenar un limitado
+número de elementos. Puede que desee configurarlo para que recuerde más
+información. Esto se hace con la siguiente orden: >
+
+	:set viminfo=string
+
+La cadena especifica que guardar. La sintaxis de la cadena es un carácter de
+opción seguido de un argumento. Las parejas opción/argumento se separan con
+comas.
+   Explore como puede construir su propia cadena viminfo. Primero, la opción
+se usa para especificar de cuantos archivos desea guardar marcas (a-z).
+Escoja un bonito número par para esta opción (1000, por ejemplo), Ahora, su
+orden presenta este aspecto: >
+
+	:set viminfo='1000
+
+La opción «f» controla si se guardan las marcas globales (A-Z y 0-9). Si
+esta opción es 0, no se guarda nada. Si es 1 o no especificó una opción «f»,
+las marcas se guardan. Desea esta función, y por ello ahora obtiene esto: >
+
+	:set viminfo='1000,f1
+
+La opción «<» define el número de líneas a guardar por cada registro. Por
+omisión, todas las líneas se guardan. Si es 0, nada se guarda. Para evitar
+que se añadan miles de líneas a su archivo viminfo (que puede que nunca se
+usen, y ralenticen el arranque de Vim) puede usar un máximo de 500 líneas: >
+
+	:set viminfo='1000,f1,<500
+<
+Otras opciones que puede que desee usar:
+	:	número de líneas a guardar del historial de la línea
+		de órdenes
+	@	número de líneas a guardar de la línea de entrada del
+		historial
+	/	número de líneas a guardar del historial de búsquedas
+	r	dispositivos extraíbles, del cual no se guardan marcas
+		(se puede introducir varias veces)
+	!	variables globales que comienzan con mayúscula y que no
+		contienen minúsculas
+	h	desactivar el resaltado de 'hlsearch' al inicio
+	%	la lista de búfers (solo se restaura si inicia Vim
+		sin argumentos de archivo)
+	c	convertir el texto usando 'encoding'
+	n	nombre usado para el archivo viminfo (tiene que ser la
+		última opción)
+
+Para más información, consulte la opción 'viminfo' y |viminfo-file|.
+
+Cuando inicia varias instancias de Vim, la última que cierre guardará su
+información. Esto puede causar que se pierda información que otras
+instancias anteriores guardaron.
+
+
+VOLVER AL PUNTO EN QUE CERRÓ VIM
+
+Si esta a medio camino de editar un archivo, y llegan las vacaciones,
+cierra Vim y disfruta de la vida, olvidando todo lo respectivo al trabajo.
+Vuelva a iniciar Vim pasadas un par de semanas, y teclee:
+>
+	'0
+
+Y ya está en el punto en que cerró Vim para así volver a su trabajo
+   Vim crea una marca cada vez que lo cierra. El último es '0. La posición
+La posición a la que '0 apuntaba se convierte en '1. Y '1 se convierte en'2,
+y así en adelante. La marca '9 se pierde.
+   La orden |:marks| es útil para ver a donde le llevarían '0 t '9.
+
+
+VOLVER A UN ARCHIVO
+
+Si desea volver a un archivo que editó recientemente, pero no al cerrar Vim,
+hay una manera un tanto más complicada. Puede ver una lista de archivos
+tecleando la orden: >
+
+	:oldfiles
+<	1: ~/.viminfo ~
+	2: ~/text/resume.txt ~
+	3: /tmp/draft ~
+
+Ahora le gustaría editar el segundo archivo, que está en la lista precedido
+por «2:». Teclee: >
+
+	:e #<2
+
+En lugar de «:e», puede usar cualquier orden que tiene un nombre de archivo
+como argumento, el elemento «#<2» funciona en el mismo lugar que «%» (nombre
+del archivo actual) y «#» (nombre de archivo alterno). Puede también dividir
+la ventana para editar el tercer archivo: >
+
+	:split #<3
+
+Usar #<123 es poco complicado cuando solo quiere editar un archivo.
+Afortunadamente, hay una manera más simple: >
+
+:browse oldfiles
+<	1: ~/.viminfo ~
+	2: ~/text/resume.txt ~
+	3: /tmp/draft ~
+	-- Más --
+
+Obtendrá la misma lista de archivos que con |:oldfiles|. Si desea editar
+«resume.txt», pulse primero «q» para detener el listado. Obtendrá un
+dialogo:
+
+	Teclee el número y pulse <Intro> (vaciar cancelaciones): ~
+
+Teclee «2» y pulse <Intro> para editar el segundo archivo.
+
+Más información en |:oldfiles|, |v:oldfiles| y |c_#<|.
+
+
+MOVER INFO DE UN VIM A OTRO
+
+Puede emplear las órdenes «:wviminfo» y «:rviminfo» para guardar y restaurar
+la información mientras Vim se está ejecutando. Ésto es útil para
+intercambiar los contenidos del registro de dos instancias de Vim, por
+ejemplo. En el primer Vim, haga: >
+
+	:wviminfo! ~/tmp/viminfo
+
+Y en el segundo Vim haga : >
+
+	:rviminfo! ~/tmp/viminfo
+
+Obviamente, «w» significa «write», y «r», «read».
+   El caracter «!» se usa por «:wviminfo» para forzar la sobreescritura de
+un archivo existente. Cuando se omite, y el archivo existe, la información
+es fusionada en el archivo.
+   El caracter «!» usado por «:rviminfo» significa que se usa toda la
+información, y esto puede sobreescribir información ya presente. Sin «!»
+sólo se usa la información que no estaba definida.
+   Estas órdenes se pueden usar también para guardar info y usarlo más tarde.
+Puede crear un directorio lleno de archivos «viminfo», cada uno con info
+dependiendo del propósito.
+
+==============================================================================
+*21.4*	Sesiones
+
+Suponga que ha estado editando, y que el día llega a su final. Desea
+finalizar el trabajo, y continuar en el mismo punto el siguiente día. Puede
+hacer esto si guarda su sesión de edición para restaurarlo el siguiente día.
+   Una sesión de Vim contiene toda la información acerca de qué está
+editando. Ésto incluye datos como la lista de archivos, disposición
+de la ventana, variables globales, opciones y más información. (Lo que se
+recuerda se controla mediante la opción 'sessionoptions', descrita más
+abajo.
+   La siguiente orden crea un archivo de sesión: >
+
+	:mksession vimbook.vim
+
+Puede usar esta orden para restaurar la sesión más tarde: >
+
+	:source vimbook.vim
+
+Si desea iniciar Vim y restaurar una sesión específica, puede usar la
+siguiente orden: >
+
+	vim -S vimbook.vim
+
+Esto le dice a Vim que lea un archivo en particular al inicio. La «S»
+significa sesión (en realidad, puede introducir cualquier script a Vim con
+«-S», por ello también puede significar «source», fuente).
+
+Las ventanas que estaban abiertas se restauran, con la misma posición y
+tamaño que antes. Las macros y valores de opciones son también las mismas.
+   Lo que se restaura exactamente depende de la opción 'sessionoptions'. El
+valor predeterminado es «blank,buffers,curdir,folds,help,options,winsize».
+
+	blank		mantener ventanas vacías
+	buffers		todos los «buffers», no sólo los de una ventana
+	curdir		el directorio actual
+	folds		pliegues, también los manualmente creados
+	help			la ventana de ayuda
+	options		todas las opciones y macros
+	winsize		tamaño de ventanas
+
+Modifique esto según su convenienvia. Para también restaurar el tamaño de la
+ventana de Vim use, por ejemplo: >
+
+	:set sessionoptions+=resize
+
+
+SESIÓN AQUÍ, SESIÓN ALLÁ
+
+La manera obvia de usar sesiones es cuando trabaja en diferenes proyetos.
+Suponga que guarda sus archivos de sesión en el directorio «~/.vim». Está
+trabajando actualmente en el proyecto «secreto» y tiene que cambiar al
+proyecto «aburrido»: >
+
+	:wall
+	:mksession! ~/.vim/secreto.vim
+	:source ~/.vim/aburrido.vim
+
+El primero usa «:wall» para escribir en todos los archivos modificados.
+Entonces se guarda la sesión actual, usando «:mksession!». Esto sobreescribe
+la sesión anterior. La siguiente vez que cargue la sesión «secreto» podrá
+continuar en el punto en que lo dejó, y por último carga la sesión
+«aburrido».
+
+Si abre ventanas de ayuda, divide y cierra varias ventanas, y en general
+desordena la disposición de la ventana, puede volver a la última sesión
+guardada: >
+
+	:source ~/.vim/aburrido.vim
+
+Por ello, ahora tiene un completo control sobre continuar en el mismo punto
+la siguiente vez que lo abra, guardando la configuración actual en una
+sesión, o mantener el archivo de sesión como un punto de partida.
+   Otra manera de usar sesiones es crear una organización de ventana que le
+gusta usar, y guardarla en una sesión. Después podrá volver a este orden
+siempre que quiera.
+   Por ejemplo, esta es una bonita organización que puede usar:
+
+	+----------------------------------------+
+	|		   VIM - main help file  |
+	|					 |
+	|Desplazarse:  Use las teclas de direcció|
+	|help.txt================================|
+	|explorer   |				 |
+	|dir	    |~				 |
+	|dir	    |~				 |
+	|file	    |~				 |
+	|file	    |~				 |
+	|file	    |~				 |
+	|file	    |~				 |
+	|~/=========|[No File]===================|
+	|					 |
+	+----------------------------------------+
+
+Ésta tiene una ventana de ayuda en la parte superior, para que pueda leer
+este texto. La estrecha ventana vertical a la izquierda contiene un
+explorador de archivos. Esta es una extensión de Vim que lista los
+contenidos de un directorio. Puede seleccionar qué archivos editar ahí.
+Más acerca de esto en el siguiente capítulo.
+   Puede crear esto con una instancia nueva de Vim con: >
+
+	:help
+	CTRL-W w
+	:vertical split ~/
+
+Puede redimensionar las ventanas a su gusto. Guarde entonces la sesión con:
+>
+	:mksession ~/.vim/mio.vim
+
+Ahora puede iniciar Vim con este diseño: >
+
+	vim -S ~/.vim/mio.vim
+
+Pista: Para abrir un archivo que vea listado en la ventana del explorador en
+la ventana vacía, mueva el cursor al nombre del archivo y pulse «O». Pulsar
+dos veces con el ratón le daría el mismo resultado.
+
+
+UNIX Y MS-WINDOWS
+
+Hay gente que tiene que trabajar un día con sistemas MS-WINDOWS y con Unix
+al siguiente. Si es uno de ellos, considere añadir «slash» y «unix» a
+'sessionoptions'. Los archivos de sesión se guardarán en un formato que les
+permita ser usados en ambos sistemas. Esta es una orden para poner en su
+archivo vimrc: >
+
+	:set sessionoptions+=unix,slash
+
+Vim usará el formato Unix, porque Vim para MS-Windows puede leer y escribir
+archivos de Unix, pero Vim para Unix no puede leer los archivos de sesión
+con formato de MS-Windows. De manera similar, Vim para MS-Windows entiene
+los nombres de archivo con «/» como diferentes palabras, pero Vim para Unix
+no entiende «\».
+
+
+SESIONES Y VIMINFO
+
+Las sesiones guardan muchas cosas, pero no la posición de las marcas,
+contenidos de registros e historiales de la línea de órdenes. Precisa emplear
+«viminfo» para estas cosas.
+   En la mayoría de las situaciones deseará usar sesiones separadas de
+«viminfo».
+Puede emplear esto para pasar a otra sesión, pero manteniendo el historial
+de la línea de órdenes. También puede copiar el texto de los registros de una
+sesión, y pegarlos en otra sesión diferente.
+   Puede que prefiera mantener el información en la sesión. Tendrá que hacer
+esto usted mismo. Ejemplo: >
+
+	:mksession! ~/.vim/secreto.vim
+	:wviminfo! ~/.vim/secreto.viminfo
+
+Y para restaurarlo: >
+
+	:source ~/.vim/secreto.vim
+	:rviminfo! ~/.vim/secreto.viminfo
+
+==============================================================================
+*21.5*	Vistas
+
+Una sesión guarda el aspecto completo de Vim. Cuando desea guardar sólo las
+propiedades de una ventana, use una vista.
+   El uso de una vista es útil cuando desea editar un archivo de una manera
+específica.
+Por ejemplo, ha activado el número de líneas con la opción 'number' y
+definido algunos plegados. Al igual que con las sesiones, puede guardar esta
+vista en el archivo y restaurarla más tarde. En realidad, cuando guarda una
+sesión, éste guarda la vista de cada ventana.
+   Hay dos maneras básicas de usar las vistas. La primera es dejar que Vim
+escoja el nombre para el archivo de la vista. Puede restaurar la vista
+posteriormente cuando edite el mismo archivo. Para guardar la vista de la
+ventana actual: >
+
+	:mkview
+
+Vim decidirá donde guardar la vista. Cuando más tarde edite el mismo archivo
+puede recuperar la vista con esta orden: >
+
+	:loadview
+
+Fácil, ¿no?
+   Cuando quiere ver el archivo sin la opción 'number' activada, o con todos
+los plegados abiertos, puede definir las opciones para que la ventana
+presente ese aspecto. Una vez hecho ésto, guarde ésta vista con: >
+
+	:mkview 1
+
+Obviamente, puede recuperar ésto con: >
+
+	:loadview 1
+
+Ahora puede pasar de una vista a otra del archivo usando «:loadview» con y
+sin el argumento «1».  De esta forma, puede guardar hasta diez vistas para el
+mismo archivo, uno sin numerar y nueve numerados del 1 al 9.
+
+
+UNA VISTA CON NOMBRE
+
+La segunda manera básica de usar las vistas se puede hacer guardando la vista
+en un archivo con un nombre de su elección. Puede cargar esta vista mientras
+edita un archivo distinto. Entonces, Vim pasará a editar el archivo
+especificado en la vista. Por ello, puede usar ésto para pasar rápidamente
+a editar otro archivo, con todas las opciones definidas tal y como las
+guardó.
+   Por ejemplo, para guardar la vista del archivo actual: >
+
+	:mkview ~/.vim/principal.vim
+
+Puede restaurarla con: >
+
+	:source ~/.vim/principal.vim
+
+==============================================================================
+*21.6*	«Modelines»
+
+Al editar un archivo en particular, puede que defina opciones específicas
+para ese archivo. Teclear estas órdenes es aburrido. Usar una sesión o vista
+para editar un archivo no funciona cuando comparte el archivo con varias
+personas.
+   La solución para esta situación es añadir un «modeline» al archivo. Éste
+es una línea de texto que le dice a Vim los valores de las opciones para su
+uso con este archivo en particular.
+   Un ejemplo típico es un programa en C en el que introduce los tabulados
+como múltiplos de 4. Esto requiere que configure la opción 'shiftwidth' a 4.
+Este «modeline» hará esta función:
+
+	/* vim:set shiftwidth=4: */ ~
+
+Ponga esta línea como uno de las primeras o cinco últimas líneas en el
+archivo. Cuando edite el archivo, notará que 'shiftwidth' se ha definido
+con valor de cuatro. Cuando edite otro archivo, esta opción será devuelta
+a su valor predeterminado de ocho.
+   Para algunas líneas, el «modeline» encaja en la cabecera, y por ello puede
+ponerlo al inicio del archivo. Para los archivos de texto y otros archivos en
+los que el «modeline» se interpone en el camino de los contenidos normales,
+póngala al final del archivo.
+
+La opción «modelines» especifica cuantas líneas son inspeccionadas al inicio
+y final del archivo en busca de un «modeline». Para inspeccionar diez
+líneas: >
+
+	:set modelines=10
+
+Puede usar la opción 'modeline' para desactivar ésto. Haga ésto cuando
+trabaje como «root» en Unix, o administrador en MS-Windows; o cuando no
+confía en los archivos que está editando: >
+
+	:set nomodeline
+
+Use este formato para el «modeline»:
+
+	any-text vim:set {opción}={valor} ... : any-text ~
+
+«any-text» indica que puede introducir texto antes y después de la parte
+que Vim usará. Esto permite que presente el aspecto de un comentario, de la
+manera en que se hizo antes con /* y */.
+   La parte de «vim:» es lo que hace que Vim reconozca esta línea. Debe haber
+un espacio en blanco antes de «vim», o «vim» ha de estar al inicio de la
+línea. Por ello, usar algo como «gvim» no funcionaría.
+   La parte entre los dos puntos es una orden «:set». Funciona de la misma
+manera que teclear la orden «:set», con la excepción de que tiene que
+introducir una barra inversa antes de un colon (en caso contrario, se vería
+como el final de un «modeline»).
+
+Otro ejemplo:
+
+	// vim:set textwidth=72 dir=c\:\tmp:  use c:\tmp here ~
+
+Hay una barra inversa extra antes del primer colon, y por ello se incluye en
+la orden «:set». Se ignora el texto antes del segundo colon, y por ello
+puede introducir aquí un comentario.
+
+Para más detalles, consulte |modeline|.
+
+==============================================================================
+
+Siguiente capítulo: |usr_22.esx| Encontrar el archivo a editar
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Omar Campagne Polaino
+
+Proyecto: |vim-doc-es|
+

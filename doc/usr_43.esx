@@ -1,0 +1,192 @@
+*usr_43.txt*	Para Vim versión 7.3.  Último cambio: 28/12/2008
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+			       Uso de tipos de archivo
+
+
+Al editar un archivo de un cierto tipo, como por ejemplo un programa C o un
+script de línea de órdenes, es común usar el mismo conjunto de opciones y
+macros. Definirlas manualmente cada vez que se edita el archivo se hace
+tedioso muy pronto. Este capítulo explica cómo hacerlo automáticamente.
+
+|43.1|	Extensiones para un tipo de archivo
+|43.2|	Añadir un tipo de archivo
+
+ Capítulo siguiente: |usr_44.esx|  Su propio resaltado de sintaxis
+  Capítulo anterior: |usr_42.esx|  Añadir nuevos menús
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*43.1*	Extensiones para un tipo de archivo		*filetype-plugin*
+
+La forma de activar las extensiones de tipo de archivo ya ha sido cubierta
+en |add-filetype-plugin|. Pero seguramente no está satisfecho con los
+valores de las opciones predeterminadas, porque éstas son mínimas. Suponga
+que para los archivos de C desea darle a 'softtabstop' el valor de 4, y
+definir una macro para insertar un comentario de tres líneas. Puede hacer
+esto en sólo dos pasos:
+
+							*your-runtime-dir*
+1. Cree su propio directorio de tiempo de ejecución. En Unix usualmente es
+   «~/.vim». En dicho directorio, cree el directorio «ftplugin»: >
+
+	mkdir ~/.vim
+	mkdir ~/.vim/ftplugin
+<
+   Si su sistema no es Unix, compruebe el valor de la opción 'runtimepath'
+   para identificar en qué sitios buscará Vim el directorio «ftplugin»: >
+
+	set runtimepath
+
+<   La convención es usar el primer directorio listado (antes de la primera
+    coma.) Si lo desea, también puede anteponer otro directorio al valor de la
+    opción 'runtimepath' en su archivo |vimrc| si no le agrada el valor
+    predeterminado.
+
+2. Cree el archivo «~/.vim/ftplugin/c.vim», con este contenido: >
+
+	setlocal softtabstop=4
+	noremap <buffer> <LocalLeader>c o/**************<CR><CR>/<Esc>
+
+Ahora edite un archivo C. Notará que se le ha dado el valor 4 a la opción
+'softtabstop'. Pero si edita otro archivo, se cambia su valor al
+predeterminado de cero. Esto sucede porque se usó la orden «:setlocal». Ésta
+define el valor de la opción 'softtabstop' únicamente para el búfer
+actual. Al editar otro búfer, se le dará el valor definido para el mismo. Al
+editar un búfer nuevo obtendrá el valor predeterminado o el valor definido
+por la última orden «:set».
+
+De la misma manera, la macro para «\c» desaparecerá al editar otro búfer. La
+orden «:map <buffer>» crea una macro local respecto al búfer actual. Esta
+opción tiene el mismo efecto en cualquier orden para macros: «:map!»,
+«:vmap», etc. El |<LocalLeader>| en la macro se reemplaza con el valor de la
+variable «maplocalleader».
+
+En este directorio encontrará ejemplos de extensiones de tipo de archivo: >
+
+	$VIMRUNTIME/ftplugin/
+
+En |write-plugin| encontrará más detalles para escribir extensiones de tipo
+de archivo.
+
+==============================================================================
+*43.2*	Añadir un tipo de archivo
+
+Si Vim no reconoce el tipo de archivo que está usando, siga los siguientes
+pasos para corregir el problema. Necesita un directorio de tiempo de
+ejecución propio. Consulte antes |your-runtime-dir|.
+
+Cree un archivo «filetype.vim» que contenga una orden automática para su
+tipo de archivo. (Las órdenes automáticas se explican el la sección |40.3|.)
+Ejemplo: >
+
+	augroup filetypedetect
+	au BufNewFile,BufRead *.xyz	setf xyz
+	augroup END
+
+Con esto se reconocerán todos los archivos cuyo nombre termina en «.xyz»
+como del tipo «xyz». Las órdenes «:augroup» ubican esta orden automática en
+el grupo «filetypedetect» (detección de tipos de archivo). Esto permite
+eliminar todas las órdenes automáticas de detección de tipo de archivo al
+ejecutar «:filetype off». La orden «:setf» definirá la opción 'filetype' con
+el argumento que se le pase, a menos que ya esté definido. Esto asegura que
+no se defina 'filetype' más de una vez.
+
+Puede usar distintos patrones que coincidan con el nombre de su
+archivo. También es posible incluir nombres de directorios. Consulte
+|autocmd-patterns|.  Por ejemplo, suponga que todos los archivos en
+«/usr/share/scripts» son archivos «ruby», pero no tienen la extensión
+usual. Puede añadir la siguiente línea al ejemplo anterior: >
+
+	augroup filetypedetect
+	au BufNewFile,BufRead *.xyz			setf xyz
+	au BufNewFile,BufRead /usr/share/scripts/*	setf ruby
+	augroup END
+
+El problema ahora se presenta al editar archivos como
+«/usr/share/scripts/README.txt», que no son archivos ruby. El problema de un
+patrón terminado en «*» es que coincide fácilmente con demasiados archivos.
+Para evitarlo, ubique el archivo «filetype.vim» en otro directorio, que esté
+al final de 'runtimepath'. Por ejemplo, en Unix puede usar
+«~/.vim/after/filetype.vim».
+   Ahora añada la detección de archivos de texto en «~/.vim/filetype.vim»: >
+
+	augroup filetypedetect
+	au BufNewFile,BufRead *.txt			setf text
+	augroup END
+
+Este archivo aparece primero en 'runtimepath'. A continuación escriba la
+siguiente orden en «~/.vim/after/filetype.vim», que se cargará al final: >
+
+	augroup filetypedetect
+	au BufNewFile,BufRead /usr/share/scripts/*	setf ruby
+	augroup END
+
+Ahora Vim buscará archivos llamados «filetype.vim» en cada directorio listado
+en 'runtimepath'. Primero encuentra «~/.vim/filetype.vim». Allí está definida
+la orden automática para los archivos «*.txt». Luego Vim encuentra el
+«filetype.vim» que está en $VIMRUNTIME, más o menos a la mitad de
+'runtimepath'. Finalmente, se encuentra «~/.vim/after/filetype.vim», y se
+añade la orden automática para detectar archivos ruby en «/usr/share/scripts».
+   Cuando edite «/usr/share/scripts/README.txt», se revisa las órdenes
+automáticas en el orden en que fueron definidas. El patrón «*.txt» coincide,
+así que se ejecuta la orden «setf text» para definir el tipo de archivo como
+«text» (texto). El patrón para archivos ruby también coincide, así que también
+se ejecuta «setf ruby». Pero como 'filetype' ya tiene el valor «text», no
+sucede nada.
+   Cuando edite el archivo «/usr/share/scripts/foobar» se revisarán las mismas
+órdenes automáticas. Sólo la de ruby coincide y «setf ruby» define 'filetype'
+a ruby.
+
+
+IDENTIFICACIÓN POR CONTENIDO
+
+Si el tipo de su archivo no se puede identificar revisando el nombre del
+mismo, también tiene la posibilidad de identificarlo revisando su
+contenido. Por ejemplo, muchos archivos de scripts empiezan con una línea
+como:
+
+	#!/bin/xyz ~
+
+Para identificar este script cree un archivo «scripts.vim» en su directorio
+de tiempo de ejecución (el mismo sitio en donde está «filetype.vim»). El
+contenido del archivo es similar a lo siguiente: >
+
+	if did_filetype()
+	  finish
+	endif
+	if getline(1) =~ '^#!.*[/\\]xyz\>'
+	  setf xyz
+	endif
+
+La primera comprobación con «did_filetype()» evita que se revise el contenido
+de un archivo cuyo tipo ya fue detectado usando el nombre de archivo. Así se
+evita desperdiciar tiempo revisando el archivo cuando se sabe que la orden
+«setf» no tendrá ningún efecto.
+   El archivo «scripts.vim» es leído por una orden automática en el archivo
+«filetype.vim» predeterminado. Por consiguiente, el orden en que se hacen las
+comprobaciones es:
+
+	1. Archivos «filetype.vim» antes de $VIMRUNTIME en 'runtimepath'
+	2. Primera parte de «$VIMRUNTIME/filetype.vim»
+	3. Todos los archivos «scripts.vim» en 'runtimepath'
+	4. El resto de «$VIMRUNTIME/filetype.vim»
+	5. Archivos «filetype.vim» luego de $VIMRUNTIME en 'runtimepath'
+
+Si estos mecanismos no son suficientes, puede añadir una orden automática
+que coincida con todos los archivos y lea un script o ejecute una función
+para revisar el contenido del archivo.
+
+==============================================================================
+
+Capítulo siguiente: |usr_44.txt| Su propio resaltado de sintaxis
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Javier Rojas
+
+Proyecto: |vim-doc-es|
+

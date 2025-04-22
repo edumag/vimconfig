@@ -1,0 +1,23 @@
+			      Proyecto vim-doc-es
+
+Instalación de la documentación:
+
+	* Abrir el archivo tar.gz
+
+	* Copiar los archivos *.esx a «~/.vim/doc» (sólo un usuario) o
+	  «/usr/share/vim/vim73/doc» como «root» para todos los usuarios en
+	  sistemas GNU/Linux.
+	  
+	  Los usuarios de Windows deben instalarlo en
+	  «C:\Program Files \Vim\vim73» o similar dependiendo de la
+	  versión de Windows.
+
+	* Ejecutar en Vim «:helptags /ruta-a-la-carpeta/doc».
+
+	* «:help ayuda» o «:help help.esx» le llevará al archivo
+	  principal de ayuda.
+
+Página web: http://www.assembla.com/wiki/show/vim-doc-es
+
+Lista de correo: <vim-doc-es@freelists.org>  
+

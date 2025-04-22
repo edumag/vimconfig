@@ -1,0 +1,457 @@
+*usr_28.esx*	Para Vim versión 7.3.  Último cambio: 8/2/2007
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+				 Plegar
+
+
+El texto estructurado se puede separar en secciones, y éstas en
+sub-secciones. Plegar le permite mostrar una sección como una sola línea,
+ofreciendo una vista más general. Este capítulo explica las diferentes
+maneras de hacerlo.
+
+|28.1|	¿Qué es plegar?
+|28.2|	Plegar manualmente
+|28.3|	Trabajar con pliegues
+|28.4|	Guardar y restaurar pliegues
+|28.5|	Plegar por sangrado
+|28.6|	Plegar con marcadores
+|28.7|	Plegar por sintaxis
+|28.8|	Plegar por expresión
+|28.9|	Plegar líneas sin cambios
+|28.10¿| ¿Qué método de plegar debería usar?
+
+ Capítulo siguiente: |usr_29.esx|  Moverse a través de programas
+  Capítulo anterior: |usr_27.esx|  Órdenes de búsqueda y patrones
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*28.1¿*	¿Qué es plegar?
+
+Plegar se usa para mostrar un rango de líneas en un búfer como una sola
+línea en la pantalla. Como un trozo de papel plegado para acortarlo.
+
+	+------------------------+
+	| línea 1		 |
+	| línea 2		 |
+	| línea 3		 |
+	|_______________________ |
+	\			 \
+	 \________________________\
+	 / líneas plegadas	  /
+	/________________________/
+	| línea 12		 |
+	| línea 13		 |
+	| línea 14		 |
+	+------------------------+
+
+El texto aún está en el búfer, sin cambios. Plegar sólo afecta a la manera
+en que se muestran las líneas.
+
+La ventaja de plegar es que obtiene una mejor vista general de la estructura
+del texto, mediante el de plegado las líneas de una sección, reemplazando
+éstos con una línea indicando que hay una sección.
+
+==============================================================================
+*28.2*	Plegar manualmente
+
+Pruebe esto: posicione el cursor en un párrafo y teclee: >
+
+	zfap
+
+Verá que una línea resaltada reemplaza al párrafo. Ha creado un
+pliegue. |zf| es un operando y |ap| una selección de un objeto
+textual. Puede usar el operando |zf| con cualquier orden de desplazamiento
+para crear un pliegue para el texto reemplazado. |zf| funciona también en el
+modo Visual.
+
+Para ver el texto otra vez, abra el pliegue con lo siguiente: >
+
+	zo
+
+Y puede cerrar el pliegue otra vez con: >
+
+	zc
+
+Todas las órdenes de plegado empiezan con «z». Si usa la imaginación, se
+asemeja a un papel plegado visto de lado. La letra a continuación de «z»
+tiene un significado nemónico que facilita recordar las órdenes:
+
+	zf	F-old creation (crear pliegue)
+	zo	O-pen a fold (abrir pliegue)
+	zc	C-lose a fold (cerrar pliegue)
+
+Puede anidar los pliegues: Una región de texto que contiene pliegues se
+puede anidar nuevamente. Por ejemplo, puede plegar cada párrafo de esta
+sección, y después plegar todas las secciones en este capítulo. Pruébelo,
+notará que abrir el pliegue del capítulo completo devolverá los pliegues
+anidados a su forma previa, algunos abiertos y otros cerrados.
+
+Imagine que ha creado varios pliegues, y que ahora desea ver todo el
+texto. Puede ir a cada pliegue y teclear «zo». Use la siguiente orden para
+hacer esto mismo con rapidez: >
+
+	zr
+
+Esto r_educe el plegado. Lo opuesto es: >
+
+	zm
+
+Esto pliega m_ás. Puede repetir «zr» y «zm» para abrir y cerrar pliegues
+anidados en varios niveles.
+
+Si ha anidado pliegues con varios niveles de profundidad, puede abrirlos
+todos con: >
+
+	zR
+
+Esto r_educe los pliegues hasta que no queda ninguno, Y puede cerrar todos
+los pliegues con: >
+
+	zM
+
+Esto pliega m_ás y m_ás.
+
+Puede desactivar el plegado rápidamente con la orden |zn|. |Zn| devuelve el
+plegado a su estado previo. |zi| pasa de uno a otro. Esta es una buena forma
+de trabajar: creación de pliegues para obtener una visión general de su
+archivo - desplazarse a las áreas que desea modificar - visionado y edición
+del texto con |zi| - repita |zi| para seguir desplazándose.
+
+Para más información acerca del plegado manual, consulte la siguiente
+sección en el manual de referencia: |fold-manual|.
+
+==============================================================================
+*28.3*	Trabajar con pliegues
+
+De haber algunos pliegues cerrados, las órdenes de movimiento como «j» y «k»
+se desplazarán sobre el pliegue como si fuese una única línea vacía. Esto
+permite un desplazamiento más rápido sobre texto plegado.
+
+Puede copiar, eliminar y mover pliegues como si fuesen una sola línea. Esto
+es útil si desea reordenar las funciones de un programa. Primero asegúrese
+de que cada pliegue contiene una función completa (o casi) seleccionado el
+método 'foldmethod' adecuado. Elimine después la función con «dd», desplaze
+el cursor y pegue el texto con «p». Puede usar la selección Visual de
+existir algunas líneas de la función por encima o a continuación del
+pliegue: coloque el cursor sobre la primera línea a mover - pulse «V» para
+iniciar el modo Visual - coloque el cursor sobre la última línea a mover -
+pulse «d» para eliminar las líneas seleccionadas - desplace el cursor a la
+nueva posición y «p»onga ahí las líneas.
+
+A veces es difícil ver o recordar la ubicación de un pliegue; la orden |zo|
+es de utilidad en estos caso. Para ver los pliegues definidos: >
+
+	:set foldcolumn=4
+
+Esto muestra una pequeña columna a la izquierda de la ventana que indica los
+pliegues. Un «+» simboliza un pliegue cerrado. Un «-» aparece al principio
+de cada pliegue abierto y «|» simboliza líneas del pliegue a continuación. 
+
+Puede usar el ratón para abrir un pliegue pulsando sobre la «+» en la
+columna de plegado. Pulsar sobre «-» o el «|» que aparece debajo cierra un
+pliegue abierto.
+
+Use |zO| para abrir todos los pliegues en la línea del cursor. Use |zC| para
+cerrar todos los pliegues en la línea del cursor. Puede eliminar un pliegue
+en la línea del cursor con |zd|. Use |zD| para borrar todos los pliegues
+bajo la línea del cursor.
+
+La línea del cursor nunca se cierra en el modo Insertar. Esto permite ver lo
+que teclea.
+
+Los pliegues se abren automáticamente al desplazarse o moviendo el cursor a
+la izquierda o a la derecha. Por ejemplo, la orden «0» abre el pliegue bajo
+el cursor (si 'foldopen' contiene 'hor', el valor predeterminado). Puede
+modificar la opción 'foldopen' para abrir los pliegues con órdenes
+específicas. Haga lo siguiente si desea que la línea bajo el cursor esté
+siempre abierta: >
+
+	:set foldopen=all
+
+Aviso: en esta situación, no será capaz de desplazarse a un pliegue
+cerrado. Puede que desea usar esto temporalmente para después devolverlo al
+valor original: >
+
+	:set foldopen&
+
+Puede hacer que los pliegues se cierren automáticamente al salir de éstos: >
+
+	:set foldclose=all
+
+Esto ejecutará 'foldlevel' en todos los pliegues que no contengan el
+cursor. Tiene que probar para ver si le gusta. Use |zm| para plegar más, y
+|zr| para plegar menos (reducir los pliegues).
+
+El pliegue es local para la ventana. Esto permite abrir dos ventanas en el
+mismo búfer, uno con pliegues y otro sin ellos. O uno con todos los pliegues
+cerrados y otro con todos los pliegues abiertos.
+
+==============================================================================
+*28.4*	Guardar y restaurar pliegues
+
+Al cerrar un archivo para iniciar la edición de otro, el estado del pliegue
+es eliminado. Si vuelve al mismo archivo más tarde, todos aquellos pliegues
+cerrados y abiertos manualmente volverán a su estado
+predeterminado. ¡Perderá todos los pliegues creados manualmente. Use la
+orden |:mkview| para guardar el estado de los archivos: >
+
+	:mkview
+
+Esto guardará la configuración y otras que cosas que modifican el visionado
+del archivo. Puede modificar lo guardado con  la opción 'viewoptions'. Puede
+cargar el mismo visionado al volver al archivo más tarde: >
+
+	:loadview
+
+Puede guardar hasta diez visionados distintos de un archivo. Por ejemplo,
+para guardar la configuración actual como el tercer visionado, y cargar
+después el segundo: >
+
+	:mkview 3
+	:loadview 2
+
+Tenga en cuenta que, al insertar o eliminar líneas, las vistas dejarán de
+ser válidas. Revise también la opción 'viewdir', que define donde se guardan
+los visionados. Puede que desee eliminar viejos visionados de vez en cuando.
+
+==============================================================================
+*28.5*	Plegar según el sangrado
+
+Definir pliegues con |zf| supone mucho trabajo. Si el texto está
+estructurado de forma que los elementos de un nivel inferior tienen un mayor
+sangrado, puede usar el método de pliegue por sangrado. Ésto crea pliegues
+para cada secuencia de líneas dentro del mismo sangrado. Las líneas con un
+sangrado mayor se convertirán en pliegues anidados. Esto funciona muy bien
+con varios lenguajes de programación.
+
+Pruebe esto definiendo la opción 'foldmethod': >
+
+	:set foldmethod=indent
+
+Puede después usar las órdenes |zm| y |zr| para aumentar y reducir el
+plegado. Es fácil de ver con este texto de ejemplo:
+
+La línea no tiene sangrado
+	Esta línea tiene un sangrado
+		Esta línea tiene doble sangrado
+		Esta línea tiene doble sangrado
+	Esta línea tiene un sangrado
+La línea no tiene sangrado
+	Esta línea tiene un sangrado
+	Esta línea tiene un sangrado
+
+Tenga en cuenta que la relación entre la cantidad de sangrado y la
+profundidad del pliegue depende de la opción 'shiftwidth'. Cada 'shiftwidth'
+con el valor de un sangrado añade uno a la profundidad del pliegue. Este se
+denomina nivel de plegado.
+
+En realidad, cuando usa las órdenes |zr| y |zm| aumento o disminuye la
+opción 'foldlevel'. Puede también definirlo directamente: >
+
+	:set foldlevel=3
+
+Esto significa que todos los pliegues con un sangrado tres veces el valor de
+'shiftwidth' se cerrarán. Cuanto más bajo es 'foldlevel', más pliegues se
+cerrarán. Si el valor de 'foldlevel' es cero, se cerrarán todos los
+pliegues. |zM| define 'foldlevel' como cero. La orden opuesta |zR| define
+'foldlevel' con el valor de nivel de pliegue más bajo presente en el
+archivo.
+
+Por ello, hay dos maneras de abrir y cerrar los pliegues:
+(a) Definiendo el nivel de pliegue (foldlevel).
+    Esto ofrece un rápida manera de alejar la vista para ver la estructura
+    general del texto, desplazar el cursor, acercar la vista y de vuelta al
+    texto otra vez.
+
+(B) Usando las órdenes |zo| y |zc| para abrir o cerrar pliegues específicos.
+    Esto permite abrir sólo aquellos pliegues que desea abrir, manteniendo
+    los otros cerrados.
+
+Esto se puede combinar: primero puede cerrar la mayoría de los pliegues
+usando |zm| unas cuantas veces, y después abrir un pliegue en particular con
+|zo|. O abrir todos los pliegues con |zR| y después cerrar pliegues
+específicos con |zc|.
+
+Pero no puede definir pliegues manualmente cuando 'foldmethod' es «indent»
+(sangrado), ya que entraría en conflicto con la relación entre sangrado y el
+nivel de plegado.
+
+Puede ver más acerca de plegar por sangrado en el manual de referencia:
+|fold-indent|
+
+==============================================================================
+*28.6*	Plegar con marcadores
+
+Los marcadores en el texto sirven  para definir el inicio y fin de una
+región plegada, ofreciendo un control preciso sobre qué líneas se incluyen
+un pliegue. La desventaja de esto es que tiene que modificar el texto.
+
+Pruebe esto: >
+
+	:set foldmethod=marker
+
+Un texto de ejemplo, como podría aparecer en un programa C:
+
+	/* foobar () {{{ */
+	int foobar()
+	{
+		/* return a value {{{ */
+		return 42;
+		/* }}} */
+	}
+	/* }}} */
+
+Observe que la líena plegada mostrará el texto previo al marcador. Es útil
+para informar de los contenidos del pliegue.
+
+Es bastante molesto cuando los marcadores no encajan correctamente tras
+desplazar algunas líneas. Esto se puede evitar usando marcadores
+numerados. Ejemplo: 
+
+	/* global variables {{{1 */
+	int varA, varB;
+
+	/* functions {{{1 */
+	/* funcA() {{{2 */
+	void funcA() {}
+
+	/* funcB() {{{2 */
+	void funcB() {}
+	/* }}}1 */
+
+Un pliegue se iniciará con el nivel definido por cada marcador
+numerado. Esto detiene en este punto cualquier pliegue de nivel
+superior. Puede usar marcadores de inicio numerados para definir todos los
+pliegues. Tendrá que añadir un marcador de fin sólo cuando desee detener un
+pliegue antes de iniciar otro.
+
+Consulte el manual de referencia para más información acerca de plegar con
+marcadores: |fold-marker|
+
+==============================================================================
+*28.7*	Plegar por sintaxis
+
+Vim usa un archivo de sintaxis diferente según el lenguaje. Éste define
+los colores de varios elementos en el archivo. Si está leyendo esto en Vim
+en una terminal compatible con colores,  los que ve se generan con el
+archivo de sintaxis «help».
+  Es posible añadir elementos sintácticos al archivo que contengan el
+argumento «fold». Esto define una región plegada. Requiere editar
+un archivo de sintaxis al que añadir estos elementos. No es tan fácil,
+pero una vez hecho, el plegado ocurrirá automáticamente.
+  Supongamos que está usando un archivo de sintaxis existente.
+No queda mucho más que explicar, puede abrir y cerrar pliegues
+tal y como se vió anteriormente. Esto pliegues se crearán y eliminarán
+automáticamente al editar el archivo.
+
+Consulte el manual de referencia para más información acerca de plegar por
+sintaxis: |fold-syntax|
+
+==============================================================================
+*28.8*	Plegar por expresión
+
+Es similar a plegar por sangrado pero usa una función de usuario para
+computar el nivel de pliegue de una línea, en lugar del sangrado. Puede usar
+esto con texto en el que éste indica qué líneas están juntas. Un ejemplo es
+un correo electrónico en el que el texto citado se indica con un «>» al
+inicio de la línea. Use esto para plegar esas citas: >
+
+	:set foldmethod=expr
+	:set foldexpr=strlen(substitute(substitute(getline(v:lnum),'\\s','',\"g\"),'[^>].*','',''))
+
+Puede probarlo con este texto:
+
+> texto citado que él escribió > texto citado que él escribió > > doble
+texto citado que yo escribí > > doble texto citado que yo escribí
+
+Explicación del 'foldexpr' usado en el ejemplo (de dentro a fuera):
+   getline(v:lnum)			obtiene la línea actual
+   substitute(...,'\\s','','g')		elimina los espacios blancos de la línea
+   substitute(...,'[^>].*','','')	elimina todo lo que '> precede
+   strlen(...)				cuenta la longitud de la cadena,
+					el cual es el número de '>'
+					encontrados.
+
+Tenga en cuenta que al usar la orden «:set» debe insertar una barra inversa
+antes de cada espacio, comilla doble y barra inversa. Si esto le confunde,
+haga >
+
+	:set foldexpr
+
+para revisar el valor actual resultante. Para corregir una expresión
+compleja, use el auto completa de línea de órdenes: >
+
+	:set foldexpr=<Tab>
+
+Aquí, <Tab> es una tabulación real. Vim rellenará el valor previo, el cual
+puede después editar.
+
+Si la expresión gana complejidad, puede insertarla dentro de una función y
+definir que 'foldexpr' invoque tal función.
+
+Consulte el manual de referencia para más información acerca de plegar por
+expresión: |fold-marker|
+
+==============================================================================
+*28.9*	Plegar líneas sin cambios
+
+Es útil cuando define la opción 'diff' en la misma ventana. La orden
+|vimdiff| hace esto por usted. Ejemplo: >
+
+	:setlocal diff foldmethod=diff scrollbind nowrap foldlevel=1
+
+Haga esto en cada ventana que muestre una versión distinta del mismo
+archivo. Verá claramente las diferencias entre archivos, plegando a su vez
+aquellas líneas que no contienen cambios.
+
+Para más detalles, consulte |fold-diff|.
+
+==============================================================================
+*28.10* ¿Qué método de plegado debería usar?
+
+Todas estas posibilidades le hacen preguntarse qué método escoger. Por
+desgracia, no existe ninguna regla de oro. Aquí tiene algunas pistas.
+
+De existir un archivo de sintaxis con plegado para el lenguaje en el que
+está editando, puede que sea la mejor opción. De no ser así, puede intentar
+crear uno. Esto requiere un buen conocimiento de patrones de búsqueda. No
+resulta sencillo, pero una vez que funciona no tendrá definir los pliegues
+manualmente.
+
+Puede escribir órdenes para plegar manualmente ciertas regiones al tratar
+con un texto sin estructura. Use después la orden |:mkview| para guardar y
+restaurar los pliegues.
+
+El método de marcado requiere que modifique el archivo. Si comparte archivos
+con más personas, o tiene que cumplir con las directrices de una compañía,
+cabe que no se le permita añadirlos.
+   La principal ventaja de los marcadores es que puede insertarlas
+exactamente donde desee. Esto evita que se pierdan algunas líneas al copiar
+y pegar pliegues. Puede después añadir un comentario acerca de los contenidos
+del pliegue.
+
+Plegar por sangrado funciona en muchos ficheros, aunque con resultados
+variables. Úselo cuando no puede usar ninguno de los otros métodos. Aún así,
+es de utilidad con los diseños preliminares. Puede entonces usar un
+'shiftwidth' en particular para cada nivel de anidado.
+
+Plegar con expresiones puede crear pliegues en prácticamente cualquier texto
+estructurado. Es sencillo de definir, particularmente se se pueden discernir con facilidad el principio y final de un pliegue.
+   Si al definir los pliegues usa el método «expr», pero no con los
+resultados deseados, puede pasar al método «manual». Esto no elimina los
+pliegues ya definidos. Puede entonces añadir o eliminar pliegues de
+manualmente.
+
+==============================================================================
+
+Capítulo siguiente: |usr_29.esx| Moverse a través de programas
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Omar Campagne Polaino
+
+Proyecto: |vim-doc-es|
+

@@ -1,0 +1,652 @@
+*usr_29.esx*	Para Vim versión 7.3.  Último cambio: 8/6/2008
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+			  Moverse a través de programas
+
+
+El creador de Vim es un programador informático. Por ello, no sorprende que
+Vim integre tantas características que facilitan la edición de
+programas. Salte de un punto a otro para ver dónde se definen y usan los
+identificadores. Previsualize declaraciones en una ventana distinta. Hay aún
+más en el siguiente capítulo.
+
+|29.1|	Usar etiquetas
+|29.2|	La ventana de vista previa
+|29.3|	Moverse a través de un programa
+|29.4|	Buscar identificadores globales
+|29.5|	Buscar identificadores locales
+
+ Siguiente capítulo: |usr_30.txt|  Editar programas
+  Capítulo anterior: |usr_28.esx|  Plegado
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*29.1*	Usar etiquetas
+
+¿Qué es una etiqueta? Es la ubicación donde un identificador se define. Un
+ejemplo es la definición de una función en un programa escrito en C o C++.
+La lista de etiquetas se guarda en un fichero de etiquetas, que Vim puede
+usar para saltar de cualquier punto a la etiqueta, donde se define un
+identificador.
+   Use la siguiente orden para generar el fichero de etiquetas para todos
+los ficheros C en el directorio actual: >
+
+	ctags *.c
+
+«ctags» es un programa aparte. Se encuentra instalado en la mayoría de
+sistemas Unix.Si no lo tiene, puede encontrar Exhuberant ctags aquí:
+
+	http://ctags.sf.net ~
+
+Ahora, cuando esté en Vim y desee ir a la definición de una función, puede
+saltar directamente a esta usando la siguiente orden: >
+
+	:tag startlist
+
+Esta orden encontraría la función «startlist» aunque esté en otro fichero.
+   La orden «CTRL-]» salta a la etiqueta de la palabra bajo el cursor. Esto
+facilita explorar un conjunto de código C. Suponga, por ejemplo, que está
+en una función llamada «write_block». Puede ver que invoca «write_line».
+¿Pero qué hace «write_line»? Si pone el cursor sobre «write_line» y pulsa
+«CTRL-]», saltará a la definición de esta función.
+   La función «write_line» invoca «write_char», y necesita comprender su
+funcionamiento. Por ello, pone el cursor sobre «write_char» y pulsa
+«CTRL-]». Ahora se encuentra sobre la definición de «write_char».
+
+	+-------------------------------------+
+	|void write_block(char **s; int cnt)  |
+	|{				      |
+	|   int i;			      |
+	|   for (i = 0; i < cnt; ++i)	      |
+	|      write_line(s[i]);	      |
+	|}	    |			      |
+	+-----------|-------------------------+
+		    |
+	     CTRL-] |
+		    |	 +----------------------------+
+		    +--> |void write_line(char *s)    |
+			 |{			      |
+			 |   while (*s != 0)	      |
+			 |	write_char(*s++);     |
+			 |}	  |		      |
+			 +--------|-------------------+
+				  |
+			   CTRL-] |
+				  |    +------------------------------------+
+				  +--> |void write_char(char c)		    |
+				       |{				    |
+				       |    putchar((int)(unsigned char)c); |
+				       |}				    |
+				       +------------------------------------+
+
+La orden «:tags» muestra la lista de etiquetas por las que se desplazó:
+
+:tags
+	  # TO tag	   FROM line  in file/text ~
+	  1  1 write_line	   8  write_block.c ~
+	  2  1 write_char	   7  write_line.c ~
+	> ~
+>
+Vuelva atrás ahora. La orden «CTRL-T» se desplaza a la etiqueta precedente.
+En el ejemplo anterior, vuelve a la función «write_line» al invocar
+«write_char».
+   Esta orden toma un argumento numérico que indica el número de etiquetas
+que se desplazará hacia atrás. Ahora que ha ido hacia delante, vuelva atrás.
+Vayamos otra vez hacia delante. La siguiente orden se desplaza a la etiqueta
+al principio de la lista: >
+
+	:tag
+
+Puede precederlo de un número para saltar hacia delante ese número d
+etiquetas. Por ejemplo:
+«:3tag». También puede preceder «CTRL-T» con un número.
+   Por ello, estas órdenes permiten desplazarse hacia delante con «CTRL-]»,
+y hacia atrás con «CTRL-T». Use «:tags» conocer dónde se encuentra.
+
+
+DIVIDIR VENTANAS
+
+La orden «:tag» reemplaza el fichero en la ventana actual con el que contiene
+la nueva función. Pero suponga que desea ver no sólo la función antigua, y
+no sólo la nueva. Para ello, puede dividir la ventana usando la orden
+«:split», seguida de la orden «:tag». Vim tiene una orden corta que realiza
+ambas funciones: >
+	:stag tagname
+
+Use la siguiente orden para dividir la ventana actual, y saltar a la
+etiqueta bajo el cursor: >
+
+	CTRL-W ]
+
+Si se define un número, la ventana nueva tendrá tal altura en líneas.
+
+
+MÁS FICHEROS DE ETIQUETAS
+
+Cuando tiene varios ficheros en muchos directorios, puede crear un fichero de
+etiquetas en cada uno de ellos. Vim sólo podrá saltar a etiquetas dentro de
+ese directorio.
+   Para encontrar más ficheros de etiquetas, defina la opción 'tags' para
+incluir todos los ficheros de etiquetas relevantes. Ejemplo: >
+
+	:set tags=./tags,./../tags,./*/tags
+
+Esto encuentra un fichero de etiquetas en el mismo directorio que el
+fichero actual, un nivel de directorios superiores y en todos los
+subdirectorios.
+   Este es un alto número de ficheros de etiquetas, pero puede que no lo
+suficiente. Por ejemplo, al editar un fichero en «~/proj/src», no encontraría
+el fichero de etiquetas «~/proj/sub/tags». Por ello, Vim ofrece buscar
+ficheros de etiquetas en todo el árbol de directorios. Ejemplo: >
+
+	:set tags=~/proj/**/tags
+
+
+UN FICHERO DE ETIQUETAS
+
+Cuando Vim tiene que buscar ficheros de etiquetas en varias ubicaciones,
+puede que escuche algunos sonidos del disco, y puede ser un poco lento.
+En este caso es mejor gastar este tiempo durante la generación de un gran
+fichero de etiquetas. Puede hacer esto durante la noche.
+Esto requiere el programa Exuberant ctags, mencionado anteriormente. Ofrece
+un argumento para buscar en todo un árbol de directorios: >
+
+	cd ~/proj
+	ctags -R .
+
+Lo mejor de esto es que Exuberant ctags reconoce varios tipos de fichero.
+Por ello, no sólo funciona con programas de C y C++, sino también para
+Eiffel e incluso scripts de Vim. Consulte la documentación de ctags para
+información de configuración.
+   Ahora sólo tiene que decir a Vim dónde está su fichero grande de
+etiquetas: >
+
+	:set tags=~/proj/tags
+
+
+VARIAS COINCIDENCIAS
+
+Cuando una función se define varias veces (o un mismo método en varias
+clases), la orden «:tag» saltaría a la primera aparición. De haber una
+coincidencia en el fichero actual, se usará éste en primer lugar.
+   Ahora puede saltar a otras coincidencias de la misma etiqueta con: >
+
+	:tnext
+
+Repita para encontrar más coincidencias. De haber varias, puede seleccionar
+a cuál saltar: >
+
+	:tselect etiqueta
+
+Vim le presentará una lista de opciones:
+
+	  # pri kind tag	       file ~
+	  1 F	f    mch_init	       os_amiga.c ~
+		       mch_init() ~
+	  2 F	f    mch_init	       os_mac.c ~
+		       mch_init() ~
+	  3 F	f    mch_init	       os_msdos.c ~
+		       mch_init(void) ~
+	  4 F	f    mch_init	       os_riscos.c ~
+		       mch_init() ~
+	Enter nr of choice (<CR> to abort):  ~
+
+Ahora puede introducir el número (en la primera columna) de la coincidencia
+a la que desea saltar. La información en las otras columnas le dan un buena
+idea de dónde se define la coincidencia.
+
+Use las siguientes órdenes para moverse entre etiquetas coincidentes:
+
+	:tfirst			Primera coincidencia
+	:[número]tprevious	Ir a la [número] coincidencia anterior
+	:[count]tnext		Ir a la [número] coincidencia siguiente
+	:tlast			Ir a la última coincidencia
+
+Si [número] se omite, se usa uno.
+
+
+AVERIGUAR NOMBRES DE ETIQUETA
+
+El autocompletado de línea de órdenes es una buena manera de evitar escribir
+un nombre de etiqueta largo. Simplemente escriba la primera parte y pulse
+<Tab>: >
+
+	:tag write_<Tab>
+
+Con esto obtendrá la primera coincidencia. Si no es la que desee, pulse
+<Tab> hasta encontrar la correcta.
+   A veces sólo conoce parte del nombre de una función, o tiene muchas
+etiquetas que empiezan con la misma cadena, pero con distinto final.
+En este caso, puede hacer que Vim use un patrón para encontrar la etiqueta.
+   Suponga que desea saltar a una etiqueta que contiene «block». Introduzca
+esto primero:
+
+	:tag /block
+
+Use ahora el autocompletado de línea de órdenes pulsando <Tab>. Vim
+encontrará todas las etiquetas que contienen «block», y usará la primera
+coincidencia. La «/» antes del nombre de una etiqueta le dice a Vim que lo
+hay a continuación no es un nombre de etiqueta, sino un patrón. Puede usar
+todos los elementos de patrones de búsqueda.
+Por ejemplo, supongo que desea seleccionar una etiqueta que empieza con
+«write»: >
+
+	:tselect /^write_
+
+La «^» especifica que la etiqueta empieza con «write_». En caso contrario,
+se detectaría también de estar en medio de un nombre de etiqueta. De forma
+similar, el signo «$» al final asegura que el patrón sólo coincida con el
+final de una etiqueta.
+
+
+UN EXPLORADOR DE ETIQUETAS
+
+Ya que «CTRL-]» le lleva a la definición del identificador bajo el cursor,
+puede usar un alista de nombres identificadores como una tabla de contenidos.
+Aquí tiene un ejemplo.
+   Primero cree una lista de identificadores (require Exuberant ctags): >
+
+	ctags --c-types=f -f functions *.c
+
+Ahora, inicie Vim sin un archivo, y edite este archivo en Vim en una ventana
+vertical dividida: >
+
+	vim
+	:vsplit functions
+
+Esta ventana contiene todas una lista de todas las funciones. También hay
+más elementos, pero los puede ignorar. Ejecute «setlocal ts=99» para
+organizarlo un poco.
+   Defina una macro en esta ventana: >
+
+	:nnoremap <buffer> <CR> 0ye<C-W>w:tag <C-R>"<CR>
+
+Desplace el cursor a la línea que contiene la función a la que desea
+ir. Pulse <Intro>, y Vim irá a la otra ventana y saltará a la función
+seleccionada.
+
+
+ELEMENTOS RELACIONADOS
+
+Puede definir 'ignorecase' para ignorar la distinción entre mayúsculas y
+minúsculas.
+
+La opción 'tagbsearch' indica si el archivo de etiquetas está ordenado o
+no. El valor predeterminado es suponer un archivo de etiquetas ordenado, que
+agiliza la búsqueda de etiquetas, pero no funciona si el archivo de
+etiquetas no está ordenado.
+
+La opción 'taglength' se puede usar para decir a Vim el número de carácteres
+significativos en una etiqueta.
+
+Cuando usa el programa SNiFF+, puede usar la interfaz de Vim |sniff|. SNiFF+
+es un programa comercial.
+
+Cscope es un programa libre. No sólo encuentra los lugares dónde se declara
+un identificador. sino también dónde se usa. Consulte |cscope|.
+
+==============================================================================
+*29.2*	La ventana de previsualización
+
+Cuando edita código que contiene una llamada a una función, necesitará los
+argumentos correctos. Para conocer los valores que puede introducir, puede
+ver cómo se define la función. El mecanismo de etiquetas es adecuado para
+esto. Preferentemente, la definición se muestra en otra ventana. Puede usar
+la ventana de previsualización para esto.
+   Use lo siguiente para abrir una ventana de previsualización que muestre
+la función «write_char»: >
+
+	:ptag write_char
+
+Vim abrirá una ventana, y saltará a la etiqueta «write_char». A
+continuación, vuelve a la posición original. Así, puede seguir escribiendo
+sin necesidad de usar la orden «CTRL-W».
+   Si el nombre de una función aparece en el texto, puede obtener su
+definición en la ventana de previsualización con lo siguiente: >
+
+	CTRL-W }
+
+Hay un script que muestra el texto automáticamente dónde se definió la
+palabra bajo el cursor. Consulte |CursorHold-example|.
+
+Para cerrar la ventana de previsualización use la orden: >
+
+	:pclose
+
+Para editar un fichero específico en la ventana de previsualización, use
+«_pedit». Esto puede ser útil para editar la cabecera de un archivo, por
+ejemplo: >
+
+	:pedit defs.h
+
+Por último, «:psearch» se puede utilizar para buscar una palabra en el
+archivo actual y cualquier archivo incluido («include») y mostrar la
+coincidencia en la ventana de previsualización. Esto es especialmente útil
+cuando se utilizan las funciones de la biblioteca para el que no tiene un
+archivo de etiquetas.  Ejemplo: >
+
+	:psearch popen
+
+Esto mostrará el archivo «stdio.h» en la ventana de previsualización, con el
+prototipode función para «popen()»:
+
+	FILE	*popen __P((const char *, const char *)); ~
+
+Puede definir la altura de la ventana de previsualización cuando está
+abierta con la orden 'previewheight'.
+
+==============================================================================
+*29.3*	Moverse a través de un programa
+
+Debido a que un programa está estructurado, Vim puede reconocer elementos en
+él. Puede usar órdenes específicas para desplazarse.
+   Los programas en C habitualmente contienen construcciones como esta:
+
+	#ifdef USE_POPEN ~
+	    fd = popen("ls", "r") ~
+	#else ~
+	    fd = fopen("tmp", "w") ~
+	#endif ~
+
+Pero también más largo, y posiblemente anidado. Posicione el cursor sobre
+«#ifdef» y pulse «%». Vim saltará al siguiente «#else». Pulsar «%» otra vez
+le devuelve a «#endif». Otro «%» le llevaría a «#ifdef» otra vez.
+    Cuando una construcción está anidada, Vim encontrará los elementos
+coincidentes. Esta es una buena forma de comprobar si se ha olvidado de
+insertar un «#endif».
+   Cuando está en algún punto dentro de un «#if - #endif», puede saltar al
+principio con lo siguiente: >
+
+	[#
+
+Si no está después de un «#if» o «#ifdef» Vim emitirá un sonido. Para saltar
+hacia adelante al siguiente «#else» o «#endif» use lo siguiente: >
+
+	]#
+
+Estas dos órdenes omiten cualquier bloque «#if - #endif» que se
+encuentran. Ejemplo:
+
+	#if defined(HAS_INC_H) ~
+	    a = a + inc(); ~
+	# ifdef USE_THEME ~
+	    a += 3; ~
+	# endif ~
+	    set_width(a); ~
+
+Con el cursor en la última línea, «[#» le lleva a la primera línea. El
+bloque «#ifdef - #endif» en el centro se omite.
+
+
+MOVERSE EN BLOQUES DE CÓDIGO
+
+Los bloques de código C están limitados por {}. Esto puede ser muy largo.
+Para saltar al principio del bloque exterior use la orden «[[». Use «][»
+para encontrar el final.
+Esto supone que «{» y «}» están en la primera columna.
+   La orden «[{» le lleva al principio del bloque actual. Omite las parejas
+de «{}» en el mismo nivel. «]}» salta al final.
+   Una vista general:
+
+			function(int a)
+	   +->		{
+	   |		    if (a)
+	   |	   +->	    {
+	[[ |	   |		for (;;)	       --+
+	   |	   |	  +->	{			 |
+	   |	[{ |	  |	    foo(32);		 |     --+
+	   |	   |   [{ |	    if (bar(a))  --+	 | ]}	 |
+	   +--	   |	  +--		break;	   | ]}  |	 |
+		   |		}		 <-+	 |	 | ][
+		   +--		foobar(a)		 |	 |
+			    }			       <-+	 |
+			}				       <-+
+
+Al escribir en C++ o Java, el bloque exterior «{}» es para la clase. El
+siguiente nivel de «{}» es para un método. Si se encuentra dentro de una
+clase, use «[m» para encontrar el inicio previo de un método. «]m» encuentra
+el siguiente inicio de un método.
+
+Además, «[]» se mueve hacia atrás al final de la función, y «]]» se mueve
+hacia adelante, al inicio de la siguiente función. El final de la función
+está definido con un «}» al principio de la primera columna.
+
+				int func1(void)
+				{
+					return 1;
+		  +---------->  }
+		  |
+	      []  |		int func2(void)
+		  |	   +->	{
+		  |    [[  |		if (flag)
+	start	  +--	   +--			return flag;
+		  |    ][  |		return 2;
+		  |	   +->	}
+	      ]]  |
+		  |		int func3(void)
+		  +---------->	{
+					return 3;
+				}
+
+No se olvido de que también puede usar «%» para desplazarase entre parejas
+de «()», «{}» y «[]». También funciona cuando están separados por varias
+líneas.
+
+
+MOVERSE ENTRE LLAVES
+
+Las órdenes  «[(» y «])» funcionan de manera similar a «[{» y «]}», con
+la excepción de que funcionan con parejas de «()» en lugar de «{}».
+>
+				  [(
+<		    <--------------------------------
+			      <-------
+		if (a == b && (c == d || (e > f)) && x > y) ~
+				  -------------->
+			  --------------------------------> >
+				       ])
+
+MOVERSE EN COMENTARIOS	
+
+Use «[/» para volver al principio de un comentario. Puede moverse hacia
+adelante al final de un comentario con «]/». Sólo funciona con comentarios
+/* - */.
+
+	  +->	  +-> /*
+	  |    [/ |    * Comentario sobre la  --+
+       [/ |	  +--  * maravillosa vida.      | ]/
+	  |	       */		      <-+
+	  |
+	  +--	       foo = bar * 3;	      --+
+						| ]/
+		       /* Comentario corto */ <-+
+
+==============================================================================
+*29.4* Buscar identificadores globales
+
+Suponga que está editando un programa escrito en C, y se pregunta se una
+variable está declarada como «int» o «unsigned». Una forma rápida de hacer
+esto es con la orden «[I».
+   Estando el cursor sobre la palabra «column», teclee: >
+
+	[I
+
+VIM enumerará las líneas coincidentes que puede encontrar. No sólo en el
+archivo actual, sino también en todos los archivos incluidos (y archivos
+incluidos en ellos, etc..). El resultado tiene el siguiente aspecto:
+
+	structs.h ~
+	 1:   29     unsigned     column;    /* column number */ ~
+
+La ventaja comparado con usar etiquetas o la ventana de previsualización es
+que se buscan los archivos incluidos. En la mayoría de los casos, se
+encuentre la declaración correcto, incluso si el archivo de etiquetas no está
+al día. También cuando no tiene etiquetas para los archivos incluidos.
+   Aun así, algunas cosas tienen que estar correctas para que «[I» funcione.
+Primero, la opción «include» debe especificar cómo se incluye el archivo. El
+valor por omisión funciona con C y C++. Tendrá que modificarlo para otros
+lenguajes.
+
+
+UBICAR ARCHIVOS INCLUIDOS («INCLUDE»)
+
+   Vim encontrará ficheros incluidos en los lugares definidos con la opción
+'path'. Si falta un directorio puede que no se encuentren todos los archivos
+incluidos. Puede descubrirlo con la siguiente orden: >
+
+	:checkpath
+
+Esto lista todos los archivos incluidos que no pudo encontrar. También
+incluye archivos incluidos por los ficheros no encontrados. Un ejemplo de la
+salida:
+
+	--- Included files not found in path --- ~
+	<io.h> ~
+	vim.h --> ~
+	  <functions.h> ~
+	  <clib/exec_protos.h> ~
+
+El archivo «io.h» está incluido en el archivo actual y no se puede
+encontrar. Se puede encontrar «vim.h», y por ello «:checkpath» acude a ese
+archivo y compruebe qué incluye. Los archivos «functions.h» y
+«clib/exec_protos.h», incluidos por «vim.h» no se pueden encontrar.
+
+	Nota:
+	Vim no es un compilador. No reconoce las declaraciones «#ifdef».
+	Esto significa que se usa cada declaración «#include», incluso si
+	aparece después de «#if NEVER».
+
+Para arreglar los archivo no encontrados, añada el directorio a la opción
+'path'. Un buen sitio para averiguar esto es el archivo «Makefile». Busque
+líneas que contengan elementos «-I», como «-I/usr/local/X11». Use los
+siguiente para añadir este directorio: >
+
+	:set path+=/usr/local/X11
+
+Puede usar el comodín «*» cuando haya varios directorios. Ejemplo: >
+
+	:set path+=/usr/*/include
+
+Esto encontraría archivos tanto en «/usr/local/include» como en
+«/usr/X11/include».
+
+Los elementos «**» son de utilidad cuando trabaja en un proyecto con un
+árblo anidado de archivos incluidos. Esto busca en todos los
+subdirectorios. Ejemplo: >
+
+	:set path+=/projects/invent/**/include
+
+Esto encontraría archivos en los directorios:
+
+	/projects/invent/include ~
+	/projects/invent/main/include ~
+	/projects/invent/main/os/include ~
+	etc.
+
+Hay incluso más posibilidades. Para más información consulte la opción
+'path'.
+   Use la siguiente orden si desea ver qué archivos incluidos se
+encontraron: >
+
+	:checkpath!
+
+Obtendrá un lista muy larga de los archivos incluidos, los que éstos
+incluyen, y así sucesivamente. Para acortar la lista Vim muestra «Ya está
+listado» para los archivos encontrados anteriormente, y no muestra los
+ficheros incluidos nuevamente.
+
+
+SALTAR A UNA COINCIDENCIA
+
+«[I» produce una lista con una sola línea de texto. Cuando desee ver el
+primer elemento, salte a esa línea con la siguiente orden: >
+
+	[<Tab>
+
+También puede usar «[ CTRL-I», y que «CTRL-I» es lo mismo que pulsar <Tab>.
+
+La lista que «[I» produce tiene un número al principio de la línea. Cuando
+desee saltar a otro elemento distinto al primero, primero introduzca el
+número:
+
+	3[<Tab>
+
+Esto salta al tercer elemento de la lista. Recuerde que puede usar «CTRL-O»
+para volver al punto desde donde empezó.
+
+
+ÓRDENES RELACIONADAS
+
+	[i		Lista sólo la primera coincidencia
+	]I		Lista sólo elementos bajo el cursor
+	]i		Lista sólo el primer elemento bajo el cursor
+
+
+ENCONTRAR UN IDENTIFICADOR DEFINIDO
+
+La orden «[I» encuentra cualquier identificador. Si sólo desea usar macros
+definidos con «#define» use lo siguiente: >
+
+	[D
+
+Una vez más, esto busca en los archivos incluidos. La opción 'define'
+especifica el aspecto de una línea que muestra elementos para «[D». Puede
+modificar esto para que funcione con otros lenguajes además de C y C++.
+
+	[d		Lista sólo la primera coincidencia
+	]D		Lista sólo elementos bajo el cursor
+	]d		Lista sólo el primer elemento bajo el cursor
+
+==============================================================================
+*29.5* Buscar identificadores locales
+
+La orden «[I» busca archivos incluidos. Use lo siguiente para buscar sólo en
+el archivo actual y saltar al primer sitio donde se usa la palabra bajo el
+cursor: >
+
+	gD
+
+Consejo. «Goto definición». Esta orden es útil para buscar una variable o
+función declarada localmente («static», en términos C). Ejemplo (cursor
+sobre «counter»):
+
+	   +->   static int counter = 0;
+	   |
+	   |     int get_counter(void)
+	gD |     {
+	   |	     ++counter;
+	   +--	     return counter;
+		 }
+
+Para limitar la búsqueda aún más, y buscar sólo la función actual, use la
+siguiente orden: >
+
+	gd
+
+Esto volvería al principio de la función actual, y buscará la primera
+aparición de la palabra bajo el cursor. En realidad, busca en sentido
+inverso una línea vacía sobre un «{» en la primera columna. A partir de ahí,
+busca hacia adelante el identificador. Ejemplo (cursor sobre «idx»):
+
+		int find_entry(char *name)
+		{
+	   +->	    int idx;
+	   |
+	gd |	    for (idx = 0; idx < table_len; ++idx)
+	   |		if (strcmp(table[idx].name, name) == 0)
+	   +--		    return idx;
+		}
+
+==============================================================================
+
+Siguiente capítulo: |usr_30.txt| Editar programas
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Omar Campagne Polaino
+
+Proyecto: |vim-doc-es|
+

@@ -1,0 +1,394 @@
+*usr_42.esx*	Para Vim versión 7.3.  Último cambio: 5/5/2008
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+			    Añadir nuevos menús
+
+
+A estas alturas ya debe saber que Vim es muy flexible. Esta flexibilidad se
+extiende a los menús disponibles en la interfaz gráfica. Puede definir sus
+propias entradas de menú para que ciertas órdenes sean más fáciles de
+acceder.  Esto es principalmente para usuarios asiduos del ratón.
+
+|42.1|	Introducción
+|42.2|	Órdenes para menús
+|42.3|	Varios
+|42.4|	Barra de herramientas y menús contextuales
+
+ Capítulo siguiente: |usr_43.esx|  Uso de tipos de archivo
+  Capítulo anterior: |usr_41.esx|  Escribir scripts para Vim
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*42.1*	Introducción
+
+Los menús que Vim usa están definidos en el archivo «$VIMRUNTIME/menu.vim». Si
+desea escribir sus propios menús, es conveniente que revise en primer lugar
+dicho archivo.
+   Para definir un elemento de un menú, use la orden «:menu». La forma básica
+de esta orden es la siguiente: >
+
+	:menu {elemento-menú} {teclas}
+
+La parte {elemento-menú} describe en qué posición del menú se ha de ubicar
+el elemento. Un {elemento-menú} típico es «Archivo.Guardar», que representa
+al elemento «Guardar» en el menú «Archivo». Se usa un punto para separar los
+nombres. Ejemplo: >
+
+menu Archivo.Guardar  :update<CR>
+
+La orden «:update» escribe el archivo a disco si éste ha sido modificado.
+   Puede añadir otro nivel: «Editar.Opciones.Shiftwidth» define un menú
+secundario «Opciones» dentro del menú «Editar», con un elemento «Shiftwidth».
+Puede usar niveles aún más profundos. No use en exceso esta funcionalidad,
+porque al hacerlo tendrá que mover bastante el ratón para usar el elemento del
+menú.
+   La orden «:menu» es muy similar a la orden «:map»: el lado izquierdo indica
+cómo se activa el elemento y el lado derecho define los caracteres que se
+ejecutan. {teclas} corresponde a caracteres; éstos se usan tal como si los
+hubiera introducido manualmente. Así que en modo Insertar, cuando {teclas}
+corresponde a texto simple, se inserta dicho texto.
+
+
+ACELERADORES
+
+Para definir un acelerador se usa el carácter et (&). Por ejemplo, es posible
+usar Alt-A para seleccionar «Archivo» y G para seleccionar «Guardar». (Sin
+embargo, ¡la opción 'winaltkeys' puede deshabilitar este comportamiento!) Por
+lo tanto, el {elemento-menú} queda como "&Archivo.&Guardar". Los caracteres
+aceleradores aparecerán subrayados en el menú.
+   Debe asegurarse de que cada tecla sea usada una sola vez en cada menú. De
+no hacerlo no sabrá cuál de los dos menús se usará. Vim no muestra ninguna
+advertencia cuando esto pasa.
+
+
+PRIORIDADES
+
+La definición real del elemento de menú «Archivo.Guardar» es similar a la
+siguiente: >
+
+	:menu 10.340 &Archivo.&Guardar<Tab>:w  :confirm w<CR>
+
+El número 10.340 es el número de prioridad. El editor lo usa para decidir
+dónde ubicar el elemento de menú. El primer número (10) indica la posición en
+la barra de menú. Los menús con números más pequeños se ubican a la izquierda,
+los más grandes a la derecha.
+   Éstas son las prioridades de los menús estándar:
+
+	  10	   20      40		 50	   60      70		9999
+
+	+---------------------------------------------------------------------+
+	| Archivo  Editar  Herramientas  Sintaxis  Búfers  Ventana	Ayuda |
+	+---------------------------------------------------------------------+
+
+Tenga en cuenta que el menú «Ayuda» tiene un número muy grande, para hacer que
+aparezca en el extremo derecho.
+   El segundo número determina la ubicación del elemento dentro del menú
+desplegable. Los números pequeños aparecen arriba, los números más grandes
+abajo. Éstas son la prioridades del menú «Archivo»:
+
+			+-------------------------+
+	    10.310	|Abrir...		  |
+	    10.320	|Abrir en otra ventana... |
+	    10.325	|Nuevo			  |
+	    10.330	|Cerrar			  |
+	    10.335	|------------------------ |
+	    10.340	|Guardar		  |
+	    10.350	|Guardar como...	  |
+	    10.400	|------------------------ |
+	    10.410	|Mostrar diferencias como |
+	    10.420	|Mostrar parcheado por	  |
+	    10.500	|------------------------ |
+	    10.510	|Imprimir		  |
+	    10.600	|------------------------ |
+	    10.610	|Guardar y salir	  |
+	    10.620	|Salir			  |
+			+-------------------------+
+
+Tenga en cuenta que hay saltos en la numeración. Es allí donde puede ubicar
+sus propios elementos de menú, si así lo desea (usualmente es mejor no alterar
+los menús estándar y crear un nuevo menú para sus elementos.)
+  Cuando crea un menú secundario, puede añadir otro «.número» a la prioridad.
+De esta forma cada nombre en {elemento-menú} obtiene un número de prioridad.
+
+
+CARACTERES ESPECIALES
+
+El {elemento-menú} de este ejemplo es «&Archivo.&Guardar<Tab>:w». Esto llama
+la atención sobre un punto importante: {elemento-menú} debe ser una sola
+palabra. Si desea usar puntos, espacios o tabuladores en el nombre, debe
+usar la notación <> (por ejemplo, <Space> y <Tab>) o escapar estos
+caracteres usando una barra inversa (\). >
+
+	:menu 10.305 &Archivo.&Ejecutar\ Tarea\.\.\. :exit<CR>
+
+En este ejemplo, el nombre del elemento del menú «Ejecutar Tarea» contiene
+un espacio, y la orden es «:exit<CR>».
+
+El carácter <Tab> se usa en el nombre de un menú para separar la definición
+del nombre del mismo de la parte que se usa como indicación al usuario. La
+parte a continuación de <Tab> se muestra justificada a la derecha en el
+menú. El nombre usado en el menú «Archivo.Guardar» es
+«&Archivo.&Guardar<Tab>:w». De acuerdo a lo anterior, el nombre del menú es
+«Archivo.Guardar» y la indicación es «:w».
+
+
+SEPARADORES
+
+Las líneas o separadores, usadas para agrupar elementos de menú relacionados,
+se definen usando un nombre que empieza y termina con '-'. Por ejemplo
+«-sep-». Al usar varios separadores se les debe dar nombres diferentes.
+Aparte de esto los nombres particulares no tienen importancia.
+   La orden de un separador nunca será ejecutada, pero hay que definirla de
+todos modos. Un «:» es suficiente. Por ejemplo: >
+
+	:amenu 20.510 Editar.-sep3- :
+
+==============================================================================
+*42.2*	Órdenes de menú
+
+Puede definir elementos de menú que sólo existen para ciertos modos. El
+funcionamiento de esta característica es idéntico al proporcionado por las
+variaciones de la orden «:map»:
+
+	:menu		Modos Normal, Visual y Operator-pending
+	:nmenu		Modo Normal
+	:vmenu		Modo Visual
+	:omenu		Modo Operator-pending
+	:menu!		Modo Insertar y Línea de órdenes
+	:imenu		Modo Insertar
+	:cmenu		Modo Línea de órdenes
+	:amenu		Todos los modos existentes
+
+Para evitar que las órdenes de un elemento en un menú se usen en una macro,
+use las órdenes «:noremenu», «:nnoremenu», «:anoremenu», etc.
+
+
+USO DE :AMENU
+
+La orden «:amenu» es ligeramente diferente. Asume que las {teclas} que se le
+indican van a ser ejecutadas en modo Normal. Cuando Vim se encuentra en modo
+Insertar o Visual, Vim debe primero volver al modo Normal. «:amenu» inserta un
+CTRL-C o un CTRL-O por usted. Por ejemplo, si usa esta orden: >
+
+	:amenu  90.100 Mío.Buscar\ Palabra  *
+
+Las órdenes de menú resultantes serán:
+
+	Modo Normal:		*
+	Modo Visual:		CTRL-C *
+	Modo Operator-pending:	CTRL-C *
+	Modo Insertar:		CTRL-O *
+	Modo Línea de órdenes:	CTRL-C *
+
+En el modo Línea de órdenes CTRL-C descarta la orden que se haya escrito. En
+los modos Visual y Operator-pending CTRL-C saldrá del modo. En el modo
+Insertar CTRL-O ejecutará la orden y volverá a modo Insertar.
+   CTRL-O sólo funciona para una orden. Si necesita usar dos o más órdenes,
+póngalas en una función, e invóquela. Ejemplo: >
+
+	:amenu  Mío.Siguiente\ Archivo  :call <SID>SiguienteArchivo()<CR>
+	:function <SID>SiguienteArchivo()
+	:  next
+	:  1/^Código
+	:endfunction
+
+Esta entrada de menú pasa al siguiente archivo en la lista de argumentos
+usando «:next». Luego busca la línea que empieza con «Código».
+   El <SID> antepuesto al nombre de la función es el ID del script. Este hace
+que la función sea local al script en el cual es definida. Esto evita
+problemas si se define una función con el mismo nombre en otro archivo de
+script. Véase |<SID>|.
+
+
+MENÚS SILENCIOSOS
+
+El menú ejecuta las {teclas} como si hubieran sido introducidas manualmente.
+Con las órdenes «:» esto implica que la orden será visible en la línea de
+órdenes. Si es una orden larga, aparecerá el mensaje «Pulse INTRO...». ¡Esto
+puede ser muy molesto!
+   Para evitar que suceda, haga que el menú sea silencioso. Puede hacerlo
+usando el argumento <silent>. Por ejemplo, considere la llamada a
+SiguienteArchivo() en el ejemplo anterior. Al usar este menú, lo siguiente
+aparecerá en la línea de órdenes:
+
+	:call <SNR>34_SiguienteArchivo() ~
+
+Para evitar esto, inserte «<silent>» como primer argumento: >
+
+	:amenu <silent> Mío.Siguiente\ Archivo :call <SID>SiguienteArchivo()<CR>
+
+No use «<silent>» demasiado. No es necesario para órdenes cortas. Si está
+haciendo un menú que alguien más usará, la posibilidad de ver la orden
+ejecutada le dará una indicación acerca de lo que pudo haber introducido
+manualmente, en lugar de usar el ratón.
+
+
+LISTAR MENÚS
+
+Cuando se usa una orden de menú sin indicar las {teclas}, se listan los
+menús definidos. Puede especificar un {elemento-menú}, o una parte de él,
+para listar menús específicos. Ejemplo: >
+
+	:amenu
+
+Esto lista todos los menús. ¡Ésa es una lista muy larga! Es mejor indicar el
+nombre del menú para recibir una lista más corta: >
+
+	:amenu Editar
+
+Esta orden lista únicamente los elementos del menú «Editar» para todos los
+modos. Para listar un elemento específico de un menú para modo Insertar: >
+
+	:imenu Editar.Deshacer
+
+Asegúrese de introducir exactamente el nombre apropiado. Las diferencias
+entre mayúsculas y minúsculas son importantes. El <Tab> y lo que aparece a
+continuación se puede omitir.
+
+
+BORRAR MENÚS
+
+Para borrar un menú se usa la misma orden que para listarlo, pero cambiando
+«menu» por «unmenu». Así, «:menu» se convierte en «:unmenu», «:nmenu» en
+«:nunmenu», etc. Para borrar el elemento «Herramientas.Ejecutar Make» para
+el modo Insertar: >
+
+	:iunmenu Herramientas.Ejecutar\ Make
+
+Puede borrar un menú completo, con todos sus elementos, usando el nombre del
+menú. Ejemplo: >
+
+	:aunmenu Sintaxis
+
+Esto borra el menú «Sintaxis» y todos los elementos que contenga.
+
+==============================================================================
+*42.3*	Varios
+
+Es posible cambiar la apariencia de los menús definiendo opciones en
+'guioptions'. De manera predeterminada están incluidas todas, excepto
+«M». Puede eliminar una opción particular con una orden como: >
+
+	:set guioptions-=m
+<
+	m		Al eliminar la opción la barra de menú no se muestra.
+
+	M		Al añadirla no se cargan los menús predeterminados.
+
+	g		Al eliminarla, los elementos de menú deshabilitados no
+			aparecen grises sino que son eliminados. (No funciona
+			en todos los sistemas.)
+
+	t		Al eliminarla se deshabilita la función de
+			desacoplar los menús de la interfaz.
+
+La línea de puntos en la parte superior de un menú no es un separador. Al
+seleccionar este elemento, el menú es «desacoplado»: se lo muestra en una
+ventana separada. Se lo denomina menú desacoplable. Es una característica
+útil si usa un mismo menú con frecuencia.
+
+Para traducir elementos de menú, véase |:menutrans|.
+
+Ya que debe usar el ratón para seleccionar un elemento en un menú, usar la
+orden «:browse» para seleccionar un archivo es una buena idea . Añada
+«:confirm» para obtener un diálogo en lugar de un mensaje de error, por
+ejemplo, cuando el búfer actual tiene cambios no guardados. Las dos órdenes
+pueden combinarse: >
+
+	:amenu Archivo.Abrir  :browse confirm edit<CR>
+
+«:browse» despliega un explorador de archivos para seleccionar el archivo a
+editar. «:confirm» mostrará un diálogo cuando el búfer actual tiene cambios
+que no han sido guardados. Puede escoger entre guardarlos, descartarlos, o
+cancelar la orden.
+   Puede usar las funciones confirm() e inputdialog() para elementos más
+complicados. Los menús predeterminados contienen algunos ejemplos.
+
+==============================================================================
+*42.4*	Menús de barra de herramientas y menús contextuales
+
+Hay dos menús especiales: ToolBar (barra de herramientas) y PopUp (menú
+contextual). Los elementos cuyos nombres empiezan con estas palabras clave
+no aparecen en la barra de menú normal.
+
+
+BARRA DE HERRAMIENTAS
+
+La barra de herramientas aparece únicamente cuando se incluye la opción «T» en
+'guioptions'.
+   La barra de herramientas usa iconos en lugar de texto para representar la
+orden asociada. Por ejemplo, el {elemento-menú} llamado «ToolBar.Nueva» hace
+que el icono «Nueva» aparezca en la barra de herramientas.
+   El editor Vim cuenta con 28 iconos incorporados. La sección |builtin-tools|
+muestra una tabla con todos ellos. La mayoría de ellos se usa en la barra de
+herramientas predeterminada. Es posible redefinir qué hacen estos elementos
+(tras configurar los menús predeterminados.)
+Puede añadir otro mapa de bits como elemento de una barra de herramientas. O
+definir un elemento nuevo en una barra de herramientas con un mapa de bits.
+Por ejemplo, puede definir un elemento de la barra de herramientas así: >
+
+	:tmenu ToolBar.Compile  Compilar el archivo actual
+	:amenu ToolBar.Compile  :!cc % -o %:r<CR>
+
+Ahora debe crear el icono. En MS-Windows debe usar el formato bitmap (mapa de
+bits), con el nombre «Compile.bmp». En Unix se usa el formato XPM, por lo que
+el nombre de archivo es «Compile.xpm». El tamaño del icono debe ser de 18 por
+18 píxeles. En MS-Windows se pueden usar otros tamaños, pero la apariencia no
+será agradable.
+   Ubique el mapa de bits en el directorio «bitmaps» en uno cualquiera de los
+directorios en 'runtimepath'. Por ejemplo, en Unix, puede usar
+«~/.vim/bitmaps/Compile.xpm».
+
+Puede definir indicaciones para los elementos de la barra de
+herramientas. Una indicación es un texto corto que explica la funcionalidad
+de un elemento de la barra de herramientas.  Por ejemplo, «Abrir
+Archivo». La indicación se hace visible cuando el puntero del ratón está
+sobre el elemento, inmóvil. Es muy útil si la intención que expresa la
+imagen no es tan obvia. Ejemplo: >
+
+	:tmenu ToolBar.Make  Ejecutar make en el directorio actual
+<
+	Nota:
+	Tenga en cuenta la capitalización de letras usada.  «Toolbar» y
+	«toolbar» no son iguales a «ToolBar»!
+
+Para eliminar una indicación, use la orden |:tunmenu|.
+
+Puede usar la opción 'toolbar' para mostrar texto en lugar de un icono, o
+mostrar texto y un icono. Muchas personas simplemente usan el icono, ya que
+el texto consume bastante espacio.
+
+
+MENÚS CONTEXTUALES
+
+Un menú contextual aparece en donde se encuentre el puntero del ratón. Puede
+activarlo en MS-Windows usando el botón derecho del ratón. Luego podrá
+seleccionar un elemento particular usando el botón izquierdo. En Unix el menú
+se usa manteniendo presionado el botón derecho del ratón.
+   El menú contextual sólo aparece cuando a la opción 'mousemodel' se le ha
+dado alguno de los valores «popup» o «popup_setpos». La diferencia entre estos
+dos valores consiste en que «popup_setpos» mueve el cursor al sitio en que se
+encuentra el puntero del ratón. Al pulsar sobre en una selección, ésta se
+usará sin modificaciones. Cuando hay una región seleccionada y se pulsa
+el ratón fuera de ella, se descarta la selección.
+   Hay un menú contextual por cada modo. Por este motivo nunca hay elementos
+deshabilitados como sucede en los menús normales.
+
+¿Cuál es el significado de la vida, el universo y todo lo demás? *42*
+Douglas Adams, la única persona que supo en realidad de qué se trataba esta
+pregunta está muerto ahora, desafortunadamente. Ahora usted puede
+preguntarse tal vez cuál es el significado de la muerte...
+
+==============================================================================
+
+Capítulo siguiente: |usr_43.esx| Uso de tipos de archivo
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Javier Rojas
+
+Proyecto: |vim-doc-es|
+

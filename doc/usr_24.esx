@@ -1,0 +1,626 @@
+*usr_24.esx*	Para Vim versión 7.3.  Último cambio: 23/6/2006
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+			  Insertar con rapidez
+
+
+Al introducir texto, Vim ofrece varias maneras de reducir el número de
+teclas que pulsa, evitando teclear errores. Use el modo de autocompletado
+del modo Insertar para repetir palabras anteriormente tecleadas. Abrevie las
+palabras largas. Teclee caracteres que no están en su teclado.
+
+|24.1|	Corregir
+|24.2|	Mostrar coincidencias
+|24.3|	Autocompletado
+|24.4|	Repetir una inserción
+|24.5|	Copiar desde otra línea
+|24.6|	Insertar un registro
+|24.7|	Abreviaturas
+|24.8|	Introducir caracteres especiales
+|24.9|	Dígrafos
+|24.10|	Órdenes del modo Normal
+
+ Capítulo siguiente: |usr_25.txt|  Editar texto con formato
+  Capitulo anterior: |usr_23.esx|  Editar otros archivos
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*24.1*	Corregir
+
+La tecla <BS> ya se ha mencionado. Borra el carácter que precede al cursor.
+La tecla <Del> hace lo mismo con el carácter debajo (después) del cursor.
+   Use CTRL-W en caso de haber tecleado una palabra completamente
+errónea:
+
+	El caballo cayó del cielo ~
+					CTRL-W
+	El caballo cayó del ~
+
+En caso de haber realizado errores en una línea, y desea empezar otra vez,
+use CTRL-U para eliminarlo. Esto mantiene el texto después del cursor, así
+como la tabulación. Sólo se elimina el texto desde el primer espacio que no
+esté vacío hasta el cursor. Pulsar CTRL-U con el cursor sobre la «c» de
+«cayó» hace lo siguiente:
+
+	El caballo cayó del cielo ~
+					CTRL-W
+	cayó del ~
+
+Cuando detecta un error en alguna palabra anterior, necesita desplazar el
+cursor hasta ese punto para corregirlo. Por ejemplo, escribió lo siguiente:
+
+	El caballo cayu al suelo ~
+
+Necesita cambiar «cayo» a «cayó». Con el cursor al final,  teclearía esto
+para corregirlo: >
+
+					<Esc>3blróA
+
+<	Abandonar el modo insertar   <Esc>
+	Cuatro palabras hacia atrás          3b
+	Desplazarse a la «u»         		l
+	Reemplazar con «ó»			ró
+	Reiniciar modo insertar			  A
+
+Existe otra manera de hacer esto: >
+
+		<C-Izq><C-Izq><C-Izq><Derecha><Derecha><Derecha><Supr>ó<Fin>
+
+<	Tres palabras hacia atrás	        <C-Izq><C-Izq><C-Izq>
+	Desplazarse a la «u»		 <Derecha><Derecha><Derecha>
+	Borrar la «u»						<Supr>
+	Insertar una «ó»					ó
+	Ir al final de la línea					<Fin>
+
+Esto emplea teclas especiales para el desplazamiento, a la vez que permanece
+en el modo Insertar. Esto se parece a lo que haría con un editor sin modos. Es
+más fácil de recordar, pero lleva más tiempo (tiene que mover sus manos de
+las letras a las teclas del cursor, y es difícil pulsar la tecla <Fin> sin
+mirar el teclado).
+   Estas teclas especiales son más útiles cuando escribe una macro que no
+abandona el modo Insertar. El tecleo adicional no importa en este caso.
+   Este es un resumen de las teclas que puede usar en el modo Insertar:
+
+	<C-Inicio>	al principio del archivo
+	<Repág>		subir una pantalla
+	<Inicio>	al inicio de la línea
+	<S-Izq>		una palabra a la izquierda
+	<C-Izq>		una palabra a la izquierda
+	<S-Der>		una palabra a la derecha
+	<C-Der>		una palabra a la derecha
+	<Fin>		al final de la línea
+	<Avpág>		bajar una pantalla
+	<C-Fin>		al final del archivo
+
+Aún hay más, consulte |ins-special-special|.
+
+==============================================================================
+*24.2*	Mostrar coincidencias
+
+Al teclear una «)» estaría bien ver con qué «(» encaja. Para hacer que Vim
+use esta orden: >
+
+	:set showmatch
+
+Ahora, cuando teclee un texto como «(ejemplo), tan pronto como teclee el «)»
+Vim moverá el cursor brevemente al «(» correspondiente, lo mantendrá ahí
+medio segundo, y volverá a donde estaba tecleando.
+   En caso de no existir un correspondiente «(», Vim pitará. Sabrá entonces que
+ha olvidado el «(» en algún lugar, o que escribió una «)» demasiadas veces.
+   También se mostrará el signo correspondiente en las parejas «[]» «{}». No
+tiene que esperar a teclear el siguiente carácter, ya que tan pronto como Vim
+lo detecte, devolverá el cursor a su posición original, continuando la
+inserción. Puede modificar el tiempo que Vim espera con la opción 'matchtime'.
+Por ejemplo, para hacer que Vim espere un segundo y medio: >
+
+	:set matchtime=15
+
+Esto especifica el tiempo en décimas de segundo.
+
+==============================================================================
+*24.3*	Autocompletado
+
+Vim puede auto-completar palabras durante la inserción. Escriba primero la
+parte inicial de una palabra, pulse CTRL-P y Vim adivinará el resto.
+   Suponga, por ejemplo, que está creando un programa en C y que desea
+teclear lo siguiente:
+
+	total = ch_array[0] + ch_array[1] + ch_array[2]; ~
+
+Empiece introduciendo lo siguiente:
+
+	total = ch_array[0] + ch_ ~
+
+En este punto es cuando le dice a Vim que complete la palabra usando la
+orden CTRL-P. Vim buscará una palabra que empiece con lo que se aparece
+frente al cursor. En este caso, es «ch_», el cual encaja con la palabra
+«ch_array». Por ello, teclear CTRL-P le daría lo siguiente:
+
+	total = ch_array[0] + ch_array ~
+
+Después de teclear un poco más, obtiene esto (finalizando con un espacio):
+
+	total = ch_array[0] + ch_array[1] +  ~
+
+Si pulsa ahora CTRL-P, Vim buscará otra vez una palabra que complete la que
+se haya frente al cursor. Ya que no hay nada en frente del cursor, busca la
+palabra en sentido inverso, el cual es «ch_array». Pulsar CTRL-P otra vez le
+daría la siguiente palabra que encaja, en este caso «total». Si lo pulsa por
+tercera vez, Vim buscará aún más atrás. Si no hay nada más, al editor se le
+acabarían las palabras, volviendo al texto original, que es nada. Un cuarto
+CTRL-P causaría al editor empezar otra vez con «ch_array».
+
+Use CTRL-N para una búsqueda hacia delante. Ya que la búsqueda vuelve al
+inicio cuando llega al final del archivo, CTRL-N y CTRL-P encontrarán las
+mismas coincidencias, pero en distinto orden. Pista: CTRL-N es siguiente
+coincidencia («Next-match») y CTRL-P es la coincidencia anterior
+(«Previous-match»).
+
+Vim realiza un gran esfuerzo por encontrar palabras que completar. Por
+omisión, busca en los siguientes lugares:
+
+	1. Archivo actual
+	2. Archivos en otras ventanas
+	3. Otros archivos cargados (búfers ocultos)
+	4. Archivos que no están cargados (búfers inactivos)
+	5. Archivos de etiquetas
+	6. Todos los archivos #incluidos en el archivo actual
+
+
+OPCIONES
+
+Puede configurar el orden de búsqueda con la opción 'complete'.
+
+La opción 'ignorecase' es empleada. Las diferencias entre mayúsculas y
+minúsculas se ignorarán al buscar coincidencias de activar esta opción.
+
+'infercase' es una opción especial para el autocompletado. Es útil para
+encontrar parejas cuando ignora la sensibilidad a mayúsculas y minúsculas
+(debe activar 'ignorecase') , y seguir usando con esta palabra la mencionada
+sensibilidad. Por ello, si teclea «Para» y Vim encuentra «paramilitar», el
+resultado final será «Paramilitar».
+
+
+COMPLETAR ELEMENTOS ESPECÍFICOS
+
+Si sabe qué está buscando, puede usar estas órdenes para completar un cierto
+tipo de elemento.
+
+	CTRL-X CTRL-F		Nombres de archivo
+	CTRL-X CTRL-L		Líneas completas
+	CTRL-X CTRL-D		Definiciones de macros
+				(también en archivos incluidos)
+	CTRL-X CTRL-I		Archivo actual e incluidos
+	CTRL-X CTRL-K		Palabras de un diccionario
+	CTRL-X CTRL-T		Palabras de un tesauro
+	CTRL-X CTRL-]		Etiquetas
+	CTRL-X CTRL-V		Línea de órdenes de Vim
+
+Puede usar CTRL-N después de cada uno de estas órdenes para hallar la siguiente
+coincidencia, y CTRL-P para hallar la anterior.
+   Para más información acerca de estas órdenes, consulte |ins-completion|.
+
+
+COMPLETAR NOMBRES DE ARCHIVO
+
+Tomemos CTRL-X CTRL-F como ejemplo. Esto busca nombres de archivo.
+Examina el directorio actual en busca de archivos, y muestra cada uno que
+encaja con la palabra frenet al cursor.
+   Suponga, por ejemplo, que tiene las siguientes líneas en el directorio
+actual:
+
+	main.c  sub_count.c  sub_done.c  sub_exit.c
+
+Inicie ahora el modo Insertar y empiece a teclear:
+
+	El código de salida está en el archivo sub ~
+
+En este momento, introduzca la orden CTRL-X CTRL-F. Vim completará la
+palabra «sub» mirando en los ficheros en el directorio actual. La primera
+coincidencia es «sub_count.c». Esto no es lo que buscaba, así que busca la
+siguiente pareja pulsando CTRL-N. La coincidencia es «sub_done.c». Teclear
+CTRL-N otra vez le devolvería a «sub_exit.c». El resultado:
+
+	El código de salida está en el archivo sub_exit.c ~
+
+Si el nombre de archivo empieza con «/» (Unix) o «C:\» (MS-Windows), puede
+buscar todos los archivos en el sistema de archivos. Por ejemplo, teclee
+«/u» y CTRL-X CTRL-F. Esto buscará «/usr» (en Unix):
+
+	El archivo se encuentra en "/usr/" ~
+
+Si ahora pulsa CTRL-N volvería a «/u». En lugar de ello, para aceptar
+«/usr/» y descender un nivel en el árbol de directorios, use otra vez CTRL-X
+CTRL-F:
+
+	El archivo se encuentra en /usr/X11R6/~
+
+Los resultados varían según lo que se encuentra en su sistema de
+archivos. Las coincidencias aparecen alfabéticamente.
+
+
+COMPLETAR EL CÓDIGO FUENTE
+
+Los archivos de código están bien estructurados. Esto posibilita un
+autocompletado inteligente. En Vim, esto se llama autocompletado global
+(«Omni completion»). Algunos otros editores lo llaman intellisense, pero eso
+es una marca.
+
+La tecla para el autocompletado global es CTRL-X CTRL-O. Obviamente, la «O»
+significa «Omni», para recordarla mejor. Usemos un ejemplo para editar
+código C:
+
+	{ ~
+	    struct foo *p; ~
+	    p-> ~
+
+El cursor está después de «p->». Pulse ahora CTRL-X CTRL-O. Vim le ofrecerá
+una lista de alternativas, los cuales son los elementos que contiene «struct
+foo». Esto es diferente al uso de CTRL-P, el cual completa cualquier
+palabra, mientras que aquí sólo son válidos los miembros de «struct foo».
+
+Necesita realizar alguna configuración para que funcione el autocompletado
+global. Asegúrese al menos de que las extensiones de tipo de archivo
+(filetype) están activadas. El archivo vimrc debería tener esta línea: >
+	filetype plugin on
+O: >
+	filetype plugin indent on
+
+Necesita crear un archivo de etiquetas y definir la opción 'tags' si desea
+editar código C. Consulte |ft-c-omni|. Puede que tenga que realizar algo
+similar para otros tipos de archivo, consulte más adelante
+|compl-omni-filetypes|. Sólo funciona para ciertos tipos de archivo. Revise
+el valor de la opción 'omnifunc' para ver si funcionaría.
+
+==============================================================================
+*24.4*	Repetir una inserción
+
+Si pulsa CTRL-A, el editor insertará el texto que tecleó la última que estaba
+en el modo Insertar.
+   Suponga, por ejemplo, que tiene un archivo que empieza con lo siguiente:
+
+	"file.h" ~
+	/* El programa principal comienza */ ~
+
+Edita después el archivo insertando «#include» al principio de la primera
+línea:
+
+	#include "file.h" ~
+	/* El programa principal comienza */ ~
+
+Puede bajar hasta el inicio de la siguiente línea con las órdenes
+«j^». Ahora puede empezar a insertar una nueva línea «include». Asi que
+escribe: >
+
+	i CTRL-A
+
+El resultado es el siguiente:
+
+	#include "file.h" ~
+	#include /* El programa principal comienza */ ~
+
+«#include» se insertó porque CTRL-A inserta el texto de la inserción
+anterior. Teclee ahora «main.h» <Enter> para finalizar la línea:
+
+
+	#include "file.h" ~
+	#include "main.h" ~
+	/* El programa principal comienza */ ~
+
+La orden CTRL-@ realiza un CTRL-A y abandona el modo Insertar. Esta es una
+manera rápida de hacer la misma inserción otra vez.
+
+==============================================================================
+*24.5*	Copiar desde otra línea
+
+La orden CTRL-Y inserta el carácter sobre el cursor. Esto es útil si está
+duplicando una línea anterior. Por ejemplo, tiene esta línea de código C:
+
+	b_array[i]->s_next = a_array[i]->s_next; ~
+
+Ahora necesita escribir la misma línea, pero con un «s_prev» en lugar de
+«s_next». Inicie una nueva línea, y pulse CTRL-Y 14 veces, hasta encontrarse
+en la «n» de «next»:
+
+	b_array[i]->s_next = a_array[i]->s_next; ~
+	b_array[i]->s_ ~
+
+Ahora escriba «prev»:
+
+	b_array[i]->s_next = a_array[i]->s_next; ~
+	b_array[i]->s_prev ~
+
+Continue pulsando CTRL-Y hasta el siguiente «next»:
+
+	b_array[i]->s_next = a_array[i]->s_next; ~
+	b_array[i]->s_prev = a_array[i]->s_ ~
+
+Escriba ahora «prev» para finalizar el proceso.
+
+La orden CTRL-E actua como CTRL-Y a excepción de que inserta el carácter
+bajo el cursor.
+
+==============================================================================
+*24.6*	Insertar un registro
+
+La orden CTRL-R {registro} inserta el contenido de un registro. Esto es útil
+para evitar escribir una palabra larga. Por ejemplo, necesita teclear esto:
+
+	r = FunciónMuyLarga(a) + FunciónMuyLarga(b) + FunciónMuyLarga(c) ~
+
+El nombre de la función se define en otro archivo. Edite ese archivo y
+desplace el cursor sobre el nombre de función presente, y copie el mismo al
+registro v:
+
+	"vyiw
+
+«"v» es el especificador del registro, «yiw» signifia copiar la palabra
+interior («yank inner word»). Edite ahora el archivo donde se insertará la
+línea, y escriba las primeras letras:
+
+	r = ~
+
+Use ahora CTRL-R para insertar el nombre de la función:
+
+	r = FunciónMuyLarga ~
+
+Continua insertando caracteres en medio del nombre de la función, y usa
+«CTRL-R v» dos veces más.
+   Podría haber realizado lo mismo con el autocompletado. Usar un registro
+es útil cuando hay varias palabras que empiezan con el mismo carácter.
+
+Si el registro contiene caracteres tales como <BS> o otros caracteres
+especiales, se interpretarán como introducidos a través del teclado. Si no
+desea que esto ocurra (realmente quiere que <BS> acabe insertado en el
+texto), use la orden CTRL-R CTRL-R {registro}.
+
+==============================================================================
+*24.7*	Abreviaturas
+
+Una abreviatura es una palabra corta que sustituye a otra más larga. Por
+ejemplo, «poli» simboliza «policía». Vim le permite insertar una abreviatura
+para después expandirla automáticamente.
+   Para decir a Vim que expanda «poli» a «policía» cada vez que lo inserte,
+use la siguiente orden: >
+
+	:iabbrev poli policía
+
+Ahora, cuando escribe «po», aparecerá la palabra completa «policía» en el
+texto. Esto se activa cuando teclea un carácter que no puede ser parte de
+una palabra, como por ejemplo un espacio:
+
+	Texto introducido	Lo que ve
+	Vi al p			Vi al p ~
+	Vi al po		Vi al po ~
+	Vi al po<Espacio>	Vi al policía<Espacio> ~
+
+La expansión no ocurre si solo escribe «po». Esto permite escribir una
+palabra como «polifacético», que no se expandirá. Solo se revisan palabras
+completas con abreviaturas.
+
+
+ABREVIAR VARIAS PALABRAS
+
+Es posible definir una abreviatura cuyo resultado sean varias palabras. Por
+ejemplo, para definir «JB» como «Juan Benítez», use la siguiente orden: >
+
+	:iabbrev JB Juan Benítez
+
+Como programador, use dos abreviaturas mas bien inusuales: >
+
+	:iabbrev #b /****************************************
+	:iabbrev #e <Space>****************************************/
+
+Uso esto para crear comentarios en cajas. El comentario empieza con «#b», el
+cual escribe la línea superior. Después escribo el texto del comentario y uso
+«#e» para dibujar la línea inferior.
+   Observe que la abreviatura «#e» empieza con un espacio. En otras palabras,
+los primeros dos caracteres son espacio-asterisco. Por lo general, Vim
+ignora los espacios entre la abreviatura y la expansión. Para evitar tal
+problema, deletreo espacio («space») como siete caracters: <, S, p, a, c, e,>.
+
+	Nota:
+	La palabra «:iabbrev» es algo larga. «:iab» también daría resultado.
+	¡Esto es abreviar la orden de abreviar!
+
+
+ARREGLAR ERRORES TIPOGRÁFICOS
+
+Es bastante normal escribir siempre el mismo error. Por ejemplo, escribir
+«qeu» en lugar de «que». Puede arreglar esto con una abreviatura: >
+
+	:abbreviate qeu que
+
+Puede crear una lista completa de ejemplos como este. Añada uno cada vez que
+descubra un error común.
+
+
+LISTAR ABREVIATURAS
+
+La orden «:abbreviate» lista las abreviaturas:
+
+	:abbreviate
+	i  #e		  ****************************************/
+	i  #b		 /****************************************
+	i  JB		 Juan Benítez
+	i  po		 policía
+	!  qeu		 que
+
+La «i» en la primera columna indica modo Insertar. Estas abreviaturas sólo
+están activas en el modo Insertar. Otros caracteres posibles son:
+
+	c	Modo Línea de órdenes			:cabbrev
+	!	Modo Insertar y	Línea de órdenes	:abbreviate
+
+Debido a que las abreviaturas no son útiles en el modo Línea de órdenes,
+usará más regularmente la orden «:iabbrev». Esto evita, por ejemplo, que se
+expanda «po» al escribir una orden como: >
+
+	:edit po
+
+
+BORRAR ABREVIATURAS
+
+Para eliminar una abreviatura, use la orden «:unabbreviate». Suponga que
+tiene la siguiente abreviatura: >
+
+	:abbreviate @f fresco
+
+Puede eliminarla con esta orden: >
+
+	:unabbreviate @f
+
+Notará al escribir esto que @f se expande a «fresco». No se preocupe, Vim lo
+entiende de todas formas (a menos que tenga una abreviatura «fresco», pero
+eso es improbable).
+   Para eliminar todas las abreviaturas: >
+
+	:abclear
+
+«:unabbreviate» y «:abclear» tienen también variantes para el modo Insetar
+(«:unabbreviate» y «:iabclear») y el modo Línea de órdenes («:cunabbreviate»
+y «:cabclear»).
+
+
+REDEFINIR LA MACRO DE UNA ABREVIATURA
+
+Existe un aspecto a tener en cuenta a la hora de definir una abreviatura: no
+debería asignar la cadena resultante a una macro. Por ejemplo: >
+
+	:abbreviate @a adder
+	:imap dd disk-door
+
+Si ahora teclea @a, obtendrá «adisk-doorer». Esto no es lo que quiere. Para
+evitarlo, use la orden «:noabbrev». Hace lo mismo que «:abbreviate», pero
+evita que la cadena resultante se use en macros.
+
+	:noreabbrev @a adder
+
+Afortunadamente, es difícil que se mapee el resultado de una abreviatura.
+
+==============================================================================
+*24.8*	Introducir caracteres especiales
+
+La orden CTRL-V se emplea para insertar el siguiente carácter de forma
+literal. En otras palabras, se ignorará el significado especial de cualquier
+carácter. Por ejemplo: >
+
+	CTRL-V <Esc>
+
+Esta orden inserta un carácter de escapado. Por ello, no abandona el modo
+Insertar. (No escriba un espacio después de CTRL-V, sólo lo hace más fácil
+de leer).
+
+	Nota:
+	En MS-Windows, CTRL-V se emplea para pegar texto. Use CTRL-Q en
+	lugar de CTRL-V. Por otra parte, Unix no reconoce CTRL-Q en algunas
+	terminales, porque tiene un significado especial.
+
+También puede usar la orden CTRL-V {dígitos} para insertar un carácter con
+el número decimal {dígitos}. Por ejemplo, el carácter número 127 es el
+carácter <Del> (Supr) (¡pero no necesariamente la tecla <Supr>!). Escriba lo
+siguiente para insetar <Del>.
+
+	CTRL-V 127
+
+Puede introducir hasta el carácter 255 de esta manera. Cuando escribe menos
+de dos dígitos, un no-dígito finalizará la orden. Para evitar la necesidad
+de escribir un no-dígito, añada uno o dos ceros para sumar tres dígitos.
+   Todas las ordenes a continuación insertan primero un <Tab> y después un
+punto:
+
+	CTRL-V 9.
+	CTRL-V 09.
+	CTRL-V 009.
+
+Para usar un carácter con valor hexadecimal, use «x» después de CTRL-V: >
+
+	CTRL-V x7f
+
+Esto también llega al carácter 255 (CTRL-V xff). También puede usar «o» para
+escribir un carácter como un número octal, y otros dos métodos le permiten
+escribir hasta un número en 16 y 32 bit (p, ej., un carácter Unicode): >
+
+	CTRL-V o123
+	CTRL-V u1234
+	CTRL-V U12345678
+
+==============================================================================
+*24.9*	Dígrafos
+
+Some characters are not on the keyboard.  For example, the copyright
+character (�).  To type these characters in Vim, you use digraphs, where two
+characters represent one.  To enter a �, for example, you press three keys:
+>
+
+	CTRL-K Co
+
+Use la siguiente orden para ver qué dígrafos están disponibles: >
+
+	:digraphs
+
+Vim mostrará la tabla de dígrafos. Aquí puede ver tres líneas:
+
+  AC ~_ 159  NS |  160  !I �  161  Ct �  162  Pd �  163  Cu �  164  Ye �  165 ~
+  BB �  166  SE �  167  ': �  168  Co �  169  -a �  170  << �  171  NO �  172 ~
+  -- �  173  Rg �  174  'm �  175  DG �  176  +- �  177  2S �  178  3S �  179 ~
+
+This shows, for example, that the digraph you get by typing CTRL-K Pd is the
+character (�).  This is character number 163 (decimal).
+   Pd is short for Pound.  Most digraphs are selected to give you a hint about
+the character they will produce.  If you look through the list you will
+understand the logic.
+   You can exchange the first and second character, if there is no digraph for
+that combination.  Thus CTRL-K dP also works.  Since there is no digraph for
+"dP" Vim will also search for a "Pd" digraph.
+
+	Nota:
+	Los dígrafos dependen del juego de caracteres que Vim asume que está
+	usando. En MS-DOS difieren con los de MS-Windows. Use siempre
+	«:digraphs» para ver de qué dígrafos dispone.
+
+Puede configurar sus propios dígrafos. Ejemplo: >
+
+	:digraph a" �
+
+This defines that CTRL-K a" inserts an � character.  You can also specify
+the character with a decimal number.  This defines the same digraph: >
+
+	:digraph a" 228
+
+Para más información acerca de los dígrafos, consulte: |digraphs|
+   Otra manera de insertar caracteres especiales es un «keymap». Puede leer
+más acerca de esto aquí: |45.5|
+
+==============================================================================
+*24.10*	Órdenes del modo Normal
+
+El modo Insertar ofrece un limitado número de órdenes. Dispone de muchas más
+en el modo normal. Si desea usar uno, abandone el modo Insertar con <Esc>,
+ejecuto la orden en modo Normal, y vuelva al modo Insertar con «i» o «a».
+   Hay una manera más rápida. Con CTRL-O {orden} puede ejecutar cualquier
+orden de modo Normal en el modo Insertar. Por ejemplo, para eliminar desde
+el cursor hasta el final de la línea: >
+
+	CTRL-O D
+
+Sólo puede ejecutar una orden de modo Normal de esta manera. Pero puede
+especificar un registro o cuenta. Aquí tiene una manera más complicada: >
+
+	CTRL-O "g3dw
+
+Esto elimina hasta la tercera palabra en el registro «g».
+
+==============================================================================
+
+Siguiente capítulo: |usr_25.esx| Editar text con formato
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Omar Campagne Polaino
+
+Proyecto: |vim-doc-es|
+

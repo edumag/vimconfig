@@ -1,0 +1,307 @@
+*usr_09.esx*	Para Vim versión 7.3. Último cambio: 24/5/2006
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+		Uso de la interfaz gráfica (GUI)
+
+
+Vim funciona en una terminal normal. GVim puede hacer las mismas cosas y
+algunas más. La interfaz gráfica ofrece menús, una barra de menú, barras de
+desplazamiento y otros. Este capítulo trata de las funcionalidades
+adicionales que la interfaz gráfica ofrece.
+
+|09.1|	Partes de la interfaz gráfica
+|09.2|	Uso del ratón
+|09.3|	El portapapeles
+|09.4|	Modo Seleccionar
+
+ Capítulo siguiente: |usr_10.esx|  Realizar grandes cambios
+  Capítulo anterior: |usr_08.esx|  Dividir en ventanas
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*09.1*	Partes de la interfaz gráfica (GUI)
+
+Puede que tenga un icono en su escritorio que arranca gVim. En caso
+contrario, una de estas órdenes lo hará: >
+
+	gvim archivo.txt
+	vim -g archivo.txt
+
+Si esto no funciona es que no tiene la versión de Vim con soporte para GUI.
+Tendrá que instalar una primero.
+   Vim abrirá una ventana y mostrará «archivo.txt». El aspecto de la
+ventana dependerá de la versión de Vim. Se debería parecer a la siguiente
+figura (¡tanto como se pueda parecer con texto ASCII!).
+
+	+----------------------------------------------------+
+	| archivo.txt + (~/dir) - VIM			   X |	<- título
+	+----------------------------------------------------+
+	| File	Edit  Tools  Syntax  Buffers  Window  Help   |	<- barra de
+	+----------------------------------------------------+     menú
+	| aaa  bbb  ccc  ddd  eee  fff	ggg  hhh  iii  jjj   |	<- barra de
+	| aaa  bbb  ccc  ddd  eee  fff	ggg  hhh  iii  jjj   |     herramientas
+	+----------------------------------------------------+
+	| archivo de texto				 | ^ |
+	| ~						 | # |
+	| ~						 | # |	<- barra de
+	| ~						 | # |     desplazam.
+	| ~						 | # |
+	| ~						 | # |
+	|						 | V |
+	+----------------------------------------------------+
+
+El espacio más grande está ocupado por el archivo de texto. Esto muestra el
+archivo de una manera similar a una terminal. Con algunas diferencias de
+tipo de letra y color, quizá.
+
+
+EL TÍTULO DE LA VENTANA
+
+En la parte superior se encuentra el título. Esto se genera por su sistema
+de ventanas. Vim pondrá en título el nombre del archivo actual. Primero
+viene el nombre del archivo, luego algunos caracteres especiales y el
+directorio del archivo entre paréntesis. Los caracteres especiales son:
+
+	-	El archivo no se puede modificar (por ej. la ayuda)
+	+	El archivo contiene cambios
+	=	El archivo es de sólo lectura
+	=+	El archivo es de sólo lectura pero contiene cambios
+
+Si no hay ningún símbolo se trata de un archivo normal, sin cambios.
+
+
+LA BARRA DE MENÚ
+
+Ya sabe como funcionan los menús, ¿no? Vim tiene los elementos habituales,
+además de otros. Explórelos para tener una idea de cómo podría usarlos. Un
+menú secundario relevante es «Editar/Opciones globlales». Encontrará los
+siguientes elementos:
+
+	Toggle Toolbar		barra de herramientas aparece/desaparece
+	Toggle Bottom Scrollbar	barra de despl. aparece/desaparece abajo
+	Toggle Left Scrollbar	barra de despl. aparece/desaparece a la izq.
+	Toggle Right Scrollbar	barra de despl. aparece/desaparece a la der.
+
+En la mayoría de los sistemas puede seccionar los menús. Seleccione el
+elemento superior del menú que parece una línea a rayas. Ahora tendrá una
+pequeña ventana aparte con el menú.
+
+
+LA BARRA DE HERRAMIENTAS
+
+Este contiene los iconos para las acciones más empleadas. La intención es
+que los iconos se expliquen a sí mismos. Hay globos de ayuda que le
+aconsejan (pon el puntero sobre un botón y no lo muevas durante un segundo).
+
+La opción «Editar/Opciones globales/Ocultar/Mostrar barra de herramientas»
+se puede emplear para hacer que la barra de herramientas desaparezca.  Si no
+desea tener una barra de herramientas en ningún momento, escriba esto en su
+«vimrc»: >
+
+	:set guioptions-=T
+
+Esto elimina la opción 'T' de la opción 'guioptions'. Otras partes de la
+interfaz gráfica se pueden también activar o desactivar del mismo modo.
+Consulte la ayuda.
+
+
+LAS BARRAS DE DESPLAZAMIENTO
+
+Por omisión sólo hay una barra de desplazamiento en la derecha. Hace lo que
+se espera de ella. Cada ventana tendrá su barra de desplazamiento.
+   Puede hacer que una barra horizontal aparezca con la opción «Editar/
+Opciones globales/Ocultar/Mostrar barra de desplazamiento inferior».
+Esto es útil en el modo diff, o cuando la opción 'wrap' está desactivada
+(eso lo veremos más adelante).
+
+Cuando hay ventanas divididas verticalmente, sólo las de la derecha tendrán
+barra de desplazamiento. Sin embargo, si mueve el cursor a una ventana en la
+izquierda, será esta la que la barra controle. Lleva cierto tiempo
+acostumbrarse a esto.
+   Cuando trabaje con ventanas divididas verticalmente, considere la
+posibilidad de añadir barras en la izquierda. Pruebe con esta opción: 
+>
+		:set guioptions+=1
+
+Esto añade la opción 'l' a 'guioptions'.
+
+==============================================================================
+*09.2*	Uso del ratón
+
+Los estándares son maravillosos. En Microsoft Windows, puede usar el ratón
+para seleccionar texto de una forma estándar. El sistema de ventanas X
+Window System también tiene un estándar para el uso del ratón. Por
+desgracia, estos dos estándares no son compatibles.
+   Afortunadamente, puede personalizarlo en Vim. Puede hacer que el
+comportamiento del ratón sea el mismo que bajo X o el de Windows. La
+siguiente orden hace que el ratón se comporte como bajo X: >
+
+	:behave xterm
+
+La siguiente orden hace que el ratón se comporte como en Windows: >
+
+	:behave mswin
+
+El comportamiento predeterminado de un ratón en los sistemas UNIX es
+xterm. El comportamiento predeterminado en un sistema Windows se selecciona
+durante la instalación. Para más detalles sobre estos comportamientos,
+consulte |:behave|. Aquí tiene un pequeño resumen:
+
+
+COMPORTAMIENTO DEL RATÓN XTERM
+
+Click botón izquierdo		posicionar el cursor
+Arrastrar botón izquierdo	seleccionar texto en modo Visual
+Click botón central		pegar texto desde el portapapeles
+Click botón derecho		extender el texto seleccionado hasta el
+				puntero del ratón
+
+
+COMPORTAMIENTO DEL RATÓN MSWIN
+
+Click botón izquierdo		posicionar el cursor
+Arrastrar botón izquierdo	seleccionar texto en modo Seleccionar (|09.4|)
+Click botón izquierdo, con May. extender el texto seleccionado hasta el
+				puntero del ratón
+Click botón central		pegar texto desde el portapapeles
+Click botón derecho		mostrar un menú pop-up
+
+
+Puede configurar el ratón con más detalle. Consulte estas opciones si desea
+cambiar el funcionamiento del ratón:
+
+	'mouse'			en qué modo Vim usa el ratón
+	'mousemodel'		qué efectos tiene pulsar con el ratón
+	'mousetime'		tiempo entre dos pulsacionespara un doble
+				click
+	'mousehide'		esconde el ratón mientras teclea
+	'selectmode'		si el ratón comienza el modo Visual o
+				Seleccionar
+
+==============================================================================
+*09.3*	El portapapeles
+
+En la sección |04.7| se explica el uso básico del portapapeles. Hay algo
+esencial que debe ser explicado sobre las X-windows: Hay dos lugares para
+intercambiar texto entre programas. MS-Windows sólo tiene uno.
+
+En X-Windows hay una «selección actual». Esto es el texto que está
+actualmente marcado. En Vim esto es el área Visual (suponiendo que usa las
+opciones predeterminadas). Puede pegar esta selección en otra aplicación sin
+ninguna acción posterior.
+   Por ejemplo, en este texto seleccione unas cuantas palabras con el
+ratón. Vim pasará al modo Visual y resaltará el texto. Ahora inicie otro
+gVim, sin un nombre de archivo, de forma que muestre una ventana vacía.
+Pulse el botón central del ratón. El texto seleccionado se insertará.
+
+La «selección actual» sólo será válida hasta que seleccione otro texto.
+Tras pegar el texto en otro gVim, seleccione ahora algunos caracteres en esa
+ventana. Se dará cuenta de que las palabras que estaban previamente
+seleccionadas en otra ventana gVim se muestran de otro modo. Esto significa
+que ya no están en la «selección actual».
+
+No necesitas seleccionar texto con el ratón, el uso de órdenes del teclado
+para el modo Visual funciona igual.
+
+
+EL VERDADERO PORTAPAPELES
+
+Tratemos ahora el otro lugar en el que puede intercambiar texto. Llamamos
+al otro portapapeles el «verdadero portapapeles», para evitar la
+confusión. A menudo la «selección actual» y el «verdadero portapapeles» son
+denominados indistintamente «portapapeles». Tendrá que acostumbrarse a
+esto.
+   Para poner el texto en el verdadero portapapeles, seleccione unas
+palabras en uno de los gVims que tenga en ejecución. Use la entrada de
+menú Editar/Copiar.
+El texto será copiado al verdadero portapapeles. No podrá comprobar esto a
+menos que tenga alguna aplicación que muestre el contenido del
+portapapeles.
+   Ahora seleccione otro gVim, coloque el cursor en algún lugar y use el
+menú Editar/Pegar. Verá que se inserta el texto del verdadero portapapeles.
+
+
+USAR AMBOS
+
+Esto de usar simultáneamente la «selección actual» y el «verdadero
+portapapeles» puede sonar un poco confuso. Pero es muy útil. Veámoslo con un
+ejemplo. Abra un gVim con un archivo de texto y haga lo siguiente:
+
+-  Seleccione dos palabras en modo Visual.
+-  Use el menú Editar/Copiar para copiar esas palabra al portapapeles.
+-  Seleccione otra palabra en modo Visual.
+-  Use el elemento de menú Editar/Pegar. A continuación esa única palabra
+   seleccionada es reemplazada por las dos palabras del portapapeles
+.-  Desplace el ratón a otro punto y pulse el botón central. Verá que la
+   palabra que sobreescribió con el portapapeles es insertada.
+
+Si usa la «selección actual» y el «verdadero portapapeles» con cuidado,
+puede llevar a cabo una gran variedad de trucos de edición.
+
+
+USO DEL TECLADO
+
+Si no le gusta usar el ratón, puede acceder a la selección actual y al
+verdadero portapapeles con dos registros. El registro "* es para la
+selección actual.
+   Para hacer que el texto se convierta en selección actual, use el modo
+Visual. Por ejemplo, para seleccionar una línea completa use «V».
+   Para insertar la selección actual antes del cursor: >
+
+	"*P
+
+Observe que es una «P» mayúscula. La «p» minúscula la pone tras el cursor.
+
+El registro "+ se usa para el verdadero portapapeles. Por ejemplo, para
+copiar el texto desde la posición del cursor hasta el final de línea: >
+
+	"+y$
+
+Recuerde, «y» es copiar («yank»).
+   Para insertar los contenidos del verdadero portapapeles antes del cursor: >
+
+	"+P
+
+Es lo mismo que para la selección actual, pero usa el registro (+) en lugar
+del registro estrella (*).
+
+==============================================================================
+*09.4*	Modo Seleccionar
+
+Ahora algo que se emplea más habitualmente en MS-Windows que en X-Windows.
+Aún así, ambos pueden hacerlo. Ya conoce el modo Visual. El modo Seleccionar
+es como el modo Visual, también empleado para la selección.  Pero hay una
+diferencia básica: Cuando escriba texto, el texto seleccionado se elimina y
+el texto introducido lo sustituye.
+
+Para iniciar el modo Seleccionar, debe activarlo primero (para MS-Windows
+está probablemente activado, pero puedes hacer esto igualmente): >
+
+	:set selectmode+=mouse
+
+A continuación, use el ratón para seleccionar algún texto. Se resaltará como
+con el modo Visual. Pulse ahora un carácter. El texto seleccionado se
+eliminará, y ese carácter lo reemplazará. Entrará en modo Insertar.
+
+Ya que escribir texto normal hace que el texto seleccionado se elimine, no
+podrá usar las órdenes de movimiento «hjkl», «w», etc. En su lugar, use las
+teclas de las flechas con mayúsculas. <S-izquierda> mueve el cursor a la
+izquierda. El texto seleccionado cambiará como en el modo Visual. <S-Fin> y
+<S-Inicio> también funcionan.
+
+Puedes ajustar el funcionamiento del modo Seleccionar mediante la opción
+'selectmode'.
+
+==============================================================================
+
+Capítulo siguiente: |usr_10.esx| Hacer cambios grandes
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Álvaro Castro Castillo 
+
+Proyecto: |vim-doc-es|
+

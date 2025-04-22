@@ -1,0 +1,379 @@
+*usr_12.esx*	Para Vim versión 7.3.  Último cambio: 11/6/2007
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+				Trucos
+
+
+Puedes conseguir que Vim haga casi cualquier cosa,.mediante la combinación
+varias órdenes. En este capítulo, presentaremos una serie de combinaciones
+útiles. Esto emplea las órdenes introducidos en capítulos anteriores y
+algunos más.
+
+|12.1|	Reemplazar una palabra
+|12.2|	Cambiar «Último, Primero» a «Primero Último»
+|12.3|	Ordenar una lista
+|12.4|	Invertir el orden de las líneas
+|12.5|	Contar palabras
+|12.6|	Encontrar una página de manual
+|12.7|	Eliminar espacios en blanco sobrantes
+|12.8|	Buscar dónde se emplea una palabra
+
+ Capítulo siguiente: |usr_20.esx|  Ser eficaz con la línea de órdenes
+  Capítulo anterior: |usr_11.esx|  Recuperarse de un fallo
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*12.1*  Reemplazar una palabra
+
+La orden sustituir se puede emplear para reemplazar todas las apariciones de
+una palabra con otra: >
+
+	:%s/cuatro/4/g
+
+El rango «%» significa reemplazar en todas las líneas. La opción «g» final
+hace que todas las palabras de una línea sean sustituidas.
+   Esto no hará lo que desea si su archivo también contiene «veinticuatro».
+Será reemplazado por «veinti4». Para evitar que esto ocurra, use el «\<»
+para concordar con el comienzo de una palabra. >
+
+	:%s/\<cuatro/4/g
+
+Obviamente, esto también funcionará mal con «cuatrocientos». Use «\>» para
+concordar el final de una palabra: >
+
+	:%s/\<cuatro\>/4/g
+
+Si está programando, quizá desee reemplazar «cuatro» en los comentarios,
+pero no en el código. Ya que es difícil de especificar, añada la opción «c»
+para que se le pida una confirmación cada vez que se vaya a reemplazar la
+palabra: >
+
+
+	:%s/\<cuatro\>/4/gc
+
+
+REEMPLAZAR EN VARIOS ARCHIVOS
+
+Suponga que quiere reemplazar una palabra en más de un archivo. Puede
+editar cada archivo y escribir la orden manualmente. Es mucho más fácil
+usar la grabación y reproducción.
+   Vamos a suponer que tiene un directorio con archivos C++ en el que todos
+terminan en «.cpp». Quiere renombrar la función «GetResp» a «GetAnswer».
+
+	vim *.cpp		Inicie Vim definiendo la lista de argumentos
+				conteniendo todos los archivos C++. Estará
+				ahora en el primer archivo.
+	qq			Comience a grabar en el registro «q».
+	:%s/\<GetResp\>/GetAnswer/g
+				Reemplace en el primer archivo.
+	:wnext			Grabe este archivo y vaya al siguiente.
+	q			Detiene la grabación.
+	@q			Ejecute el registro «q». Esto ejecutará la
+				sustitución y la orden «:wnext». Puede
+				comprobar que esto no produzca ningún error.
+	999@q			Ejecute el registro «q» en el resto de archivos.
+
+En el último archivo obtendrá un mensaje de error, porque «wnext» no puede
+ir a un archivo siguiente. Esto parará la ejecución y todo terminará.
+
+	Nota:
+	Cuando vuelva a reproducir una secuencia grabada, un error detendrá la
+	ejecución. Cuide de no producir errores cuando grabes.
+
+Hay un pequeño problema: Si uno de los archivos .cpp no contiene la palabra
+«GetResp», obtendrá un error y la ejecución se detendrá. Para evitar esto,
+añada la opción «e» a la orden de sustituir: >
+
+	:%s/\<GetResp\>/GetAnswer/ge
+
+La opción «e» le dice a «:substitute» que ninguna coincidencia no es un
+error.
+
+==============================================================================
+*12.2*	Cambiar «Último, Primero» a «Primero Último»
+
+Tiene una lista de nombre de la siguiente forma:
+
+	Pepe, Juan ~
+	Amancio, Pedro ~
+
+Quiere cambiarlo a:
+
+	Juan Pepe ~
+	Pedro Amancio ~
+
+Esto se puede hacer con una sola orden: >
+
+	:%s/\([^,]*\), \(.*\)/\2 \1/
+
+Veámoslo por partes. Obviamente comienza con la orden «substitute».
+El «%» es el rango de líneas, que se refiere al archivo completo. Por lo
+tanto la sustitución se producirá en cada línea del archivo.
+   Los argumentos para la orden sustituir son «/desde/a/». Las barras
+separan el patrón «desde» y la cadena "hacia". Esto es lo que el patrón
+«desde» contiene:
+							\([^,]*\), \(.*\) ~
+
+	La primera parte entre \( \) concuerda «Último» \(     \)
+	    concordar cualquier cosa excepto una coma     [^,]
+	    cualquier número de veces                         *
+	concuerda literalmente ", "                              ,
+	La segunda parte entre \(  \) concuerda «Primero»	   \(  \)
+	    cualquier carácter                                       .
+	    cualquier número de veces 					     *
+
+En la parte «a» tenemos «\2» y «\1». A esto se le llaman referencias
+«inversas». Se refieren al texto encontrado por los «\( \)» del patrón. «\2» se
+refiere al texto del segundo «\( \)», que es el nombre «Primero». «\1» se
+refiere al primer «\( \)», que es el nombre «Último».
+   Puede usar hasta nueve referencias «inversas» en la parte «a» de una
+orden de sustitución. «\0x se refiere a la cadena coincidente completa. Hay
+otros elementos especiales en una orden sustituir,
+consulte |sub-replace-special|.
+
+==============================================================================
+*12.3*	Ordenar una lista
+
+A menudo, en un archivo Makefile tiene una lista de archivos. Por ejemplo:
+
+	OBJS = \ ~
+		version.o \ ~
+		pch.o \ ~
+		getopt.o \ ~
+		util.o \ ~
+		getopt1.o \ ~
+		inp.o \ ~
+		patch.o \ ~
+		backup.o ~
+
+Para ordenar esta lista, filtre el texto a través de la orden externa
+«sort»: >
+
+	/^OBJS
+	j
+	:.,/^$/-1!sort
+
+Esto va a la primera línea, donde «OBJS» es lo primero que se encuentra en una
+línea. Luego baja una línea y filtra las líneas hasta encontrar una línea
+vacía. También podría seleccionar las líneas en modo Visual y escribir
+«!sort». Es más fácil pero conlleva más trabajo cuando hay muchas líneas.
+   El resultado es el siguiente:
+
+	OBJS = \ ~
+		backup.o ~
+		getopt.o \ ~
+		getopt1.o \ ~
+		inp.o \ ~
+		patch.o \ ~
+		pch.o \ ~
+		util.o \ ~
+		version.o \ ~
+
+
+Observe que una barra inversa al final de cada línea se usa para indicar
+que la línea continúa. Tras ordenar, está mal puesto. La línea de «backup.o»
+que estaba al final no tenía una barra inversa. Ahora que se sitúa en otro
+lugar debe tener una barra inversa.
+   La solución más sencilla es añadirla con «A \<Esc>». Puede mantener la
+barra en la última línea si se asegura de que una línea en blanco viene justo
+después. De este modo no tendrá este problema de nuevo.
+
+==============================================================================
+*12.4*	Invertir el orden de las líneas
+
+La orden «|:global|» se debe combinar con la orden «|:move|» para mover
+todas las líneas antes de la primera línea, invirtiendo el archivo.  La
+orden es: >
+
+	:global/^/m 0
+
+Abreviado: >
+
+	:g/^/m 0
+
+La expresión regular «^» coincide con el comienzo de línea (incluso si la
+línea está en blanco). La orden «|:move|» mueve la línea justo después de la
+mítica «línea cero», de forma que se convierte en la primera línea. Como la
+orden «|:global|» no se confunde al cambiar la numeración de las líneas,
+«|:global|» procede a concordar el resto de líneas del archivo y pone cada
+una como la primera.
+
+Esto también funciona sobre un rango de líneas. Vaya primero a la línea de
+encima de la primera y márcala con "mt".  Luego pon el cursor en la última
+línea del rango y escribe: >
+
+	:'t+1,.g/^/m 't
+
+==============================================================================
+*12.5*	Contar palabras
+
+A veces puede escribir un texto con un número máximo de palabras. Vim
+puede contar las palabras por Ud.
+   Cuando quiera usar el archivo completo para contar las palabras, use la
+siguiente orden: >
+
+	g CTRL-G
+
+No teclee un espacio tras la «g», esto está aquí para hacer que la orden sea
+fácil de leer.
+   La salida tendrá este aspecto:
+
+	Col 1 of 0; Línea 141 of 157; Palabra 748 of 774; Carácter 4489 of 4976 ~
+
+Puede ver en qué palabra está (748), y el número total de palabras en el
+archivo (774).
+
+Cuando el texto sea sólo una parte del archivo, puede ir al comienzo del
+texto, pulsar «g CTRL-G», ir al final del texto y volver a escribir «g
+CTRL-G» y usar la cabeza para calcular la diferencia. Es un buen ejercicio,
+pero hay un modo más sencillo. En el modo Visual, seleccione el texto sobre
+el que quiera contar las palabras. Escriba «g CTRL-G». El resultado será:
+
+	Selección 5 of 293 Líneas; 70 of 1884 Palabras; 359 of 10928 Bytes ~
+
+Para otras formas de contar las palabras, líneas y otros, consulte
+|count-items|.
+
+==============================================================================
+*12.6*	Encontrar una página de manual		*find-manpage*
+
+Mientras edita un script de consola o un programa C, está usando una orden o
+función para el que quiera encontrar una página de manual (en Unix). Vamos a
+usar la forma sencilla. Ponga el cursor sobre la palabra y pulse: >
+
+	K
+
+Vim ejecutará el programa externo «man» sobre la palabra. Si se encuentra la
+página de manual, se mostrará. Esto usa el paginador normal para desplazarse
+por el texto (con el programa «more»). Cuando llegue al final, presionando
+<Intro> le devolverá a Vim.
+
+Una desventaja es que no puede ver la página de manual y el texto en el que
+trabaja al mismo tiempo. Hay un truco para hacer que la página de manual
+aparezca en una ventana de Vim. Primero cargue la extensión del tipo de
+archivo man: >
+
+	:runtime! ftplugin/man.vim
+
+Ponga esta orden en su archivo «vimrc» si tiene la intención de hacer esto a
+menudo. Ahora puede usar «:Man» para ver una página man en una ventana: >
+
+	:Man csh
+
+Puede desplazarse alrededor y el texto se resaltará. Esto le permite
+encontrar la ayuda que estaba buscando. Use «CTRL-W w» para saltar a la
+ventana con el texto en el que trabajaba.
+   Para encontrar la página de manual en una sección específica, ponga el
+número de sección primero. Por ejemplo, para ver «echo» en la sección 3: >
+
+	:Man 3 echo
+
+Para saltar a otra página de manual, la cuál está en el texto con la forma
+típica «word(1)», pulse «CTRL-]» sobre ella. Otras llamadas a «:Man»
+emplearán la misma ventana.
+
+Para mostrar una página de manual para la palabra bajo el cursor use lo
+siguiente: >
+
+	\K
+
+(Si ha redefinido <Leader>, úselo en lugar de la barra inversa). Por
+ejemplo, puede que quiera saber el valor que le devuelve «strstr()» mientras
+edita esta línea:
+
+	if ( strstr (input, "aap") == ) ~
+
+Ponga el cursor en alguna parte de «strstr» y escriba «\K». Una ventana se
+abrirá a continuación para mostrar la página de manual de «strstr()».
+
+==============================================================================
+*12.7*	Eliminar espacios en blanco sobrantes
+
+Algunas personas encuentran los espacios y los tabuladores al final de línea
+inútiles y feos. Para eliminar el espacio en blanco al final de cada línea,
+ejecute la siguiente orden: >
+
+	:%s/\s\+$//
+
+El rango de línea «%» es empleado, funcionando sobre todo en el archivo
+completo. El patrón que la orden «:substitute» concuerda es el «\s\+$».
+Esto encuentra los caracteres en blanco (\s), 1 o más (\+), antes del final
+de línea ($).
+Más tarde explicaremos cómo se escriben patrones como este |usr_27.txt|.
+   La parte «hacia» de la orden de sustituxión está vacía: «//». Por lo tanto
+reemplaza con nada, lo que de hecho elimina el espacio en blanco.
+
+Otro uso desafortunado de los espacios es colocarlos antes de un
+tabulador. A menudo, se pueden eliminar sin cambiar la cantidad de espacio
+en blanco.  ¡Pero no siempre! Por lo tanto, lo mejor es que lo haga a
+mano. Use esta orden de búsqueda: >
+
+	/	
+
+No puede verlo, pero hay un espacio antes de un tabulador en esta orden. De
+hecho, es «/<Espacio><Tabulador>». Use ahora «x» para eliminar el espacio
+y comprobar que la cantidad de espacio en blanco no cambia. Puede que
+tenga que insertar un tabulador si cambia. Teclee «n» para encontrar la
+próxima coincidencia. Repita esto hasta que no se encuentren más
+concordancias.
+
+==============================================================================
+*12.8*	Buscar donde se emplea una palabra
+
+Si eres un usuario de sistemas UNIX, puede usar una combinación de Vim
+y «grep» para editar todos los archivos que contengan la palabra dada.
+Esto es extremadamente útil si está trabajando en un programa y quiere
+ver o editar todos los archivos que contienen una variable específica.
+   Por ejemplo, suponga que desea editar todos los archivos C que contengan
+la palabra «frame_counter». Para hacer esto, use la orden: >
+
+	vim `grep -l frame_counter *.c`
+
+Veamos esta orden en detalle. La orden «grep» busca a través de un
+conjunto de archivos una palabra dada. Ya que especificamos el argumento
+«-l», la orden sólo listará archivos que contengan la palabra y no impriman
+las líneas coincidentes. La palabra que está buscando es «frame_counter».
+De hecho, esto puede ser cualquier expresión regular. (Nota: las expresiones
+regulares en Vim y «grep» no siguen las mismas convenciones.)
+   La orden está arropada por acentos invertidos (`). Esto le dice a la consola
+de UNIX que ejecute la orden y haga como si el resultado se hubiese
+escrito en la línea de órdenes. Por lo tanto la orden «grep» se ejecutará
+y producirá una lista de archivos, estos archivos serán puestos en la línea
+de órdenes de Vim. Podrá usar las órdenes «:next» y «:first» para navegar
+entre los archivos.
+
+
+ENCONTRAR CADA LÍNEA
+
+La orden anterior sólo dice los archivos en los cuáles se encuentra la
+palabra. Todavía tendrás que encontrar la palabra entre los archivos.
+   Vim tiene una orden integrada que puede usar para buscar una cadena
+en un conjunto de archivos. Si desea encontrar todas las coincidencias de
+«error_string» en todos los archivos C, por ejemplo, introduzca lo siguiente: >
+
+	:grep error_string *.c
+
+Esto hace que Vim busque la cadena «error_string» en cada uno de los
+archivos especificados (*.c). El editor abrirá el primer archivo donde se
+produzca una concordancia y posicionará el cursor en la primera línea
+coincidente.
+Para ir a la siguiente línea (no importa en que archivo se encuentre), use la
+orden «:cnext». Para ir a la anterior, use «:cprev». Use «:clist» para ver
+todas las coincidencias y dónde están.
+  La orden «:grep"» usa la orden externa «grep» en Unix y «findstr» en
+Windows.
+Puedes cambiar esto modificando la opción 'grepprg'.
+
+==============================================================================
+
+Capítulo siguiente: |usr_20.esx| Ser eficaz con la línea de órdenes
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Álvaro Castro Castillo 
+
+Proyecto: |vim-doc-es|
+

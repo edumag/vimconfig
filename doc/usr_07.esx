@@ -1,0 +1,493 @@
+*usr_07.esx*	Para Vim version 7.3.  Último cambio: 24/5/2006
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+			 Editar más de un archivo
+
+
+No importa cuántos archivos tenga, puede editarlos todos sin salir de Vim.
+Defina una lista de archivos de trabajo y pase de uno a otro. Copie texto de
+un archivo a otro.
+
+|07.1|	Editar otro archivo
+|07.2|	Una lista de archivos
+|07.3|	Pasar de archivo a archivo
+|07.4|	Copias de seguridad
+|07.5|	Copiar texto entre archivos
+|07.6|	Ver un archivo
+|07.7|	Cambiar el nombre de archivo
+
+ Capítulo siguiente: |usr_08.esx|  Dividir en ventanas
+  Capítulo anterior: |usr_06.esx|  Uso del coloreado de sintaxis
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*07.1*	Editar otro archivo
+
+Hasta ahora ha tenido que iniciar Vim para cada archivo que quería editar.
+Hay una manera más sencilla: Para editar otro archivo, use esta orden: >
+
+	:edit foo.txt
+
+Puede usar cualquier nombre de archivo en lugar de «foo.txt». Vim cerrará el
+archivo actual y abrirá uno nuevo. Sin embargo, si el archivo actual tiene
+cambios no guardados, Vim mostrará un error y no abrirá el archivo nuevo:
+
+	E37: No se ha guardado el fichero desde el último cambio
+	(añada ! para forzar) ~
+
+	Nota:
+	Vim coloca una ID de error al comienzo de cada mensaje de error.  Si
+	no entiende el mensaje o su causa, puedes buscar ayuda para esta ID.
+	En este caso: >
+
+		:help E37
+
+En este punto, dispone de una serie de alternativas. Puede escribir el
+archivo usando esta orden: >
+
+	:write
+
+O puede forzar que Vim descarte los cambios y edite un archivo nuevo usando
+el carácter «!»: >
+
+	:edit! foo.txt
+
+Si quiere editar otro archivo, pero no escribir los cambios en el archivo
+actual todavía, puede hacer que se oculte: >
+
+	:hide edit foo.txt
+
+El texto con los cambios está todavía aquí, pero no lo puede ver. Esto se
+explica con más detalle en la sección |22.4|: La lista de búfers.
+
+==============================================================================
+*07.2*	Una lista de archivos
+
+Puede iniciar Vim para editar una secuencia de archivos. Por ejemplo: >
+
+	vim uno.c dos.c tres.c
+
+Esta orden inicia Vim y le dice que va a editar tres archivos. Vim muestra
+solamente el primero. Tras haber terminado con el primero, puede editar el
+siguiente con esta orden: >
+
+	:next
+
+Si tiene cambios sin guardar en el archivo actual, obtendrá un mensaje de
+error y «:next» no funcionará. Este es el mismo problema mencionado con
+«:edit» en la sección anterior. Para abandonar los cambios: >
+
+	:next!
+
+Pero habitualmente querrá guardar los cambios e ir al siguiente archivo.
+Hay una orden especial para esto: >
+
+	:wnext
+
+Esto hace lo mismo que usar las siguientes órdenes: >
+
+	:write
+	:next
+
+
+¿DÓNDE ESTOY?
+
+Para ver qué archivo de la lista de argumentos está editando, mire en el
+título de la ventana. Debería mostrar algo como «(2 de 3)». Esto significa
+que está editando un segundo archivo de una lista de tres.
+   Si quieres ver la lista de archivos, use esta orden: >
+
+	:args
+
+Esta es la abreviatura de «argumentos». La salida será algo así:
+
+	uno.c [dos.c] tres.c ~
+
+Estos son los archivos con los que ha iniciado Vim. El que está editando
+actualmente, «dos.c», se encuentra entre corchetes.
+
+
+DESPLAZARSE A OTROS ARGUMENTOS
+
+Para ir hacia atrás un archivo: >
+
+	:previous
+
+Esto es justo como la orden «:next», excepto que va en la otra dirección.
+Una vez más, existe una orden para cuando quiera escribir el archivo
+primero: >
+
+	:wprevious
+
+Para saltar al último archivo de la lista: >
+
+	:last
+
+Para volver al primero de nuevo: >
+
+	:first
+
+No hay una orden «:wlast» ni «:wfirst».
+
+Puede usar un multiplicador para «:next» y «:previous». Para saltar dos
+archivos: >
+
+	:2next
+
+
+GUARDAR AUTOMÁTICAMENTE
+
+Cuando se mueva por los archivos y haga cambios, tiene que recordar usar
+«:write». En caso contrario, obtendrá mensajes de error. Si está seguro de
+que siempre va a escribir los archivos modificados, puede decirle a Vim que
+los escriba automáticamente: >
+
+	:set autowrite
+
+Cuando edite un archivo que no quiera escribir automáticamente, desactívelo
+de nuevo: >
+
+	:set noautowrite
+
+
+EDITAR OTRA LISTA DE ARCHIVOS
+
+Puede redefinir la lista de archivos sin la necesidad de salir de Vim y
+arrancarlo de nuevo. Emplee esta orden para editar otros tres archivos: >
+
+	:args cinco.c seis.c siete.h
+
+O use comodines, del mismo modo que se hace en la shell: >
+
+	:args *.txt
+
+Vim le llevará al primer archivo en la lista. De nuevo, si el archivo actual
+cambia, puede tanto guardar el archivo antes como usar «:args!» (con el !
+añadido) para abandonar los cambios.
+
+
+¿HA EDITADO EL HASTA EL ÚLTIMO ARCHIVO?
+							*arglist-quit*
+Cuando usa una lista de archivos, Vim asume que quiere editarlos todos.
+Para evitar cerrar antes de tiempo, obtendrá un error cuando no haya
+editado el último archivo en la lista e intentes salir.
+
+	E173: 46 more files to edit ~
+
+Si realmente desea salir, simplemente inténtelo de nuevo. Entonces
+funcionará (pero no si ejecuta otras órdenes durante).
+
+==============================================================================
+*07.3*	Pasar de un archivo a otro
+
+Para saltar rápidamente entre dos archivos, pulse CTRL-^ (en teclados
+Inglés-EEUU el ^ se encuentra encima de la tecla 6). Por ejemplo: >
+
+	:args uno.c dos.c tres.c
+
+Ahora está en uno.c >
+
+	:next
+
+Ahora está en two.c. Use CTRL-^ para volver a uno.c. Use CTRL-^ otra vez y
+estará de vuelta en dos.c. Otro CTRL-^ y estará en uno.c de nuevo. Si ahora
+hace: >
+
+	:next
+
+Está en tres.c. Observe que la orden CTRL-^ no cambia la idea de dónde está
+en la lista de archivos. Sólo órdenes como «:next» y «:previous» lo hacen.
+
+El archivo que haya estado editando anteriormente se llama el archivo
+«alterno». Hasta que no haya un archivo anterior, CTRL-^ no funcionará.
+
+
+MARCAS PREDEFINIDAS
+
+Tras saltar a otro archivo, puede usar dos marcas predeterminadas que son de
+gran utilidad: >
+
+	`"
+
+Esto le lleva a la posición en la que estaba el cursor cuando salió del
+archivo. Otra marca que se recuerda es la posición donde hizo el último
+cambio: >
+
+	`.
+
+Suponga que está editando el archivo «uno». En algún lugar a mitad de camino
+en el archivo, use «x» para eliminar un carácter. Vaya ahora a la última
+línea con «G» y escriba el archivo con «:w». Edite otros archivos y use
+«:edit uno.txt» para volver a «uno.txt». Si ahora usa `", Vim saltará a la
+última línea del archivo. Usar `. le llevará a la posición donde eliminó el
+carácter. Incluso cuando se mueva por el archivo, `" y `. le llevará a la
+posición recordada. Al menos hasta que realice otro cambio o salga del
+archivo.
+
+
+MARCAS DE ARCHIVO
+
+En el capítulo 4 explicamos cómo puede poner un marcador en el archivo con
+«mx» y saltar a esa posición con «`x». Esto funciona en un archivo. Si
+edita otro archivo y coloca un marcador ahí, este será específico para ese
+archivo. Así cada archivo tiene su propio conjunto de marcadores locales.
+   Hasta ahora estábamos empleando marcadores con una letra en minúscula.
+También hay marcadores con letras mayúsculas. Éstos son globales, pudiendo
+ser empleados desde cualquier archivo. Por ejemplo, suponga que editamos
+«foo.txt», ve a cualquier punto y coloca el marcador F ahí: >
+
+	50%mF
+
+Edite ahora el archivo «bar.txt» y coloque el marcador B en su última línea:
+>
+	GmB
+
+Ahora puede usar la orden «'F» para saltar al punto marcado de foo.txt. O
+edite otro archivo, escriba «'B» y estará en el final de bar.txt de nuevo.
+
+Estas marcas de archivo se recordarán hasta que se coloquen en algún
+otro lugar. Así podrás colocar los marcadores, trabajar durante horas y aún
+tendrá la posibilidad de volver al punto marcado.
+   Es útil pensar en una conexión sencilla entre la letra del marcador y el
+lugar donde se coloca. Por ejemplo, use la letra H para un archivo de
+cabecera (*.h), M para un Makefile y C para código C.
+
+Para ver dónde está un marcador específico, escriba la orden «:marks» con un
+argumento: >
+
+	:marks M
+
+También puede darle varios argumentos: >
+
+	:marks MCP
+
+No olvide que puede usar CTRL-O y CTRL-I para saltar a posiciones anteriores
+y posteriores sin necesidad de poner marcadores en esos puntos.
+
+==============================================================================
+*07.4*	Copias de seguridad
+
+Habitualmente, Vim no produce copias de seguridad. Si desea que lo haga,lo
+único que tiene que hacer es ejecutar la siguiente orden: >
+
+	:set backup
+
+El nombre del archivo de seguridad es el original con un ~ añadido al
+final.
+Si su archivo se llama datos.txt, por ejemplo, el archivo de seguridad será
+datos.txt~.
+   Si no le gusta el hecho de que las copias de seguridad terminen con ~,
+puedes cambiar la extensión: >
+
+	:set backupext=.bak
+
+Esto hará que Vim use datos.txt.bak en lugar de datos.txt~.
+   Otra opción que resulta importante aquí es 'backupdir'. Especifica dónde
+se guardará el archivo de seguridad. La opción por omisión, escribir la
+copia de seguridad en el mismo directorio, es habitualmente la mejor.
+
+	Nota:
+	Cuando la opción 'backup' no está activada pero 'writebackup' lo está,
+	Vim creará igualmente la copia de seguridad. Sin embargo, se
+	eliminará tan pronto como se escriba el archivo con éxito. Esto
+	funciona como seguridad ante la pérdida de su archivo original cuando
+	la escritura falla por algún motivo (un disco lleno es el más habitual,
+	un rayo puede ser otra causa aunque menos común).
+
+
+MANTENER EL ARCHIVO ORIGINAL
+
+Si está editando archivos fuente, quizá desee mantener el archivo antes de
+hacer ningún cambio. Pero la copia de seguridad se sobreescribirá cada vez que
+escriba el archivo. Así sólo contendrá la versión previa y no la original.
+   Para hacer que Vim mantenga el archivo original, activa la opción
+'patchmode'. Esto especifica la extensión usada para la primera copia de
+seguridad de un archivo modificado. Habitualmente harás esto: >
+
+	:set patchmode=.orig
+
+Cuando edite el archivo datos.txt por primera vez, haga cambios y guarde el
+archivo, Vim mantendrá una copia del archivo sin cambios bajo el nombre
+«datos.txt.orig».
+   Si hace más cambios, Vim notará que «datos.txt.orig» ya existe y lo dejará
+en paz. El resto de copias de seguridad se llamarán «datos.txt~» (o lo que
+haya especificado con 'backupext').
+   Si deja 'patchmode' vacío (la opción por defecto), el archivo original no
+se guardará.
+
+==============================================================================
+*07.5*	Copiar texto entre archivos
+
+A continuación explicamos cómo copiar texto desde un archivo a otro. Vamos
+a comenzar con un simple ejemplo. Edite el archivo que contiene el texto que
+desea copiar. Mueva el cursor al comienzo de lo que quiera editar y pulse
+«v». Mueva ahora el cursor al final del texto y pulse «y». Esto copia
+yank) el texto seleccionado.
+   Para copiar el texto del párrafo anterior, haría lo siguiente: >
+
+	:edit estearchivo
+	/Este
+	vjjjj$y
+
+Edite ahora el archivo donde desea poner el texto. Mueva el cursor al
+caracter donde quiera que el texto se coloque a continuación. Use «p» para
+poner el texto allí. >
+	:edit otroarchivo
+	/Allí
+	p
+
+Naturalmente, podrás usar cualquiera otra orden de copia. Por ejemplo, para
+seleccionar líneas completas, inicie el modo Visual con «V». O pulse CTRL-V
+para seleccionar bloques rectangulares. Puede usar «Y» para simplemente
+copiar una línea, «yaw» para pegar una palabra (yank-a-word).
+   La orden «p» pone el texto después del cursor. Use «P» para pegarlo
+antes del cursor. Repare en el hecho de que Vim recuerda si ha copiado una
+línea completa o un bloque y lo pondrá del mismo modo.
+
+
+USO DE REGISTROS
+
+Cuando quiera copiar diversas porciones de un texto de un archivo a otro,
+tener que cambiar entre los archivos y guardarlos lleva mucho tiempo. Para
+evitar esto, copie cada porción en un registro independiente.
+   Un registro es un lugar donde Vim guarda texto. Aquí usaremos los
+registros nombrados desde la «a» a la «z» (más tarde se percatará de que hay
+otros). Vamos a copiar una frase en el registro f: >
+
+	"fyas
+
+La orden «yas» copia una frase. Es el «"f» el que le dice a Vim que el texto
+se debe situar en el registro f. Esto debe aparecer justo antes de la orden
+copiar.
+   Ahora copie tres líneas completas en el registro l: >
+
+	"l3Y
+
+El multiplicador puede situarse también antes del «"l».  Para copiar un
+bloque de texto al registro b: >
+
+	CTRL-Vjjww"by
+
+Observe que la especificación del registro «"b» se encuentra justo antes
+de la orden «y». Esto es imprescindible. Si lo hubierse puesto antes de la
+orden «w», no habría funcionado.
+   Ahora tiene tres porciones de texto en los registros f, l, y b. Edite
+otro archivo, desplácese por el texto y allá donde desee: >
+
+	"fp
+
+Una vez más, la especificación del registro «"f» viene antes de la orden «p».
+   Puede poner los registros en cualquier orden, y el texto se mantendrá en
+cualquier orden hasta que copie algo dentro de él. Así podrá ponerlo tantas
+veces desee.
+
+Cuando elimine texto, también puedes especificar un registro. Use esto para
+mover varias porciones de texto de un lado para otro. Por ejemplo, para
+eliminar una palabra y ponerla en el registro w (delete-a-word): >
+
+	"wdaw
+
+Una vez más, la especificación del registro viene antes de la orden
+eliminar, «d».
+
+
+AÑADIR A UN ARCHIVO
+
+Cuando quiera reunir una serie de líneas en un archivo, puede usar esta
+orden: >
+
+	:write >> archivo_registro
+
+Esto escribirá el texto del archivo actual al final de "archivo_log",
+añadiéndose a éste. Evita que tenga que copiar las líneas, editar el
+archivo de registro (log) y ponerla allí, ahorrándole dos pasos. Sin
+embargo, sólo podrá añadirlo al final del archivo.
+   Para añadir sólo unas líneas, selecciónelas en el modo Visual antes de
+escribir «:write». El cap. 10 explicará otras maneras de seleccionar
+rangos.
+
+==============================================================================
+*07.6*	Ver un archivo
+
+A veces sólo quiere ver qué contiene un archivo, sin la intención de
+guardar ningún cambio. Existe el riesgo de que escribas «:w» sin pensar y
+sobreescriba el archivo original. Para evitar esto, edite el archivo como
+sólo lectura.
+   Para ejecutar Vim en modo sólo lectura, haga lo siguiente: >
+
+	vim -R archivo
+
+En Unix esta orden debería funcionar igualmente: >
+
+	view archivo
+
+Ahora está editando «archivo» en modo sólo lectura. Cuando pruebe a usar
+«:w» se dará cuenta de que aparecerá un mensaje de error y no se guardará.
+   Cuando intente hacer un cambio al archivo, Vim le dará un aviso:
+
+	W10: Advertencia: cambiando un fichero de solo lectura ~
+
+El cambio se realizará igualmente. Esto permite formatear el archivo, por
+ejemplo, para facilitar su lectura.
+   Si intenta hacer cambios a un archivo y olvidas que era de sólo lectura,
+aún podrá guardarlo. Añada «!» a la orden guardar para forzar la escritura.
+
+Si realmente quiere prohibir los cambios en un archivo, haga lo siguiente: >
+
+	vim -M file
+
+Ahora, cualquier intento de cambiar el texto fallará. Los archivos de ayuda
+son así, por ejemplo. Si intenta cambiar algo, obtendrá el siguiente error:
+
+	E21: No se pueden hacer cambios, «modifiable» está desactivado ~
+
+Puede usar el argumento «-M» para configurar Vim para que trabaje en modo
+visor. Esto es opcional, ya que estas órdenes eliminan la protección. >
+
+	:set modifiable
+	:set write
+
+==============================================================================
+*07.7*	Cambiar el nombre de un archivo
+
+Una forma inteligente de comenzar la edición de un archivo nuevo es usar un
+archivo similar de partida que contenga algo parecido. Por ejemplo, empiece
+a escribir un programa para filtrar archivos. Sabe que ya tiene un código
+que copia archivos, así que podría comenzar con él: >
+
+	:edit copiar.c
+
+Puede eliminar lo que no necesita. A continuación tendrá que guardar el
+archivo bajo un nombre distinto. La orden «:saveas» es adecuado para esto: >
+
+	:saveas filtrar.c
+
+Vim escribirá el archivo con el nuevo nombre y editará el nuevo archivo.
+Así la próxima vez que haga «:write», escribirá «filtrar.c». «copiar.c» se
+mantiene sin modificaciones.
+   Cuando desee cambiar el nombre del archivo que está editando pero no
+quiere escribirlo, puede usar el siguiente orden: >
+
+	:file move.c
+
+Vim marcará el archivo como «no editado». Esto significa que Vim sabe que
+este no es el archivo que comenzó a editar. Cuando intente guardar el
+archivo, puede que vea el siguiente mensaje:
+
+	E13: El fichero ya existe (use ! para sobreescribir) ~
+
+Esto evita que sobreescriba otro archivo con el mismo nombre.
+
+==============================================================================
+
+Capítulo siguiente: |usr_08.esx| Dividir en ventanas
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Álvaro Castro Castillo 
+
+Proyecto: |vim-doc-es|
+

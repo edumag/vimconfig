@@ -1,0 +1,232 @@
+*usr_26.esx*	Para Vim versión 7.3. Último cambio: 24/5/2006
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+				 Repetición
+
+
+Rara vez, una tarea de edición carece de estructura. A menudo tiene que
+realizar un cambio varias veces. En este capítulo se muestran varias maneras
+útiles de repetir un cambio.
+
+|26.1|	Repetir en modo Visual
+|26.2|	Sumar y restar
+|26.3|	Realizar un cambio en varios archivos
+|26.4|	Usar Vim desde un script de intérprete de órdenes
+
+ Siguiente capítulo: |usr_27.esx|  Órdenes y patrones de búsqueda
+  Capitulo anterior: |usr_24.esx|  Editar otros archivos
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*26.1*	Repetición en modo Visual
+
+El modo Visual es útil cuando desea modificar una secuencia de líneas.
+Al poder ver el texto resaltado, puede revisar si las líneas a modificar
+lo han sido correctamente. Pero hacer la selección conlleva teclear. La
+orden «gv» selecciona la misma área otra vez. Esto le permite realizar otra
+acción sobre el texto seleccionado.
+   Suponga que tiene algunas líneas en las que desea cambiar «2001» a «2002»
+y «2000» a «2001»:
+
+	Los resultados financieros de 2001 son mejores ~
+	que para el año 2000. Los ingresos aumentaron un ~
+	50%, ~ 2001, más aun cuando había más lluvia que en el 2000. ~
+			2000		2001~
+	ingresos	45.403		66.234 ~
+
+Primero cambie «2001» a ««2002». Seleccione las líneas en modo Visual y use:
+>
+
+	:s/2001/2002/g
+
+Use ahora «gv» para seleccionar otra vez el mismo texto. No importa donde está
+el cursor. Use entonces «:s/2000/2001/g» para hacer el segundo cambio.
+   Obviamente, puede repetir estos cambios varias veces.
+
+==============================================================================
+*26.2*	Sumar y restar
+
+Al repetir un cambio de un número a otro, lo normal es que tenga una
+compensación fijada. En el ejemplo anterior, se añado «1» a cada año. Puede
+usar la orden CTRL-A en lugar de teclear una orden de sustitución para cada
+año en el texto.
+
+	/19[0-9][0-9]\|20[0-9][0-9]
+
+Ahora pulse Ctrl-A. El año se incrementará en uno:
+
+	Los resultados financieros de 2002 son mejores ~
+	que para el año 2000. Los ingresos aumentaron un ~
+	50%, ~ 2001, más aun cuando había más lluvia que en el 2000. ~
+			2000		2001~
+	ingresos	45.403		66.234 ~
+
+Use «n» para encontrar el siguiente año y pulse «.» para repetir CTRL-A
+(«.» es más rápido de teclear). Repita «n» y «.» para todos los años.
+   Pista: active la opción 'hlsearch' para ver las coincidencias que
+se modificaran. De esta manera, podrá ver los siguientes cambios, y
+realizarlos rápidamente.
+
+Es posible añadir más de uno si prefija un número a CTRL-A.
+Suponga que tiene esta lista:
+
+	1.  cuarto elemento ~
+	2.  quinto elemento ~
+	3.  sexto elemento ~
+
+Mueva el cursor a «1.» y escriba: >
+
+	3 CTRL-A
+
+El «1.» pasará a ser «4.». Otra vez, puede usar «.» para repetir la misma
+acción sobre otros números.
+
+Otro ejemplo:
+
+	006	foo bar ~
+	007	foo bar ~
+
+Usar CTRL-A sobre estos números resulta en:
+
+	007	foo bar ~
+	010	foo bar ~
+
+¿7 más 1 igual a 10? Lo que ha ocurrido es que Vim reconoció 007 como un
+número octal, ya que hay un cero precediendo el número. Esta notación se usa
+a menudo en programas C. Si no desea que un número con ceros a la izquierda
+se considere un número octal, use lo siguiente: >
+
+	:set nrformats-=octal
+
+La orden CTRL-X realiza la resta de una manera similar.
+
+==============================================================================
+*26.3*	Realizar un cambio en varios archivos
+
+Suponga que tiene una variable llamada «x_cnt» y que desea cambiarla a
+«x_counter». Ya que esta variable aparece en varios de sus archivos C, tendrá
+que realizar este cambio en todos los archivos. Esta es la manera de hacerlo.
+   Ponga todos los archivos relevantes en la lista de argumentos: >
+
+	:args *.c
+<
+Esto encuentra todos los archivos C y edita el primero. Ahora puede realizar
+una orden de sustitución sobre todos estos archivos: >
+
+	:argdo %s/\<x_cnt\>/x_counter/ge | update
+
+La orden «:argdo» toma otra orden como argumento. Esta orden se ejecutará
+sobre todos los archivos en la lista de argumentos.
+   La orden de sustitución «%s» a continuación afecta a todas las líneas.
+Busca la palabra «x_cnt» con «\<x_cnt\>». Los «\<» y «\>» se usan para
+encontrar sólo la palabra completa, y no «px_cnt» o «x_cnt2».
+   Las opciones para la orden de sustitución incluyen «g» para reemplazar
+todas las apariciones de «x_cnt» en la misma línea. La opción «e» se emplea
+para evitar un mensaje de error cuando «x_cnt» no está presente en el
+archivo. En caso contrar, «:argdo» se interrumpiría en el primer archivo en
+el que no se encontrase «x_cnt».
+   La «|» separa dos órdenes. La orden a continuación «update» escribe en el
+archivo sólo si éste cambió. Si no se cambió ningún «x_cnt» a «x_counter»
+no ocurrirá nada.
+
+También dispone de la orden «:windo», que ejecuta su argumento en todas las
+ventanas. «:bufdo» ejecuta su argumento en todos los búfers. Sea cuidadoso
+con esto, porque puede que tenga más archivos de los que crea en su lista
+de búfers. Revise esto con la orden «:buffers» (o «:ls»).
+
+==============================================================================
+*26.4*	Usar Vim desde un script de intérprete de órdenes
+
+Suponga que tiene que cambiar la cadena «-persona-»  a «Juan» en varios
+archivos, e imprimirlo después. ¿Como se hace? Una manera es teclear mucho.
+La otra es escribir un script de consola para hacer la tarea.
+   El editor Vim realiza un trabajo superlativo como un editor orientado a
+pantalla cuando usa las órdenes de modo Normal. Para un procesamiento en
+lotes, por otra parte, las órdenes de modo Normal no finalizan correctamente
+como archivos claros y comentados; para ello tiene que usar el modo Ex.
+Este modo ofrece una bonita interfaz de línea de órdenes que facilita su
+inserción en un archivo de lotes. («Orden Ex» es sólo otro nombre para una
+orden en la línea de órdenes («:»).)
+   Las órdenes del modo Ex que necesita son las siguientes: >
+
+	%s/-persona-/Juan/g
+	write archivo_temporal
+	quit
+
+Ponga estas órdenes en el archivo «change.vim». Para ejecutar el editor en
+modo de lotes, ese este script de consola: >
+
+	for file in *.txt; do
+	  vim -e -s $file < change.vim
+	  lpr -r archivo_temporal
+	done
+
+El bucle for-done es una construcción de consola para repetir las dos
+líneas entre ellas, mientras que la variable $file es definida con un nombre
+diferente cada vez.
+   La segunda línea inicia Vim en modo Ex (argumento «-e») en el archivo
+$file y lee las órdenes del archivo «change.vim». El argumento «-s» le dice
+a Vim que opere en modo silencioso. En otras palabras, no mostrar «:prompt»
+(cuadro de diálogo interactivo), o cualquier otro diálogo.
+   La orden «lpr -r archivo_temporal» muestra el «archivo_temporal»
+resultante y lo elimina (esto es lo que hace el argumento «-r»).
+
+
+LEER DESDE LA ENTRADA ESTÁNDAR
+
+Vim puede leer texto desde la entrada estándar. Debido a que esta es la
+manera normal de leer órdenes, tendrá que decirle a Vim que lea texto. Esto
+se hace introduciendo el argumento «-» en lugar de un archivo. Ejemplo: >
+
+	ls | vim -
+
+Esto permite editar la salida de la orden «ls», sin guardar primero el texto
+en un archivo.
+   Si usa la entrada estándar para leer texto, puede usar el argumento «-S»
+para leer un script: >
+
+	producer | vim -S change.vim -
+
+
+MODO NORMAL EN SCRIPTS
+
+Si realmente desea usar órdenes de modo Normal en un script, puede hacerlo
+del siguiente modo: >
+
+	vim -s script file.txt ...
+<
+	Nota:
+	«-s» tiene un significado diferente cuando se usa sin «-e». Aquí
+	significa que tiene que cargar el script como si fueran órdenes de
+	modo Normal. «-e» significa modo silencioso, y no usa el siguiente
+	argumento como un nombre de archivo.
+
+Las órdenes en «script» se ejecutan como los introdujo. No olvide que un 
+salto de línea se interpreta como <Intro>. En modo Normal, desplaza el cursor
+a la siguiente línea.
+   Para crear el script, puede editar el archivo de script y teclear las
+órdenes. Necesita imaginar el resultado final, lo cual es un poco difícil.
+Otra manera es grabar las órdenes al ejecutarlas manualmente.
+Así es como se hace: >
+
+	vim -w script file.txt ...
+
+Todas las teclas pulsadas se escribirán a «script». Si comete errores,
+continúe, acordándose después de editar el script.
+   El argumento «-w» añade a un script existente. Esto es útil cuando desea
+grabar el script poco a poco. Si desea empezar otra vez desde cero, use el
+argumento «-W», que sobreescribe todo archivo existente.
+
+==============================================================================
+
+Siquiente capítulo: |usr_27.esx| Órdenes y patrones de búsqueda
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Omar Campagne Polaino
+
+Proyecto: |vim-doc-es|
+

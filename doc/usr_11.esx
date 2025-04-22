@@ -1,0 +1,325 @@
+*usr_11.esx*	Para Vim versión 7.3.  Último cambio: 20/6/2010
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+			  Recuperarse de un fallo
+
+
+¿Se colgó su ordenador después de horas editando? ¡No entre en pánico! Vim
+mantiene suficiente información para poder recuperar la mayor parte del
+trabajo. Este capítulo le mostrará cómo recuperar su trabajo y cómo funciona
+el archivo de intercambio («swap»).
+
+|11.1|	Recuperación básica
+|11.2|	¿Dónde está el archivo de intercambio?
+|11.3|	¿Se ha colgado o no?
+|11.4|	Más información
+
+ Capítulo siguiente: |usr_12.esx|  Trucos
+  Capítulo anterior: |usr_10.esx|  Realizar grandes cambios
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*11.1*	Recuperación básica
+
+En la mayoría de los casos, recuperar un archivo es bastante sencillo, si
+suponemos que sabe qué archivo estaba editando (y el disco duro aún
+funciona). Inicie Vim con el archivo y el argumento «-r»: >
+
+	vim -r ayuda.txt
+
+Vim leerá el archivo de intercambio (empleado para almacenar el texto
+editado) y puede que lea bits y porciones del texto original. Verá los
+siguientes mensajes si todo ha ido bien (con nombres de fichero diferentes,
+por supuesto).
+
+	Using swap file ".help.txt.swp" ~
+	Original file "~/vim/runtime/doc/help.txt" ~
+	Recovery completed. You should check if everything is OK. ~
+	(You might want to write out this file under another name ~
+	and run diff with the original file to check for changes) ~
+	You may want to delete the .swp file now. ~
+
+Para ponerse del lado de la seguridad, escriba este archivo con otro nombre:
+>
+
+	:write ayuda.txt.recuperado
+
+Compare el archivo con el original para ver si obtuvo lo que
+esperaba. Vimdiff es muy útil para esta tarea |08.7|. Por ejemplo: >
+
+	:write help.txt.recovered
+	:edit #
+	:diffsp help.txt
+
+Compruebe que el archivo original no contenga una versión más reciente
+(guardó el archivo justo antes de que el sistema diese un fallo).
+Compruebe también que no se ha omitido ninguna línea (algo ha ido mal
+y Vim no pudo recuperar).
+   Si Vim genera mensajes de advertencia al recuperar un archivo, lea
+éstos cuidadosamente. Aún así, es poco habitual.
+
+Si la recuperación ha resultado en un texto idéntico a los contenidos del
+archivo obtendrá este mensaje:
+
+	Using swap file ".help.txt.swp" ~
+	Original file "~/vim/runtime/doc/help.txt" ~
+	Recovery completed. Buffer contents equals file contents. ~
+	You may want to delete the .swp file now. ~
+
+Habitualmente, esto ocurre si ya ha recuperado los cambios, o si editó el
+archivo después de realizar cambios. En este momento ya puede eliminar el
+archivo de intercambio.
+
+Es normal que los últimos cambios no se puedan recuperar. Vim vuelca los
+cambios al disco duro cuando no teclea durante cuatro segundos, o tras
+escribir unos doscientos caracteres. Esto se puede modificar con las
+opciones 'updatetime' y 'updatecount'. De esta forma, cuando Vim no tiene
+posibilidad de guardar cuando el sistema cae, tendrá los cambios del último
+volcado.
+
+Si estaba editando sin un nombre de archivo designado, dele este argumento:
+>
+
+	vim -r ""
+
+Debe estar en el directorio adecuado. En caso contrario, Vim no podrá
+encontrar el archivo de intercambio.
+
+==============================================================================
+*11.2* 	¿Dónde está el archivo de intercambio?
+
+Vim puede guardar el archivo de intercambio en distintos lugares.
+Normalmente se encuentra en el mismo directorio que el archivo original.
+Para encontrarlo, cambie al directorio del archivo y escriba: >
+
+	vim -r
+
+Vim usará una lista de archivos de intercambio que ha encontrado. También
+buscará en otros directorios donde los archivos de intercambio para archivos
+en el actual puedan encontrarse. No buscará archivos de intercambio en
+otros directorios, ni siquiera en los subdirectorios.
+   La salida se parecerá a esto:
+
+	Swap files found: ~
+	   In current directory: ~
+	1.    .main.c.swp ~
+		  owned by: mool   dated: Tue May 29 21:00:25 2001 ~
+		 file name: ~mool/vim/vim6/src/main.c ~
+		  modified: YES ~
+		 user name: mool   host name: masaka.moolenaar.net ~
+		process ID: 12525 ~
+	   In directory ~/tmp: ~
+	      -- none -- ~
+	   In directory /var/tmp: ~
+	      -- none -- ~
+	   In directory /tmp: ~
+	      -- none -- ~
+
+Si hay varios archivos de intercambio que parecen ser el que quiere
+usar, se mostrará una lista y se requerirá que introduzcas el número del que
+quiere seleccionar. Observe con cuidado las fechas para decidir cuál
+quieres usar.
+   En caso de que no sepa cuál seleccionar, pruébelos uno a uno y compruebe
+que los archivos resultantes son el que deseas.
+
+
+USAR UN ARCHIVO DE INTERCAMBIO ESPECÍFICO
+
+Si sabe qué archivo de intercambio quiere usar, puede realizar la
+intercambio dando como argumento el nombre de este archivo. Vim encontrará
+el nombre del archivo original del cuál éste es el archivo de intercambio.
+
+Ejemplo: >
+	vim -r .help.txt.swo
+
+Esto resulta útil cuando el archivo de intercambio está en otro directorio
+diferente al esperado. Vim reconoce los archivos con el patrón *.s[uvw][a-z]
+como archivos de intercambio.
+
+Si esto tampoco funciona, compruebe los nombres de archivo que Vim reporta y
+renombre los archivos acordemente. Compruebe la opción 'directory' para ver
+dónde ha podido poner Vim el archivo de intercambio.
+
+	Nota:
+	Vim intenta encontrar los archivos de intercambio buscando los
+	directorios de la opción 'dir' por nombres que coincidan con
+	«nombredearchivo.sw?». Si la expansión del nombre no funciona (p.ej.
+	la opción 'shell' es inválida), Vim intenta buscar el archivo
+	«nombredearchivo.swp». Si esto también falla, tendrá que darle el
+	nombre del archivo a mano para que pueda recuperarlo.
+
+==============================================================================
+*11.3*	¿Se ha colgado o no?					*ATTENTION* *E325*
+
+Vim intenta protegerle de cometer estupideces. Suponga que inocentemente
+comienza la edición de un archivo, a la espera de que los contenidos se
+muestren. En su lugar, Vim produce un mensaje muy largo:
+
+		E325: ATENCIÓN ~
+Se ha encontrado un archivo de intercambio con el nombre ".main.c.swp" ~
+		propiedad de: mool   de fecha: Tue May 29 21:09:28 2001 ~
+		nombre del archivo: ~mool/vim/vim6/src/main.c ~
+		modificado: no ~
+		nombre del usuario: mool   host name: masaka.moolenaar.net ~
+		ID del proceso: 12559 (aún en ejecución) ~
+		al abrir el archivo "main.c" ~
+		de fecha: Tue May 29 19:46:12 2001 ~
+ ~
+	(1)  Puede que otro programa esté editando el mismo archivo. ~
+	    De ser así, tenga cuidado de no acabar con dos ~
+	    ejemplares diferentes del mismo archivo al hacer cambios. ~
+	    Salga del programa o continúe con precaución. ~
+ ~
+	(2) Falló una sesión de edición de este archivo. ~
+	    Si es así, use \":recover\" o \"vim -r  main.c" ~
+	    para recuperar los cambios (véa \":help recovery\"). ~
+	    Si Ud. ya ha hecho esto, borre el archivo de intercambio ".main.c.swp" ~
+	    para evitar este mensaje. ~
+
+Ha recibido este mensaje porque cuando comienza a editar un archivo, Vim
+comprueba que exista un archivo de intercambio para este archivo. Si hay
+uno, algo debe estar pasando. Puede ocurrir cualquiera de estas situaciones:
+
+1. Hay otra sesión de edición activa en este archivo. Busque en el
+   mensaje la línea con «ID del proceso». Puede parecerse a esto:
+
+		process ID: 12559 ((aún en ejecución) ~
+
+   El texto «(still running)» indica que el proceso que edita este archivo
+está corriendo en el mismo ordenador. Cuando estés bajo un sistema no
+Unix, no obtendrá esta información extra. Cuando edite un archivo a través
+de red, seguramente no verá esta información, porque el proceso estará en otro
+   ordenador. Tendrá que averiguarlo por su cuenta.
+      Si hay otro Vim editando el mismo archivo, continuar editándolo
+   conllevará a que tenga dos versiones del mismo archivo. La última que
+   guarde sobreescribirá a la otra, con la consecuente pérdida de los
+   cambios. Mejor salir de este Vim.
+
+2. El archivo de intercambio puede ser el resultado de un cuelgue anterior
+   de Vim o del ordenador. Revise las fechas mencionadas en el mensaje. Si la
+   fecha del archivo de intercambio es más reciente que la del archivo que
+   está editando, y aparece esta línea:
+
+		modificado: YES ~
+
+   Entonces es muy probable que haya ocurrido algo con la sesión.
+      Si la fecha del archivo es posterior a la fecha del archivo de
+   intercambio, es que o cambiado tras el cuelgue (quizá la recuperó antes
+   y no eliminó el archivo de intercambio), o es que el archivo fue
+   guardado después de la última grabación del archivo de intercambio
+   (entonces tienes suerte: no necesita ni ese viejo archivo de
+   intercambio). Vim le advertirá de esto:
+
+      MÁS NUEVO que el archivo de intercambio! ~
+
+
+ARCHIVO DE INTERCAMBIO ILEGIBLE
+
+A veces la línea
+
+	[no se puede leer] ~
+
+aparecerá bajo el nombre del archivo de intercambio. Esto puede ser bueno o
+malo dependiendo de las circunstancias.
+
+Son buenas noticias si la sesión anterior se colgó sin haber hecho ningún
+cambio al archivo. En tal caso un listado de archivos del directorio
+mostrará que tiene cero bytes. Tal vez quiera eliminarla y continuar.
+
+No son muy buenas noticias si lo que ocurre es que no tiene permisos de
+lectura del archivo de intercambio. Tal vez desee ver el archivo en modo
+sólo lectura o salir. En sistemas multiusuario, si empleó otro usuario,
+salir y volver a identificarte tal vez resuelva el «error de lectura». O en
+su defecto quizá quiera encontrar quien lo editó por última vez (o está
+editándolo ahora mismo) y hablar con él.
+
+Son muy malas noticias si significa que hay un error de lectura a nivel
+físico del disco duro. Afortunadamente, esto no ocurre casi nunca. Quizá
+quiera ver el archivo en modo sólo lectura inicialmente (si puede), para ver
+el alcance de los cambios que fueron «olvidados». Si eres el que está a
+cargo del archivo, prepárate para rehacer los últimos cambios.
+
+
+¿QUÉ HACER?					*swap-exists-choices*
+
+Si tiene soporte para diálogos, se le pedirá que elija una de las siguientes
+opciones:
+
+  Swap file ".main.c.swp" already exists! ~
+  [O]pen Read-Only, (E)dit anyway, (R)ecover, (Q)uit, (A)bort, (D)elete it: ~
+
+O  Abrir el archivo en modo sólo lectura. Use esto cuando sólo desee ver el
+   archivo y no necesite recuperarlo. Tal vez quiera usar esto cuando sepa
+   que alguien está usando el archivo y usted sólo quiera echar un vistazo sin
+   hacer cambios.
+
+E  Editar el archivo igualmente. ¡Use esto con cuidado! Si el archivo está
+   siendo utilizado por otro Vim, terminará con dos versiones del archivo.
+   Vim intentará advertirte si esto va a ocurrir, pero más vale prevenir.
+
+R  Recuperar el archivo del archivo de intercambio. Emplee esto si sabe que
+   el archivo de intercambio contiene los cambios que desea.
+
+Q  Salir. Esto evita la edición. use esto si hay otro Vim editando el mismo
+   archivo.
+      Tras iniciar Vim, este saldrá de él. Cuando comiences Vim con archivos
+   en varias ventanas, Vim sale sólo si hay un archivo de intercambio para el
+   primero.  Cuando use una orden de edición, el archivo no se cargará y
+   será devuelto al archivo previamente editado.
+
+A  Abortar. Como salir (Q), pero también aborta las órdenes posteriores.
+   Esto es útil cuando cargue un script que edita varios archivos, como una
+   sesión con múltiples ventanas.
+
+D  Eliminar el archivo de intercambio. Use esto cuando esté seguro de que
+   no lo necesita. Por ejemplo, cuando no contenga cambios o cuando el
+   archivo en sí sea más nuevo que el archivo de intercambio.
+      En Unix esta opción sólo se ofrece cuando el proceso que creó el archivo
+   de intercambio no parece que estar en ejecución.
+
+Si no ve el diálogo (está ejecutando una versión de Vim que no lo soporta,
+tendrá que hacerlo a mano. Para recuperar el archivo, use la siguiente
+orden: >
+
+	:recover
+
+
+Vim no puede siempre detectar cuando ya existe un archivo de intercambio
+para un archivo. Este es el caso cuando otras sesiones de edición ponen los
+archivos en otro directorio o cuando una ruta de archivo difiere en máquinas
+distintas.  Por lo tanto, no confíe en que Vim siempre le vaya a alertar.
+
+Si realmente no quiere ver este mensaje, puede añadir la opción 'A' a la
+opción 'shortmess'. Pero es poco habitual que lo necesite.
+
+Para apuntes relativos al cifrado y al archivo de intercambio, consulte
+|:recover-crypt|.
+
+==============================================================================
+*11.4*	Más información
+
+|swap-file|	Una explicación sobre dónde se creará el archivo de
+		intercambio y cuál es su nombre.
+|:preserve|	Volcado manual de un archivo de intercambio al disco.
+|:swapname|	Ver el nombre del archivo de intercambio para el actual.
+'updatecount'	Número de pulsación tras las cuales el archivo de intercambio
+		es volcado al disco.
+'updatetime'	Temporizador tras el cuál se producirá el volcado a disco.
+'swapsync'	Si se debe sincornizar el disco duro tras el volcado.
+'directory'	Listado de directorios para el archivo de intercambio.
+'maxmem'	Limitar el uso de memoria antes de hacer el volcado.
+'maxmemtot'	Lo mismo pero incluyendo todos los archivos en total.
+
+==============================================================================
+
+Capítulo siguiente: |usr_12.esx| Trucos
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Álvaro Castro Castillo 
+
+Proyecto: |vim-doc-es|
+

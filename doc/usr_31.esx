@@ -1,0 +1,306 @@
+*usr_31.esx*	Para Vim versión 7.3.  Último cambio: 8/6/2007
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+		     Sacar partido a la interfaz gráfica
+
+
+Vim funciona bien en una terminal, pero la interfaz gráfica de usuario tiene
+algunos elementos adicionales. Un explorador de archivos para las órdenes
+que usan un archivo. Una ventana de diálogo para hacer una elección entre
+alternativas. Usar accesos directos de teclado para acceder rápidamente a
+los elementos en los menús.
+
+|31.1|	El explorador de archivos
+|31.2|	Confirmación
+|31.3|	Atajos de teclado para menús
+|31.4|	Posición y tamaño de la ventana de Vim
+|31.5|	Varios
+
+   Capítulo siguiente: |usr_32.esx|  El árbol de deshacer
+     Capítulo anterior: |usr_30.esx|  Editar programas
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*31.1*	El explorador de archivos
+
+Al usar el menú «Archivo/Abrir»... obtiene un explorador de archivos. 
+Esto facilita ubicar el archivo que desea editar. ¿Pero y si desea
+dividir una ventana para editar otro archivo? No hay una entrada en el menú
+para esto. Puede usar primero «Ventana/Dividir» y luego «Archivo/Abrir»...,
+pero eso es más trabajo.
+  Ya que está escribiendo la mayoría de las órdenes en Vim, abrir el
+explorador de archivos con una orden escrita también es posible. Para hacer
+que la orden de división use el explorador de archivos, anteponga «browse»: >
+
+	:browse split
+
+Seleccione un archivo para que la orden «:split» se ejecute luego
+con el nombre del mismo. Si se descarta la ventana del explorador de
+archivos, no pasa nada, la ventana no se divide.
+  También es posible pasar como parámetro un nombre de archivo o directorio,
+que es usado para indicarle al explorador de archivos desde qué directorio
+empezar. Por ejemplo: >
+
+	:browse split /etc
+
+Abrirá el explorador de archivos, desde el directorio «/etc».
+
+La orden «:browse» puede ser antepuesta prácticamente a cualquier orden que
+abra un archivo.
+   Si no se especifica un directorio, Vim será quien determine en qué
+directorio iniciar el explorador de archivos. De manera predeterminada se usa
+el mismo directorio usado la vez anterior. Así, si se usó «:browse split» y
+se seleccionó un archivo en «/usr/local/share», la próxima vez que use
+«:browse» se empezará desde «/usr/local/share» de nuevo.
+   Esto se puede ajustar mediante la opción 'browsedir'. Dicha opción acepta
+uno de los tres siguientes valores:
+
+	last		Usar el último directorio visitado (predeterminado)
+	buffer		Usar el mismo directorio del búfer actual
+	current		Usar el directorio actual
+
+Por ejemplo, cuando se encuentra en el directorio «/usr», editando el
+archivo «/usr/local/share/readme», la orden: >
+
+	:set browsedir=buffer
+	:browse edit
+
+Ejecutará el explorador de archivos desde «/usr/local/share». Por otro lado:
+>
+
+	:set browsedir=current
+	:browse edit
+
+Ejecutará el explorador de archivos desde «/usr».
+
+	Nota:
+	Para evitar el uso del ratón, muchos de los exploradores de archivos
+	ofrecen navegación mediante teclas. Ya que esto difiere de sistema a
+	sistema, no se explica aquí. Vim usa un explorador estándar cuando es
+	posible; la documentación del sistema que use debería contener
+	una sección acerca de los accesos directos de teclado disponibles.
+
+Cuando no se está usando la versión gráfica de Vim, es posible usar el
+explorador de archivos para seleccionar archivos de la forma habitual con un
+explorador de archivos. Sin embargo, el explorador no funciona con la orden
+«:browse». Véase |netrw-browse|.
+
+==============================================================================
+*31.2*	Confirmación
+
+Vim le protege de sobreescribir accidentalmente un archivo, y de otras formas
+de perder los cambios realizados.  Si hace algo que puede ser peligroso,
+Vim muestra un mensaje de error y sugiere añadir ! si el usuario está
+seguro de querer hacerlo.
+   Para evitar teclear de nuevo la orden con el !, puede hacer que Vim le
+ofrezca un diálogo. Así, podrá pulsar «OK» o «Cancelar» para
+indicarle a Vim qué desea hacer.
+   Por ejemplo, está editando un archivo y ya hizo algunos cambios.
+Puede editar otro archivo con: >
+
+	:confirm edit foo.txt
+
+Vim mostrará un diálogo con el siguiente aspecto:
+
+	+-----------------------------------+
+	|				    |
+	|?Guardar los cambios en "bar.txt"? |
+	|				    |
+	|   SÍ   NO	       CANCELAR     |
+	+-----------------------------------+
+
+Y ahora puede decidir qué hacer. Si desea conservar los cambios, escoja
+«SÍ». Si quiere descartar permanentemente los cambios hechos: «NO».  Si
+olvidó lo que estaba haciendo y quiere revisar cuáles fueron los cambios
+hechos, use «CANCELAR». Estará de nuevo en el mismo archivo, y los cambios
+aún estarán allí.
+
+Tal como «:browse», la orden «:confirm» se puede anteponer a la mayoría de
+las órdenes que editan un archivo.  Estas órdenes también se pueden
+combinar: >
+
+	:confirm browse edit
+
+Esto mostrará un diálogo cuando el búfer actual contiene cambios. Luego se
+mostrará un explorador de archivos para seleccionar el archivo a editar.
+
+	Nota:
+	Es posible usar el teclado para seleccionar la opción deseada en
+	el diálogo. Generalmente, la tecla <Tab> y las teclas de cursor
+	cambian la opción seleccionada. Pulsar <Enter> escoge la opción
+	definida. Sin embargo, esto varía de sistema a sistema.
+
+Cuando no se usa la GUI, la orden «:confirm» sigue funcionando. En vez de
+crear una ventana de diálogo, el mensaje se mostrará en la parte de abajo de
+la ventana de Vim, y se le solicitará pulsar una tecla para hacer una
+elección. >
+
+	:confirm edit main.c
+<	Guardar los cambios en "Sin título"? ~
+	[Y]es, (N)o, (C)ancelar:  ~
+
+Ahora puede realizar su selección simplemente pulsando una tecla. En
+particular, no tiene que pulsar <Enter>, a diferencia del tecleo normal en
+la línea de órdenes.
+
+==============================================================================
+*31.3*	Atajos de teclado para menús
+
+El teclado se usa para todas las órdenes de Vim. Los menús proveen una forma
+sencilla de seleccionar órdenes sin saber de antemano cómo se llaman.
+Pero es necesario alejar la mano del teclado y tomar el ratón.
+   Habitualmente los menús también se pueden seleccionar mediante teclas.
+Esto varía de sistema a sistema, pero generalmente funciona como sigue:
+Pulse la tecla <Alt> junto con la letra subrayada en el menú. Por ejemplo,
+<A-v> (<Alt> y v) activa el menú Ventana.
+   En el menú Ventana, la «d» en la entrada para «split» (dividir ventana)
+está subrayada. Para seleccionar dicha entrada, suelte la tecla <Alt> y
+pulse la tecla d.
+
+Después de la selección inicial de un menú con la tecla <Alt>, es posible
+usar las teclas de cursor para explorar los menús. <Derecha> abre un menú
+secundario, e <Izquierda> lo cierra. <Esc> también puede cerrar un
+menú. <Enter> activa el elemento seleccionado del menú.
+
+Hay un conflicto con el uso de la tecla <Alt> para seleccionar elementos de
+menús, y el uso de la tecla <Alt> en combinaciones de teclas para macros. La
+opción 'winaltkeys' le indica a Vim qué hacer con la tecla <Alt>.
+   El valor predeterminado «menu» es la selección inteligente: si la
+combinación de teclas es un atajo de teclado para el menú, no se la puede
+usar en una macro. Todas las otras teclas están disponibles para crear macros.
+   El valor «no» hace que no se use ninguna tecla <Alt> para los menús. Por
+esto, es necesario usar el ratón para acceder a los menús, y todas las teclas
+<Alt> se pueden incluir en macros.
+   El valor «yes» implica que Vim usará cualquier tecla <Alt> para los menús.
+Algunas combinaciones de teclas con <Alt> pueden hacer cosas distintas a
+seleccionar un menú.
+
+==============================================================================
+*31.4*	Posición y tamaño de la ventana de Vim
+
+Para ver la posición actual de la ventana de Vim en la pantalla use: >
+
+	:winpos
+
+Esto sólo funcionará en la interfaz gráfica. La salida será similar a lo
+siguiente:
+
+	Posición de la ventana: X 272, Y 103 ~
+
+La posición está dada en píxeles de la pantalla. Puede usar estos números
+para mover la ventana de Vim a algún otro sitio. Por ejemplo, para moverla a
+la izquierda cien píxeles: >
+
+	:winpos 172 103
+<
+	Nota:
+	Puede haber un pequeño desfase entre la posición señalada y el sitio
+	al que se mueve la ventana.  Esto es debido al borde de la ventana.
+	Éste es añadido por el administrador de ventanas.
+
+Es posible usar esta orden en el archivo de arranque de Vim para ubicar la
+ventana en una posición específica.
+
+El tamaño de la ventana de Vim se calcula en caracteres. Por este motivo el
+tamaño depende del tipo de letra usado. El tamaño actual puede consultarse
+con esta orden: >
+
+	:set lines columns
+
+Para cambiar el tamaño ajuste el valor de las opciones 'lines' y/o
+'columns': >
+
+	:set lines=50
+	:set columns=80
+
+Consultar el tamaño funciona en una terminal de la misma manera que en la
+GUI. En la mayoría de las terminales no es posible ajustar el tamaño.
+
+Puede iniciar la versión de gvim para el sistema de ventanas X con
+argumentos para especificar el tamaño y la posición de la ventana: >
+
+	gvim -geometry {ancho}x{alto}+{desplz_x}+{desplz_y}
+
+{ancho} y {alto} están dados en caracteres, {desplz_x} y {desplz_y} están
+dados en píxeles. Por ejemplo: >
+
+	gvim -geometry 80x25+100+300
+
+==============================================================================
+*31.5*	Varios
+
+Puede usar gvim para editar mensajes de correo. Debe seleccionar gvim como el
+editor para sus mensajes en su programa de correo. Al hacerlo, notará que
+esto falla: el programa de correo cree que la edición del mensaje ha
+terminado, ¡aún cuando gvim no se ha cerrado!
+   El motivo de este error es que gvim se desconecta de la consola en la que
+se inició. Esto funciona bien cuando se inicia gvim desde una terminal,
+para que se pueda hacer otras cosas en ella. Pero cuando se necesita esperar
+a que gvim termine, hay que evitar dicha desconexión. El argumento «-f» hace
+precisamente eso: >
+
+	gvim -f file.txt
+
+«-f» significa foreground (primer plano). Ahora, Vim bloqueará la consola en
+la que se inició hasta que termine la edición y cierre el editor.
+
+
+ARRANQUE POSTERGADO DE LA GUI
+
+En Unix es posible iniciar Vim en una terminal. Esto es útil si se están
+realizando varias tareas en una misma consola. Si está editando un archivo y
+decide que después de todo quiere usar la GUI, puede lanzarla con la orden:
+>
+
+	:gui
+
+Vim abrirá la ventana de la GUI y no seguirá usando la terminal. Puede
+continuar usando la terminal para lo que necesite. El argumento «-f» se usa
+aquí para ejecutar la GUI en primer plano. También puede usar «:gui -f».
+
+
+EL ARCHIVO DE INICIO DE GVIM
+
+Cuando gvim inicia, lee el archivo gvimrc. Es similar al archivo vimrc que
+se
+usa al iniciar Vim. El archivo gvimrc puede usarse para fijar opciones de
+configuración y órdenes que sólo deban usarse cuando se inicie la GUI. Por
+ejemplo, puede definir la opción 'lines' para obtener un tamaño de ventana
+diferente: >
+
+	:set lines=55
+
+No es conveniente hacer esto en una terminal, debido a que su tamaño es fijo
+(excepto por un xterm que soporte redimensionado).
+   El archivo gvimrc se busca en las mismas ubicaciones que el archivo vimrc.
+Habitualmente, su nombre es «~/.gvimrc» en sistemas Unix/Linux y
+«$VIM/_gvimrc» en MS-Windows. La ruta de este archivo se almacena en la 
+variable de entorno $MYGVIMRC, por lo que puede usar la siguiente orden para
+editar ese archivo, si existe: >
+
+	:edit $MYGVIMRC
+<
+Si por algún motivo no desea usar el archivo gvimrc normal, puede especificar
+otro mediante el argumento «-U»: >
+
+	gvim -U otrorc ...
+
+Esto le permite iniciar gvim para distintas formas de edición. Puede,
+por ejemplo, definir otro tamaño para el tipo de letra.
+   Para evitar la ejecución del archivo gvimrc use: >
+
+	gvim -U NONE ...
+
+==============================================================================
+
+Capítulo siguiente: |usr_32.esx| El árbol de deshacer
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Omar Campagne Polaino
+
+Proyecto: |vim-doc-es|
+

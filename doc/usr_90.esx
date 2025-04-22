@@ -1,0 +1,536 @@
+*usr_90.esx*	Para Vim versión 7.3. Último cambio: 10/09/2008
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+				Instalar Vim
+
+							*instalar* *install*
+Antes de usar Vim, tiene que instalarlo. Es sencillo o fácil dependiendo de su
+sistema. Este capítulo ofrece algunas indicaciones y explica cómo se actualiza
+a una nueva versión.
+
+|90.1|	Unix
+|90.2|	MS-Windows
+|90.3|	Actualizar
+|90.4|	Problemas de instalación habituales
+|90.5|	Desinstalar Vim
+
+ Capítulo siguiente: |usr_45.esx|  Seleccione su idioma
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*90.1*	Unix
+
+Primero debe decidir si va a instalar Vim para uno o todos los usuarios. La
+instalación es muy similar, pero el directorio de instalación de Vim difiere.
+   Para una instalación de sistema (todos los usuarios), a menudo se usa el
+directorio base «/usr/local». Pero puede ser distinto en su sistema. Intente
+averiguar dónde se instalan los otros paquetes.
+   Cuando realiza una instalación para un sólo usuario, puede usar su
+directorio personal como base. Los archivos se ubicarán en subdirectorios como
+«bin» y «shared/vim».
+
+
+DE UN PAQUETE
+
+Puede obtener binarios precompilados para muchos sistemas UNIX
+diferentes. En esta página hay una larga lista con enlaces:
+
+	http://www.vim.org/binaries.html ~
+
+Los responsables de los binarios son voluntarios, por lo que a menudo están
+obsoletos. Es una buena idea compilar su propia versión UNIX desde las
+fuentes. Así mismo, crear el editor desde las fuentes le permite controlar
+las características a compilar. Por otra parte, esto requiere un compilador.
+
+Si tiene una distribución de Linux, el programa vi es probablemente una
+versión mínima de Vim. No cuenta con resaltado de sintaxis, por
+ejemplo. Intente buscar otro paquete de Vim para su distribución, o busque
+en la página web.
+
+
+DESDE LAS FUENTES
+
+Necesitará lo siguiente para compilar e instalar Vim:
+
+	-  Un compilador C (preferentemente GCC)
+	-  El programa GZIP (puede obtenerlo en www.gnu.org)
+	-  Los archivos de Vim fuente y de tiempo de ejecución
+
+Para obtener los archivos de Vim, busque en este archivo un servidor réplica
+cerca a usted. Le debería ofrecer la descarga más rápida posible:
+
+	ftp://ftp.vim.org/pub/vim/MIRRORS ~
+
+O use la página oficial ftp.vim.org, si cree que es suficientemente rápida.
+Vaya al directorio «unix», y encontrará una serie de archivos. El número de
+versión está integrado en el nombre del archivo. Querrá obtener la versión más
+reciente.
+   Puede obtener los archivos para Unix de dos formas: Un único archivo grande
+que contiene todo, o cuatro más pequeños que caben cada uno en un disquete. El
+archivo grande para la versión 6.1 se llama:
+
+	vim-6.1.tar.bz2 ~
+
+Necesita el programa bzip2 para descomprimirlo. Si no lo tiene, descargue
+los cuatro archivos más pequeños, que se pueden descomprimir con gzip. Para
+Vim 6.1, se llaman:
+
+	vim-6.1-src1.tar.gz ~
+	vim-6.1-src2.tar.gz ~
+	vim-6.1-rt1.tar.gz ~
+	vim-6.1-rt2.tar.gz ~
+
+
+COMPILAR
+
+Primero, cree un directorio de nivel superior donde trabajar, por ejemplo: >
+
+	mkdir ~/vim
+	cd ~/vim
+
+Luego descomprima los archivos en esa ubicación. Si tiene el archivo único
+grande, lo puede desempaquetar de la siguiente forma: >
+
+	bzip2 -d -c ruta/vim-6.1.tar.bz2 | tar xf -
+
+Cambie «ruta» a la ubicación dónde descargó el archivo: >
+
+	gzip -d -c ruta/vim-6.1-src1.tar.gz | tar xf -
+	gzip -d -c ruta/vim-6.1-src2.tar.gz | tar xf -
+	gzip -d -c ruta/vim-6.1-rt1.tar.gz | tar xf -
+	gzip -d -c ruta/vim-6.1-rt2.tar.gz | tar xf -
+
+Si le satisfacen las funcionalidades predeterminadas, y si su entorno está
+configurado correctamente, debería poder compilar Vim con lo siguiente: >
+
+	cd vim61/src
+	make
+
+El programa «make» ejecutará «configure» y compilará todo. Más adelante
+explicaremos como compilar con funcionalidades distintas.
+   Si detecta errores durante la compilación, mire con detenimiento los
+mensajes de error. Debería haber una indicación de qué falló. Con suerte,
+podrá corregirlo. Puede que deba desactivar algunas funcionalidades para poder
+compilar Vim. Consulte el archivo «Makefile» para ver indicaciones específicas
+a su sistema.
+
+
+PRUEBA
+
+Ahora puede comprobar si la compilación se realizó con éxito: >
+
+	make test
+
+Esto ejecutará una secuencia de scripts de prueba para comprobar que Vim
+funciona de la manera esperada. Se iniciará Vim varias veces, y aparecerá
+rápidamente todo tipo de texto y mensajes. Si todo es correcto, verá:
+
+	test results: ~
+	ALL DONE ~
+
+Si le devuelve «TEST FAILURE», es que ha fallado alguna prueba. Si existen
+uno o más mensajes de pruebas fallidas, puede que Vim funcione, pero no a la
+perfección. Si ve muchos mensajes de error o Vim no continúa hasta el final,
+puede que exista algún problema. Puede intentar encontrarlo manualmente, o
+encontrar a alguien que lo puede solucionar. También puede consultar la
+lista de correo (|maillist-archive|) en busca de una solución. Si todo
+falla, puede preguntar en la lista de correo (|maillist|) de Vim si alguien
+le puede ayudar.
+
+
+INSTALACIÓN
+							*install-home*
+Si desea instalar Vim en su directorio personal (o «home»), edite el archivo
+«Makefile» y busque la siguiente línea:
+
+	#prefix = $(HOME) ~
+
+Elimine «#» al principio de la línea.
+   Al instalar para todo el sistema, los más probable es que Vim haya
+seleccionado un directorio de instalación adecuado. También puede definir uno;
+vea a continuación. Necesita ser el administrador para poder realizar lo
+siguiente.
+
+Para instalar Vim, haga: >
+
+	make install
+
+Esto debería mover todos los archivos relevantes al sitio adecuado. Ahora
+puede intentar ejecutar Vim para comprobar que funciona. Use dos pruebas
+sencillas para comprobar que Vim puede encontrar sus archivos de tiempo de
+ejecución: >
+
+	:help
+	:syntax enable
+
+Si no funciona, use esta orden para comprobar dónde está buscando Vim sus
+archivos de tiempo de ejecución: >
+
+	:echo $VIMRUNTIME
+
+También puede iniciar Vim con el argumento «-V» para ver qué ocurre durante
+el inicio: >
+
+	vim -V
+
+No olvide que el manual del usuario supone que usa Vim de una cierta
+manera. Tras instalar Vim, siga las instrucciones en |not-compatible| para
+que Vim funcione de la forma aceptada en este manual.
+
+
+SELECCIONAR FUNCIONALIDADES
+
+Vim ofrece varias formas de seleccionar funcionalidades. Una de las más
+sencillas es editar el archivo «Makefile». Hay muchas indicaciones y ejemplos.
+Generalmente, puede activar o desactivar una funcionalidad simplemente
+descomentando una línea.
+   Otra alternativa es ejecutar «configure» de forma separada. Le permite
+especificar opciones de configuración manualmente. La desventaja es que tiene
+que averiguar qué teclear exactamente.
+   A continuación tiene algunas de los argumentos más interesantes. También se
+pueden activar desde el archivo «Makefile».
+
+	--prefix={directorio}		Directorio superior donde instalar
+					Vim.
+
+	--with-features=tiny		Compilación con varias funcionalidades
+					desactivadas.
+	--with-features=small		Compilación con algunas
+					funcionalidades desactivadas.
+	--with-features=big		Compilación con más funcionalidades
+					activadas.
+	--with-features=huge		Compilación con la mayoría de
+					funcionalidades activadas.
+					Consulte |+feature-list| para ver qué
+					funcionalidad está activa en cada
+					caso.
+
+	--enable-perlinterp		Activa la interfaz de Perl. Existen
+					argumentos similares para Ruby,
+					Python y Tcl.
+
+	--disable-gui			No compila la interfaz gráfica.
+	--without-x			No compila las funcionalidades del
+					sistema de ventanas X.  Si se usan las
+					dos, Vim no se conectará al servidor
+					de X, lo cual agiliza el inicio.
+
+Para ver la lista completa, use: >
+
+	./configure --help
+
+Puede encontrar una explicación de cada funcionalidad y enlaces a más
+información aquí: |feature-list|.
+   Para los atrevidos, edite el archivo «feature.h». ¡También puede modificar
+el código fuente directamente!
+
+==============================================================================
+*90.2*	MS-Windows
+
+Existen dos formas de instalar el programa Vim para Microsoft Windows. Puede
+descomprimir varios archivos, o usar un único archivo de instalación
+automática. La mayoría de usuarios con ordenadores relativamente recientes
+pueden preferir el segundo método. Se requiere lo siguiente para usar el
+primero:
+
+	- Un archivo con binarios para Vim.
+	- El archivo de tiempo de ejecución («runtime) de Vim.
+	- Un programa para desempaquetar los archivos zip.
+
+Para obtener los archivos de Vim, busque en este archivo un servidor réplica
+cerca a usted. Le debería ofrecer la descarga más rápida posible:
+
+	ftp://ftp.vim.org/pub/vim/MIRRORS ~
+
+O use la página oficial ftp.vim.org si cree que es suficientemente
+rápido. Vaya al directorio «pc» y verá una lista de archivos. El número de
+versión se incluye en el nombre de archivo. Le recomendamos que obtenga la
+versión más reciente. En este documento se usará «61», la versión 6.1.
+
+	gvim61.exe		El archivo de instalación automática.
+
+Esto es todo lo que necesita para el segundo método. Simplemente ejecute el
+archivo, y siga los diálogos.
+
+Debe escoger uno de los archivos binarios para usar el primer método. Los
+siguientes están disponibles:
+
+	gvim61.zip		La versión de interfaz gráfica normal de MS
+				Windows.
+	gvim61ole.zip		La versión gráfica de MS Windows con
+				compatibilidad con OLE.
+				Usa más memoria, permite interactuar con otras
+				aplicaciones OLE.
+	vim61w32.zip		La versión de consola de 32 bit para MS
+				Windows. Para el uso en una consola Win
+				NT/2000/XP console. No funciona bien en Win
+				95/98.
+	vim61d32.zip		Versión de 32 bit para MS-DOS. Para el uso en
+				una ventana de consola de Win 95/98.
+	vim61d16.zip		Versión de 16 bit para MS-DOS. Sólo para
+				sistemas antiguos. No permite el uso de
+				nombres de archivo largos.
+
+Sólo necesita uno de estos. Aunque puede instalar la versión gráfica y una
+versión de intérprete de órdenes. Siempre necesita obtener el archivo con
+los archivos de tiempo de ejecución.
+
+	vim61rt.zip		Los archivos de tiempo de ejecución.
+
+Use su programa un-zip para descomprimir los archivos. Por ejemplo, usando
+el programa «unzip»: >
+
+	cd c:\
+	unzip path\gvim61.zip
+	unzip path\vim61rt.zip
+
+Éstas órdenes desempaquetarán los ficheros en el directorio «c:\vim\vim61».
+Si ya tiene un directorio «vim», se sugiere navegar al directorio superior a
+él.
+   Ahora, entre al directorio «vim\vim61» y ejecute el programa de
+instalación: >
+
+	install
+
+Revise los mensajes con cuidado y seleccione las opciones que desea usar. Si
+al final selecciona «do it» (ejecutar), el programa de instalación llevará a
+cabo las acciones seleccionadas.
+   El programa de instalación no reubica los archivos de tiempo de ejecución.
+Permanecerán en el lugar en el que usted los desempaquetó.
+
+En el caso de que no esté satisfecho con las características incluidas en
+los binarios proporcionados, puede intentar compilar Vim. Obtenga el archivo
+de fuentes de la misma ubicación de los binarios. Necesitará un compilador
+para el que exista un «makefile». Microsoft Visual C funciona, pero es
+caro. Puede usar el compilador de línea de órdenes libre Borland 5.5, así
+como los compiladores libres MingW y Cygwin. Consulte el archivo
+«src/INSTALLpc.txt» para más indicaciones.
+
+==============================================================================
+*90.3*	Actualizar
+
+Si está usando una versión de Vim y desea instalar otra, haga lo siguiente.
+
+
+UNIX
+
+Cuando teclea «make install», los ficheros de tiempo de ejecución se copiarán
+un directorio específico a la versión. Por ello, no sobreescribirán los de una
+versión anterior. Esto permite usar dos o más versiones simultáneamente.
+   El ejecutable «vim» sobreescribirá una versión anterior. Si no le interesa
+preservar la versión más antigua, ejecutar «make install» funcionará sin
+problemas. Puede eliminar los archivos de tiempo de ejecución manualmente.
+Simplemente elimine el directorio con el número de versión y todos los
+archivos contenidos en él. Ejemplo: >
+
+	rm -rf /usr/local/share/vim/vim58
+
+Generalmente, bajo este directorio no hay archivos modificados. Si ha
+modificado el archivo «filetype.vim», por ejemplo, será mejor que introduzca
+esos cambios en la versión nueva antes de eliminar el archivo.
+
+Si es cuidadoso y desea probar la nueva versión durante un tiempo antes de
+cambiar a ella, instale la nueva versión bajo otro nombre. Necesita
+especificar un argumento de configuración. Por ejemplo: >
+
+	./configure --with-vim-name=vim6
+
+Debería usar «make -n install» antes de ejecutar «make install» para comprobar
+que no se sobreescribirá ningún archivo valioso.
+   Cuando decida pasar a la nueva versión, todo lo que necesita hacer es
+renombrar el binario a «vim». Por ejemplo: >
+
+	mv /usr/local/bin/vim6 /usr/local/bin/vim
+
+
+MS-WINDOWS
+
+Actualizar es casi idéntico a instalar una versión nueva. Sencillamente
+desempaquete los archivos en la misma ubicación de la versión anterior. Se
+creará un directorio nuevo, por ejemplo, «vim61», para los archivos de la
+versión nueva. Sus archivos de tiempo de ejecución, «vimrc» y «viminfo» no se
+modificarán.
+   Si desea ejecutar la nueva versión junto a la antigua, tendrá que hacer
+algún trabajo manual. No ejecute el programa de instalación, ya que
+sobreescribirá algunos archivos de la versión antigua. Ejecute los binarios
+nuevos especificando la ruta completa. El programa debería averiguar
+automáticamente la ubicación de los archivos de tiempo de ejecución para la
+versión adecuada. Por otra parte, no funcionará si define en algún lugar la
+variable «$VIMRUNTIME».
+   Si la actualización le satisface, puede eliminar los archivos de la versión
+anterior. Consulte |90.5|.
+
+==============================================================================
+*90.4*	Problemas de instalación habituales
+
+Esta sección describe algunos de los problemas más habituales al instalar
+Vim, y sugiere algunas soluciones. También contiene respuestas a muchas
+preguntas sobre la instalación.
+
+
+P: No tengo privilegios de administrador. ¿Cómo puedo instalar Vim? (Unix)
+
+Use la siguiente opción de configuración para instalar Vim en un directorio
+llamado «$HOME/vim»: >
+
+	./configure --prefix=$HOME
+
+Esto genera una copia personal de Vim. Necesita poner «$HOME/bin» en su ruta
+(variable PATH) para ejecutar el editor. Consulte también |install-home|.
+
+
+P: Los colores no son los correctos en mi pantalla. (Unix)
+
+Compruebe su configuración de terminal usando la siguiente orden en un
+intérprete de órdenes: >
+
+	echo $TERM
+
+Si el tipo de terminal listado no es el correcto, corríjalo. Para más
+indicaciones, consulte |06.2|. Otra solución es usar siempre la versión
+gráfica de usuario de Vim, llamado gvim. Esto último evita la necesidad de
+una correcta configuración de terminal. 
+
+
+P: Mis teclas de retroceso y eliminar no funcionan bien.
+
+La definición del código que cada tecla envía no está muy clara con las
+teclas de retroceso <BS> y eliminar <Del>. Primero, compruebe su opción de
+configuración «$TERM». Si no detecta nada incorrecto, pruebe esto: >
+
+	:set t_kb=^V<BS>
+	:set t_kD=^V<Del>
+
+En la primera línea tiene que pulsar «CTRL-V» y después pulsar la tecla de
+retroceso. En la segunda, debe pulsar «CTRL-V» y pulsar la tecla de
+eliminar. Puede poner estas líneas en su archivo «vimrc», consulte
+|05.1|. Una desventaja es que no funcionará cuando use otra terminal.
+Consulte aquí las posibles soluciones: |:fixdel|.
+
+
+P: Uso RedHat Linux. ¿Puedo usar la versión de Vim que viene con el sistema?
+
+Por omisión, RedHat instala una versión mínima de Vim. Busque entre los
+paquetes RPM algo llamado «Vim-enhanced-version.rpm» e instale ese paquete.
+
+
+P: ¿Como se activa el resaltado de sintaxis? ¿Como hago funcionar las
+extensiones?
+
+Use el script de ejemplo «vimrc». Encontrará una explicación de su uso en el
+siguiente apartado: |not-compatible|.
+
+Para más información sobre el resaltado de sintaxis consulte el sexto
+capítulo: |usr_06.txt|.
+
+
+P: ¿Qué es un buen archivo «vimrc» para usar?
+
+Consulte la página web www.vim.org para varios ejemplos buenos.
+
+
+P: ¿Dónde encuentro una buena extensión de Vim?
+
+Visite el sitio web de Vim: http://vim.sf.net. Muchos usuarios han enviado
+scripts de Vim y extensiones útiles a esta ubicación de Internet.
+
+
+P: ¿Dónde puedo encontrar más consejos?
+
+Consulte el sitio web de Vim: http://vim.sf.net. Hay un archivo con
+indicaciones de usuarios de Vim. Puede que también desee buscar en el
+archivo de la lista de correo, |maillist-archive|.
+
+==============================================================================
+*90.5*	Desinstalar Vim
+
+En el caso improbable de que desea desinstalar Vim completamente, aquí se
+trata cómo hacerlo.
+
+
+UNIX
+
+Si ha instalado Vim como un paquete, compruebe su gestor de paquetes para
+averiguar cómo eliminar el paquete.
+   Si ha instalado Vim a partir de las fuentes, puede usar la siguiente orden: >
+
+	make uninstall
+
+Sin embargo, si ha eliminado los archivos originales, o ha usado un archivo
+que alguien le ha proporcionado, no podrá hacer esto. Este es un ejemplo de
+desinstalación manual de Vim cuando «/usr/local» se ha usado como el
+directorio raíz: >
+
+	rm -rf /usr/local/share/vim/vim61
+	rm /usr/local/bin/eview
+	rm /usr/local/bin/evim
+	rm /usr/local/bin/ex
+	rm /usr/local/bin/gview
+	rm /usr/local/bin/gvim
+	rm /usr/local/bin/gvim
+	rm /usr/local/bin/gvimdiff
+	rm /usr/local/bin/rgview
+	rm /usr/local/bin/rgvim
+	rm /usr/local/bin/rview
+	rm /usr/local/bin/rvim
+	rm /usr/local/bin/rvim
+	rm /usr/local/bin/view
+	rm /usr/local/bin/vim
+	rm /usr/local/bin/vimdiff
+	rm /usr/local/bin/vimtutor
+	rm /usr/local/bin/xxd
+	rm /usr/local/man/man1/eview.1
+	rm /usr/local/man/man1/evim.1
+	rm /usr/local/man/man1/ex.1
+	rm /usr/local/man/man1/gview.1
+	rm /usr/local/man/man1/gvim.1
+	rm /usr/local/man/man1/gvimdiff.1
+	rm /usr/local/man/man1/rgview.1
+	rm /usr/local/man/man1/rgvim.1
+	rm /usr/local/man/man1/rview.1
+	rm /usr/local/man/man1/rvim.1
+	rm /usr/local/man/man1/view.1
+	rm /usr/local/man/man1/vim.1
+	rm /usr/local/man/man1/vimdiff.1
+	rm /usr/local/man/man1/vimtutor.1
+	rm /usr/local/man/man1/xxd.1
+
+
+MS-WINDOWS
+
+Si ha instalado Vim usando el archivo de instalación automática, puede
+ejecutar el programa «uninstall-gui», ubicado en el mismo directorio de los
+otros programas de Vim, por ejemplo, «c:\vim\vim61». También puede iniciarlo
+desde el menú de aplicaciones si ha instalado las entradas de Vim. Esto
+elimina la mayoría de los archivos, entradas de menú y enlaces directos. Sin
+embargo, algunos archivos permanecerán en el sistema, ya que necesitan un
+reinicio de Windows antes de su eliminación.
+   Se le dará la opción de eliminar todo el directorio «vim». Probablemente,
+contiene su archivo «vimrc» y otros archivos de tiempo de ejecución que ha
+creado, tenga cuidado.
+
+Por otra parte, si ha instalado Vim con los archivos zip, la manera
+recomendada es usar el programa «uninstal» (observe la omisión de la última
+«l»). Lo encontrará en el mismo directorio que el programa «install», por
+ejemplo, «c:\vim\vim61». También debería funcionar desde la aplicación
+habitual «Instalar/eliminar programas».
+   Sin embargo, esto sólo elimina la entradas de Vim en el registro. Tendrá
+que eliminar los archivos manualmente. Sencillamente seleccione el directorio
+«vim\vim61» y elimínelo recursivamente. No debería contener archivos
+modificados por el usuario, pero quizá quiera comprobarlo.
+   Probablemente, el directorio «vim» contiene su archivo «vimrc» y otros
+archivos de tiempo de ejecución que ha creado. Puede que desee preservarlos.
+
+==============================================================================
+
+Tabla de contenidos: |usr_toc.txt|
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Omar Campagne Polaino
+
+Proyecto: |vim-doc-es|
+

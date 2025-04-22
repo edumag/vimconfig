@@ -1,0 +1,603 @@
+*usr_27.esx*	Para Vim version 7.3.  Último cambio: 28/3/2010
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+			 Órdenes y patrones de búsqueda
+
+
+El capítulo 3 trató superficialmente los patrones de búsqueda |03.9|, pero
+Vim puede realizar búsquedas más complejas. Este capítulo explica los más
+comunes. Dispone de una explicación más detallada: |pattern|
+
+|27.1|	Ignorar la distinción entre mayúsculas y minúsculas
+|27.2|	Justificar el fin del archivo
+|27.3|	Dirección relativa («offsets»)
+|27.4|	Emparejar varios elementos
+|27.5|	Alternativas
+|27.6|	Rangos de caracteres
+|27.7|	Clases de caracteres
+|27.8|	Coincidir con un salto de línea
+|27.9|	Ejemplos
+
+ Siguiente capítulo: |usr_28.txt|  Plegar
+  Capítulo anterior: |usr_25.esx|  Repetición
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*27.1*	Ignorar la distinción entre mayúsculas y minúsculas
+
+Vim distingue entre mayúsculas y minúsculas al realizar un búsqueda de forma
+predeterminada. «INCLUDE», «Include» e «include»  son por ello tres palabras
+distintas, y una búsqueda encontraría sólo una de ellas.
+   Active ahora la opción 'ignorecase': >
+
+	:set ignorecase
+
+Si realiza otra búsqueda de «include», ésta devolvería «Include», «INCLUDE»
+e «InClUDe». Puede activar la opción 'hlsearch' (resaltar búsquedas) para
+ver fácilmente los patrones coincidentes.
+   Puede desactivar esta opción con: >
+
+	:set noignorecase
+
+Vamos a dejar esta opción activada, y realizar una búsqueda de
+«INCLUDE». Encontrará el mismo texto que «include». Active ahora la opción
+'smartcase': >
+
+	:set ignorecase smartcase
+
+Si tiene un patrón con al menos un carácter en mayúscula, la búsqueda no
+distinguirá entre mayúsculas y minúsculas. La idea es que no necesitaba
+escribir ese carácter en mayúscula, y que por ello lo que deseaba era
+encontrar coincidencias con distinción entre mayúsculas y minúsculas. ¡Qué
+inteligente!
+   Obtendría las siguientes coincidencias de activar ambas opciones:
+
+	patrón			coincidencias	~
+	palabra			palabra, Palabra, PALABRA, PaLaBRa etc.
+	Palabra			Palabra
+	PALABRA			PALABRA
+	PaLaBRa			PaLaBRa
+
+
+DISTINCIÓN ENTRE MAYÚSCULAS Y MINÚSCULAS EN UN PATRÓN
+
+Puede anexar la cadena «\c» si desea ignorar esta distinción para un patrón
+en particular. Usar «\C» activará la distinción. Esto invalida las opciones
+'ignorecase' y 'smartcase', ya que usar «\c» o «\C» obvia el valor de estas
+opciones.
+
+	patrón			coincidencias	~
+	\Cpalabra		palabra
+	\CPalabra		Palabra
+	\cpalabra		palabra, Palabra, PALABRA, PaLaBrA, etc.
+	\cPalabra		palabra, Palabra, PALABRA, PaLaBrA, etc.
+
+Una enorme ventaja de usar «\c» y «\C» es que se mantienen ligadas al
+patrón. Por ello, si repite un patrón desde el registro de búsquedas
+obtendrá el mismo resultado sin importar si cualquier cambio de 'ignorecase'
+y 'smartcase'. 
+
+	Nota:
+	El uso del elemento «\» en patrones de búsqueda depende de la opción
+	'magic'.
+	En estos capítulos daremos por sentado que 'magic' está activado, ya
+	que es la configuración estándar y recomendad. De cambiar 'magic'
+	muchos patrones de búsqueda no serían válidos.
+
+	Nota:
+	Si la búsqueda lleva más tiempo del esperado, puede interrumpir esta
+	con CTRL-C en Unix y CTRL-Break en MS-DOS y MS-Windows.
+
+==============================================================================
+*27.2*	Justificar el fin del archivo
+
+Por omisión, una búsqueda hacia adelante se inicia buscando la cadena dada
+en la ubicación presente del cursor. Después continua hasta el final del
+archivo. Si no ha encontrado ninguna cadena, vuelve al inicio y busca desde
+el principio del archivo.
+   Tenga en cuenta que, de repetir la orden «n» para buscar la siguiente
+coincidencia, al final volverá a la primera. ¡Buscará para siempre si no nota
+esto! Vim le da una pista con la forma del siguiente mensaje:
+
+	La búsqueda ha llegado al FINAL, continuando desde el PRINCIPIO ~
+
+Si usa la orden «?» para buscar en dirección inversa obtendrá el siguiente
+mensaje:
+
+	La búsqueda ha llegado al FINAL, continuando desde el PRINCIPIO ~
+
+Aún así,no sabe cuando vuelve a la primera coincidencia. Una forma de ver
+esto es activando la opción 'ruler'.
+
+	:set ruler
+
+Muestra siempre la posición actual en la esquina inferior derecha de la
+ventana (en la línea de estado, de existir). Presenta este aspecto:
+
+	101,29       84% ~
+
+El primer número es el número de la línea del cursor. Recuerde el número de
+la línea inicial, de manera pueda comprobar si ya pasó por esta posición.
+
+
+BÚSQUEDA «NOWRAP»
+
+Para evitar continuar la búsqueda al alcanzar el fin del archivo, use la
+siguiente orden.
+
+	:set nowrapscan
+
+Ahora verá un mensaje de error cuando la búsqueda llega al final del
+archivo:
+
+	E385: La búsqueda ha llegado al FINAL sin una coincidencia para:
+	forever ~
+
+Así, puede encontrar todas las coincidencias desplazándose al inicio del
+archivo con «gg», y buscar hasta ver este mensaje.
+   Si busca en otra dirección, usando, «?», obtendrá:
+
+	E385: La búsqueda ha llegado al PRINCIPIO sin una coincidencia
+	para: forever ~
+
+==============================================================================
+*27.3*	Dirección relativa («Offsets»)
+
+Por omisión, la orden de búsqueda posiciona el cursor al inicio del
+patrón. Puede hacer que Vim lo posicione en algún lugar especificando una
+dirección relativa. Para la orden de búsqueda hacia delante «/», la
+dirección relativa se especifica añadiendo una barra inversa («/») y la
+dirección relativa: >
+
+	/omisión/2
+
+Esta orden busca el patrón «omisión», y después se desplaza al inicio de la
+segunda línea, más allá del patrón. De usar esta orden en el párrafo
+anterior, Vim encontraría la palabra «omisión» en la primera línea. Acto
+seguido, el cursor se posicionaría dos líneas más abajo, para acabar en la
+dirección relativa.
+
+El cursor se posicionara al inicio de la línea presente un número n de
+líneas a partir de la coincidencia, si la dirección relativa es un simple
+número. El número de dirección relativa puede ser positivo o negativo. De
+ser positivo, el cursor se desplaza hacia abajo un número n de líneas; si es
+negativo, se desplaza hacia arriba.  
+
+
+CARÁCTER DE DIRECCIÓN RELATIVA
+
+La dirección relativa «e» indica una dirección a partir del final de la
+coincidencia. Desplaza el cursor al último carácter de la coincidencia. La
+orden :>
+
+	/const/e
+
+pone el cursor sobre la «t» de «const».
+   Añadir un número le desplazará hacia delante tantos caracteres desde la
+posición inicial. Esta orden desplaza el carácter a la posición anterior
+a la coincidencia: >
+
+	/const/e+1
+
+Un número positivo desplaza el cursor a la derecha, un número negativo lo
+desplaza a la izquierda. Ejemplo: >
+
+	/const/e-1
+
+desplaza el cursor a la «s» de «const».
+
+Si la dirección empieza con una «b», el cursor se desplazará al inicio del
+patrón. No es muy útil, ya que se logra lo mismo dejando la «b». Es de
+utilidad al añadir o sustraer un número. Entonces, el cursor se desplaza
+hacia delante o atrás tantos caracteres. Por ejemplo: >
+
+	/const/b+2
+
+Desplaza el cursor al principio de la coincidencia, dos caracteres a la
+derecha. Por ello, finaliza en «n».
+
+
+REPETICIÓN
+
+Para repetir una búsqueda del último patrón dado, pero con una dirección
+relativa distinta, omita el patrón: >
+
+	/that
+	//e
+
+Equivale a: >
+
+	/that/e
+
+Para repetir con el mismo desplazamiento:>
+
+	/
+
+«n» hace lo mismo. Para repetir mientras elimina una dirección usada
+anteriormente: >
+
+	//
+
+
+BUSCAR EN SENTIDO INVERSO
+
+La orden «?» usa las direcciones relativas de la misma forma, pero debe usar
+«?» para separar la dirección del patrón, en lugar de «/»: >
+
+	?const?e-2
+
+La «b» y la «e» mantienen su significado, no cambien de dirección con el uso
+de «?».
+
+
+POSICIÓN INICIAL
+
+Al iniciar una búsqueda, generalmente comienza por la posición del
+cursor. Esto puede causar problemas cuando especifica un desplazamiento
+relativo de línea. Por ejemplo: >
+
+	/const/-2
+
+Esto encuentra la siguiente aparición de «const», y después se desplaza dos
+líneas haci arriba. Si usa «n» para repetir la búsqueda, puede que Vim la
+inicie en la posición actual, encontrando la misma coincidencia de «const».
+Al usar el mismo desplazamiento relativo, ha vuelto al punto inicio.
+¡Se quedaría atascado!
+   Aún pero: supongo que existe otra aparición de «const» en la siguiente
+línea. Repetir la búsqueda hacia adelante encontraría esta coincidencia,
+y desplazaría el cursor dos líneas atrás. ¡Estaría desplazando el cursor
+hacia atrás todo el rato!
+
+Al especificar un carácter de desplazamiento relativo, Vim dará una
+compensación. Por ello, la búsqueda se inicia unos cuantos caracteres
+delante o detrás, para no encontrar otra vez la misma coincidencia.
+
+==============================================================================
+*27.4*	Emparejar varios elementos
+
+El elemento «*» especifica que el elemento precedente puede emparejarse un
+número ilimitado de veces. Por ello: >
+
+	/a*
+
+coincide con «a», «aa», «aaa», etc. Pero también « » (una cadena vacía), ya
+que se incluye por omisión cero veces.
+   «*» sólo afecta al su elemento precedente. Por ello, «ab*» encuentra «a»,
+«ab», «abb», «abbb», etc. Para encontrar varias apariciones de una cadena
+completa, ésta ha de estar agrupada bajo un mismo elemento. Esto se hace
+colocando «\(» antes de la cadena, y «\)» después. Por ello, la siguiente
+orden: >
+
+	/\(ab\)*
+
+encuentra «ab», «abab», «ababab», etc. También « ».
+
+Para evitar que coincida con una cadena vacía, use «\+». Esto encuentra una
+o
+más apariciones del elemento precedente. >
+
+	/ab\+
+
+Encuentra «ab», «abb», «abbb», etc. No coincide con «a» si no va seguido de
+«b».
+
+Para hacer coincidir un elemento opcional, utilice «\=». Ejemplo:>
+
+	/directorio\=
+
+Encuentra «directorio» y «directorios».
+
+
+RECUENTOS ESPECÍFICOS
+
+Use la forma «\{n,m}» para emparejar un número específico de elementos. «n»
+y «m» son números. El elemento anterior a éstos se emparejará con «n» un
+número «m» de veces |inclusive|. Ejemplo: >
+
+	/ab\{3,5}
+
+empareja «abbb», «abbbb» y «abbbbb».
+  El valor predeterminado cero en ausencia de «n». El valor predeterminado
+es infinito en ausencia de «m». En ausencia de «m», se empareja
+exactamente «n» veces.
+Ejemplos:
+
+	patrón		número de coincidencias ~
+	\{,4}		0, 1, 2, 3 o 4
+	\{3,}		3, 4, 5, etc.
+	\{0,1}		0 o 1, igual que \=
+	\{0,}		0 o más, igual que *
+	\{1,}		1 o más, igual que \+
+	\{3}		3
+
+
+REDUCIR EL NÚMERO DE COINCIDENCIAS
+
+Los elementos encajan con cuantos caracteres pueden encontrar. Para encontrar
+el menor número posible de coincidencias, use «\{-n,m}». Funciona igual
+que «\{n,m}», pero se mostrará la menor cantidad posible.
+
+	/ab\{-1,3}
+
+Encontraría «ab» en «abbb». En realidad, nunca coincidirá con mas de una «b»,
+ya que no hay razón para coincidir con más. Se precisa algo más para forzar
+un número de coincidencias mayor que el límite más bajo.
+   Las mismas reglas están presentes al eliminar «n» y «m». También es posible
+eliminar ambos números, dejando «\{-}». Esto encuentra el elemento anterior
+a él cero o más veces, pero cuantas menos posibles. El elemento en sí siempre
+se empareja cero veces. Es de utilidad en combinación con algo más.
+Ejemplo: >
+
+	/a.\{-}b
+
+Esto coincide con «axb» en «axbxb». De usar este patrón >
+
+	/a.*b
+
+...intentaría coincidir con tantos caracteres como es posible con «.*», y
+por ello se empareja por completo con «axbxb».
+
+==============================================================================
+*27.5*	Alternativas
+
+El operador «or» dentro de un patrón es «\|». Ejemplo: >
+
+	/foo\|bar
+
+Esto encuentra «foo» o «bar». Puede concatenar más alternativas: >
+
+	/uno\|dos\|tres
+
+Coincide con «uno», «dos» y «tres».
+   Para encontrar varias coincidencias debe insertar la cadena completa entre
+«\(» y «\)»: >
+
+	/\(foo\|bar\)\+
+
+Esto encuentra «foo», «foobar», «foofoo», «barfoobar», etc.
+   Otro ejemplo: >
+
+	/end\(if\|while\|for\)
+
+Esto coincide con «endif», «endwhile» y «endfor».
+
+Un elemento relacionado es «\&». Esto requiere que ambas alternativas
+coincidan en el mismo lugar. La coincidencia resultante usa la última
+alternativa. Ejemplo: >
+
+	/forever\&...
+
+Esto coincide on «for» en «forever». No coincide con «fortuin», por ejemplo.
+
+==============================================================================
+*27.6*	Rangos de caracteres
+
+Puede usar «/a|b\|c» para encontrar «a», «b» o «c». Esto se extiende si
+desea encontrar todas las letras de la «a» a la «z». Existe una manera más
+corta: >
+
+	/[a-z]
+
+La construcción [] encuentra un sólo carácter. Especifique dentro de este
+los caracteres a encontrar. Puede incluir una lista larga de caracteres,
+como esto: >
+
+	/[0123456789abcdef]
+
+Esto encuentra cualquier carácter incluido. Puede especificar un rango para
+encontrar caracteres consecutivos. «0-3» significa «01234». «w-z» significa
+«wxyz». Por ello, puede acortar la orden anterior: >
+
+	/[0-9a-f]
+
+Para encontrar el carácter «-», tiene que aparecer al principio o final del
+rango. Estos caracteres especiales se aceptan para facilitar su uso dentro
+de un rango [] (en realidad, puede usarlos en cualquier lugar dentro del
+patrón de búsqueda):
+
+	\e	<Esc>
+	\t	<Tab>
+	\r	<CR>
+	\b	<BS>
+
+Existen unas cuantos casos especiales para los rangos [], consulte |/[]|
+para una completa información.
+
+
+RANGO COMPLEMENTADO
+
+Use «^» al principio del rango para evitar emparejar un carácter en
+particular. El elemento [] emparejará todo menos los caracteres
+incluidos. Ejemplo: >
+
+	/"[^"]*"
+<
+	 "	  dobles comillas
+	  [^"]	  todo carácter que no es una comilla doble
+	      *	  tantos como sea posible
+	       "  otras dobles comillas
+
+Esto coincide con "foo" y "3!x", incluyendo las comillas dobles.
+
+
+RANGOS PREDEFINIDOS
+
+Existe un número de rangos usados a menudo. Vim ofrece accesos directos para
+esto. Por ejemplo: >
+
+	/\a
+
+Encuentra caracteres alfabéticos. Esto equivale a usar «/[a-zA-Z]». Aquí hay
+más ejemplos:
+
+       elemento coincidencias		equivalente ~
+	\d	dígito			[0-9]
+	\D	no-dígito		[^0-9]
+	\x	dígito hexadecimal	[0-9a-fA-F]
+	\X	dígito no hexadecimal	[^0-9a-fA-F]
+	\s	espacio vacío		[ 	]     (<Tab> y <Space>)
+	\S	caracteres no vacíos	[^ 	]     (no <Tab> y <Space>)
+	\l	alfa minúscula		[a-z]
+	\L	alfa no mayúscula	[^a-z]
+	\u	alfa mayúscula		[A-Z]
+	\U	alfa no mayúscula	[^A-Z]
+
+	Nota:
+	El uso de estos rangos predeterminados es más rápido que el rango de
+	caracteres que simbolizan.
+	Estos elementos no se pueden usar dentro de []. Así, «[\d\l]» NO
+	funciona para encontrar un dígito o un alfa minúscula. En lugar
+	de ello, use «\(\d\|\l\)».
+
+Consulte |/\s| para la lista completa de rangos.
+
+==============================================================================
+*27.7*	Clase de carácter
+
+El rango de carácter empareja un conjunto específico de caracteres. Se
+parece una clase de carácter, pero con una importante diferencia: puede
+redefinir el conjunto de caracteres sin cambiar el patrón de búsqueda.
+   Por ejemplo, busque este patrón: >
+
+	/\f\+
+
+Los elementos «\f» simbolizan caracteres de nombre de archivo. Así, esto
+empareja una secuencia de caracteres que pueden ser un nombre de archivo.
+Qué caracteres pueden formar parte de un nombre de archivo dependen del
+sistema que esté usando. En MS-Windows, la barra inversa está incluida, pero
+no en Unix. Puede especificar esto con la opción 'isfname'. El valor por
+omisión en Unix es: >
+
+	:set isfname
+	isfname=@,48-57,/,.,-,_,+,,,#,$,%,~,=
+
+El valor predeterminado depende del sistema. Así, puede crear un patrón de
+búsqueda con «\f» para emparejar un nombre de archivo, y ajustarse
+automáticamente al sistema en el que lo está usando.
+
+	Nota:
+	En realidad, Unix permita usar casi cualquier carácter, incluyendo
+	espacios. Incluir estos caracteres en 'isfname' sería teóricamente
+	correcto, pero imposibilitaría encontrar el fin del nombre de archivo
+	en el texto. Así, el valor predeterminado de 'isfname' es importante.
+
+Las clases de caracteres son:
+
+      elemento	coinicidencias			opción ~
+	\i	caracteres de identificación	'isident'
+	\I	como \i, excluyendo dígitos
+	\k	carácter de palabra clave	'iskeyword'
+	\K	como \k, excluyendo dígitos
+	\p	caracteres imprimibles		'isprint'
+	\P	como \p, excluyendo dígitos
+	\f	caracteres de nombre de archivo	'isfname'
+	\F	como \f, excluyendo dígitos
+
+==============================================================================
+*27.8*	Coincidir con un salto de línea
+
+Vim puede encontrar un patrón que incluye un salto de línea. Debe especificar
+la aparición del salto de línea, ya que todos los elementos mencionados hasta
+ahora no se emparejan con un salto de línea.
+   Para comprobar si hay un salto de línea en un lugar específico, use el
+elemento «\n»: >
+
+	/la\npalabra
+
+Esto coincidiría en una línea que termina con «la», seguida de una que
+comienza con «palabra». Para encontrar también «la palabra», tendrá que
+emparejar el espacio o el salto de línea. Para ello, use el elemento «\_s»:
+>
+
+	/la\_spalabra
+
+Para permitir cualquier cantidad de espacio en blanco:>
+
+	/la\_s\+palabra
+
+Esto también coincide cuando «la » está al final de la línea, y «palabra» al
+inicio de la siguiente.
+
+«\s» coincide con espacio en blanco, «\_s» coincide con espacio en blanco o
+un salto de línea. De forma parecida, «\a» coincide con un carácter
+alfabético o un salto de línea. Las otras clases de caracteres y rangos se
+pueden modificar de la misma forma insertando un «_».
+
+Puede hacer coincidir muchos otros elementos con un salto de línea
+prefijando «\_». Por ejemplo, «\_.» coincide con cualquier carácter o salto
+de línea.
+
+	Nota:
+	«\_.*» empareja todo hasta el final del archivo. Use esto con
+	cuidado, ya que puede reducir la velocidad de una orden de búsqueda.
+
+Otro ejemplo es «\_[]», un rango de carácter que incluye un salto de línea:
+>
+
+	/"\_[^"]*"
+
+Esto encuentra un texto entre comillas dobles que se puede dividir en varias
+líneas.
+
+==============================================================================
+*27.9*	Ejemplos
+
+Aquí dispone de unos cuantos patrones de búsqueda que puede encontrar
+útiles. Esto muestra cómo combinar los elementos anteriormente mencionados.
+
+
+ENCONTRAR UNA MATRÍCULA DE COCHE DE CALIFORNIA
+
+Un ejemplo de un número de matrícula es «1MGU103». Tiene un dígito, tres
+letras mayúsculas y tres dígitos. Puede insertar esto en un patrón búsqueda
+de la siguiente manera: >
+
+	/\d\u\u\u\d\d\d
+
+Otra forma es especificar que hay tres dígitos y letras, con un recuento: >
+
+	/\d\u\{3}\d\{3}
+
+O usando rangos [] en su lugar: >
+
+	/[0-9][A-Z]\{3}[0-9]\{3}
+
+¿Cual debería usar? Él que recuerde. La manera sencilla que puede recordar
+es más rápida que la compleja que no puede. Si los puede recordar todos,
+evite el último, ya que es más lento de teclear y de ejecutar.
+
+
+ENCONTRAR UN IDENTIFICADOR
+
+En programas C (y muchos otros lenguajes de programación), un identificador
+empieza con una letra seguida de letras y dígitos. Puede usar
+subrayados. Puede encontrar esto con: >
+
+	/\<\h\w*\>
+
+«\<» y «\>» se usan para encontrar palabras completas.«\h» simboliza
+«[A-Za-z_]», y «\w» simboliza «[0-9A-Za-z_]».
+
+	Nota:
+	«\<» y «\>» dependen de la opción 'iskeyword'. De incluir un «-»,
+	por ejemplo, «ident-» no se encontrará. Use lo siguiente en esta
+	situación: >
+
+		/\w\@<!\h\w*\w\@!
+<
+	Esto revisa se «\w» no se empareja antes o después de un
+	identificador. Consulte |/\@<!| and |/\@!|.
+
+==============================================================================
+
+Siguiente capítulo: |usr_28.txt| Plegar
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Omar Campagne Polaino
+
+Proyecto: |vim-doc-es|
+

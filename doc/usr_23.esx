@@ -1,0 +1,362 @@
+*usr_23.esx*	Para Vim version 7.3. Último cambio: 24/6/2006
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+			    Editar otros archivos
+
+
+Este capítulo trata acerca de editar archivos que no son archivos
+ordinarios. Con Vim, puede editar archivos comprimidos o cifrados.  Necesita
+acceder a algunos archivos a través de Internet. Con alguna restricción,
+también puede editar archivos binarios.
+
+|23.1|	Archivos de DOS, Mac y Unix
+|23.2|	Archivos en Internet
+|23.3|	Cifrado
+|23.4|	Archivos binarios
+|23.5|	Archivos comprimidos
+
+Capítulo siguiente : |usr_24.esx|  Insertar con rapidez
+  Capítulo anterior: |usr_22.esx|  Encontrar el archivo a editar
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*23.1*	Archivos de DOS, Mac y Unix
+
+Antiguamente, las viejas máquinas Teletype usaban dos caracteres para
+iniciar una nueva línea. Uno desplazaba el transporte de vuelta a la
+posición inicial («carriage return», <CR>), y el otro desplazaba la
+la página hacia arriba («line feed», <LF>).
+   Cuando aparecieron los ordenadores el almacenamiento era caro. Algunas
+personas decidieron que no necesitaban dos caracteres para marcar el final
+de la línea. La gente de UNIX decidió usar sólo <Line Feed>. La gente de
+Apple tomó <CR> como estándar. La gente de MS-DOS (y Microsoft Windows)
+decidió seguir con el antiguo <CR><LF>.
+   Esto supone que si intenta mover un archivo de un sistema a otro, tendrá
+problemas con el retorno de línea. El editor Vim detecta los diferentes
+formatos de archivos automáticamente y gestiona las cosas adecuadamente
+sin que usted lo note.
+   La opción 'fileformats' contiene los diversos formatos que se prueban
+cuando edite un archivo nuevo. La siguiente orden, por ejemplo, le dice a
+Vim que primero pruebe con el formato UNIX, y después con el formato MS-DOS: >
+
+	:set fileformats=unix,dos
+
+Reconocerá el formato por el mensaje que obtendrá al editar un archivo.  No
+verá nada si edita un formato de archivo nativo. Por ello, editar un archivo
+UNIX en Unix no resultará en un aviso. Pero cuando edite un archivo DOS, Vim
+le notificará de ello:
+
+	"/tmp/test" [dos] 3L, 71C ~
+
+Verá «[mac]» si es un archivo MAC.
+   El formato de archivo detectado se guarda en la opción 'fileformat'. Para
+ver qué formato tiene, ejecute la siguiente orden: >
+
+	:set fileformat?
+
+Los tres nombres que Vim usa son:
+
+	unix		<LF>
+	dos		<CR><LF>
+	mac		<CR>
+
+
+USAR EL FORMATO MAC
+
+En Unix, se emplea <LF> para marcar un retorno de línea. No es inusual
+obtener un caracter <CR> en mitad de la línea. Fortuitamente, esto ocurre
+con regularidad en los scripts de Vi (y Vim).
+   En un Macintosh, donde <CR> marca el retorno de línea, es posible obtener
+un caracter <LF> en mitad de la línea.
+   El resultado es que no es posible estar totalmente seguro de si es un
+archivo MAC o UNIX al estar presentes ambos caracteres <CR> y <LF>. Por
+ello, Vim asume que probablemente no editaría un archivo MAC bajo Unix, y no
+revisará el tipo del archivo. Para revisar el formato de todas maneras,
+añada «mac» a 'fileformats'.
+
+	:set fileformats+=mac
+
+Vim intentará entonces dilucidar el formato del archivo. Esté atento a las
+situaciones en las que Vim erra en su conclusión.
+
+
+OBVIAR EL FORMATO
+
+Si está usando el clásico Vi e intenta editar un archivo con formato MS-DOS
+notará que cada línea termina con un carácter ^M.(^M es <CR>). La detección
+automática evita esto. ¿Y si desea editar el archivo de esta manera? Debe
+entonces obviar el formato: >
+
+	:edit ++ff=unix file.txt
+
+La cadena «++» es un elemento que informa a Vim de que a continuación hay
+un nombre de opción que invalida el valor predeterminado, sólo de esta
+orden. «++ff» se usa para 'fileformat'. También puede usar «++ff=mac» o
+«++ff=dos».  Esto no funciona con cualquier opción, y sólo está
+implementado «++ff» y «++enc». Los nombres completos, «++fileformat» y
+«++encoding», también funcionan.
+
+
+CONVERSIÓN
+
+Puede usar la opción 'fileformat' para convertir el formato de un archivo a
+otro. Suponga, por ejemplo, que tiene un archivo MS-DOS llamado README.TXT,
+que desea convertir al formato UNIX. Comience editando el archivo de formato
+MS-DOS: >
+	vim README.TXT
+
+Vim reconocerá esto como un archivo de formato MS-DOS. Ahora cambie el
+formato a UNIX: >
+
+	:set fileformat=unix
+	:write
+
+El archivo se escribe entonces en formato Unix.
+
+==============================================================================
+*23.2*	Archivos en Internet
+
+Suponga que alguien le manda un correo electrónico que le remite a un
+archivo a través de su URL. Por ejemplo:
+
+	Puedes encontrar la información aquí: ~
+	ftp://ftp.vim.org/pub/vim/README ~
+
+Puede iniciar un programa para descargar el archivo, guardarlo en su disco
+e iniciar Vim para editarlo.
+   Existe una manera mucho más simple. Desplace el cursor hacia cualquier
+carácter del URL.
+Después ejecute esta orden: >
+
+	gf
+
+Con un poco de suerte, Vim escogerá qué programa usar para descargarse el
+archivo, lo descargará y editará la copia. Para abrir el archivo en una
+ventana nueva use «CTRL-W f».
+   Se le informará de cualquier incidencia en el proceso. Es posible que
+el URL sea erróneo, que no tiene los permisos necesarios para leerlo, que
+la conexion a Internet se ha interrumpido, etc. Desafortunadamente, es
+difícil conocer la causa del error. Puede que desee intentar una descarga
+manual.
+
+El acceso a archivos en Internet es posible gracias a la extensión netrw.  A
+día de hoy se reconocen los siguientes formatos de URL:
+
+	ftp://		usa ftp
+	rcp://		usa rcp
+	scp://		usa scp
+	http://		usa wget (sólo lectura)
+
+Vim no realiza la conexión por si mismo, sino que depende de que los
+programas mencionados estén instalados en su ordenador. La mayoría de los
+sistemas Unix incluyen ftp y rcp. Puede que tenga que instalar scp y wget.
+
+Vim detecta estas URL para cada orden que inicia la edición de un archivo
+nuevo, también con «:edit» y «:split», por ejemplo. Las órdenes de escritura
+también funcionan, a excepción de «http://».
+
+Para más información, también acerca de contraseñas, consulte |netrw|.
+
+==============================================================================
+*23.3*	Cifrado
+
+Existe información que desea ocultar a otros. Por ejemplo, cuando escribe un
+examen en un ordenador que los estudiantes también usan. No desea que el
+alumno ingenioso descubra cómo leer las preguntas antes del inicio del
+examen.Vim puede cifrar el archivo para usted, lo cual le ofrece
+cierta protección.   Para iniciar la edición de un archivo cifrado nuevo,
+use el argumento «-x» cuando inicie Vim. Ejemplo: >
+
+	vim -x examen.txt
+
+Vim pedirá que introduzca una clave para cifrar y descifrar el archivo:
+
+	Introduzca la clave de cifrado: ~
+
+Escriba ahora la clave con cuidado. No puede ver los caracteres que teclea,
+sino que serán reemplazados por estrellas. Para evitar problemas debidos a
+un error mecanográfico, Vim le pedirá que introduzca la clave otra vez:
+
+	Introduzca la misma clave de cifrado otra vez: ~
+
+Ahora puede editar este archivo con normalidad e introducir en él todos sus
+secretos. Cuando haya terminado de editar el archivo este se guarda y es
+cifrado.
+   Cuando edite el archivo con Vim, éste le pedirá que introduzca la
+contraseña otra vez. No necesita emplear el argumento «-x». Puede también
+usar la orden «:edit». Vim añade una cadena mágica al archivo con el cual
+reconoce que el archivo está cifrado.
+   Obtendrá sólo basura si intenta editar este archivo con otro programa.
+Así mismo, si lo abre con Vim pero introduce mal la contraseña también
+obtendrá basura.
+Vim no posee un mecanismo para revisar si la clave es correcta (lo cual hace
+más difícil descifrar la clave).
+
+
+CONMUTAR EL CIFRADO
+
+Para desactivar el cifrado de un archivo, configure la opción 'key' con una
+cadena vacía: >
+	:set key=
+
+La siguiente vez que escriba el archivo, ésto se hará sin cifrado.
+   Configurar la opción 'key' para activar el cifrado no es una buena idea
+ya que la contraseña aparece sin ocultar. Cualquier persona leyendo por
+encima de su hombro puede leer su contraseña.
+   La orden «:X» se creó para evitar este problema. Le pide una clave de
+cifrado, al igual que hizo el argumento «-x»: >
+
+	:X
+	Introduzca la clave de cifrado: ******
+	Introduzca la misma clave de cifrado otra vez: ******
+
+
+LIMITES DEL CIFRADO
+
+El algoritmo de cifrado de Vim es débil. Es suficiente para mantener alejado
+al merodeador de turno, pero no lo es para mantener alejado a un experto
+en cifrado con mucho tiempo libre. Debe ser consciente de que el archivo de
+de intercambio («swap») no está cifrado; por ello, al editar, personas con
+privilegios de superusuario pueden leer el texto sin cifrar en este archivo.
+   Una manera de evitar que le gente lea su archivo de intercambio es evitar
+tener uno.
+Si introduce el argumento «-n» en la linea de órdenes, no se usará ningún
+archivo de intercambio (en lugar de ello, volcará todo en la memoria). Por
+ejemplo, para editar el archivo cifrado «archivo.txt» si un archivo de
+intercambio, use la siguiente orden: >
+
+	vim -x -n archivo.txt
+
+Si ya está editando un archivo, puede desactivar el archivo de intercambio
+con: >
+
+	:setlocal noswapfile
+
+Es imposible recuperar un archivo si no existe un archivo de intercambio.
+Guarde los datos en el archivo más regularmente para evitar perder sus
+cambios .
+
+Un archivo está en texto simple mientras esté en memoria. Cualquiera con los
+privilegios necesarios puede mirar en la memoria del editor y descubrir los
+contenidos del archivo.
+   Si está usando un archivo viminfo, sea consciente de que los contenidos del
+registro del texto también se escriben de manera abierta.
+   Si realmente desea proteger los contenidos de un archivo, edítelo sólo en
+un ordenador portátil sin conexión a ninguna red, use buenas herramientas de
+cifrado, y guarde el ordenador en una gran caja fuerte cuando no esté en uso.
+
+==============================================================================
+*23.4*	Archivos binarios
+
+Puede editar archivos binarios con Vim. Vim no se creó para esta labor, y
+por ello hay ciertas restricciones. Pero puede leer el archivo, cambiar un
+carácter y escribir esto en el archivo, con el resultado de que sólo cambió
+un carácter y que, en todo lo demás, el archivo es idéntico.
+   Para impedir que Vim use sus ingeniosos trucos de manera inapropiada,
+añada el argumento «-b» al iniciar Vim: >
+
+	vim -b archivo_de_datos
+
+Esto activa la opción 'binary'. El efecto que tiene es que se desactivan
+ciertos efectos secundarios inesperados. Por ejemplo, 'textwidth' recibe un
+valor 0, para evitar el formateo automático de las líneas. Y los archivos se
+leen siempre en el formato de archivo UNIX.
+
+El modo binario se puede usar para cambiar el mensaje de un programa. Tenga
+cuidado de no insertar o eliminar cualquier carácter, ya que impediría el
+funcionamiento del programa.  Use «-R» para pasar al modo «replace»
+(reemplazar).
+
+Muchos caracteres en el archivo no se pueden imprimir. Para verlos en
+formato Hex: >
+
+	:set display=uhex
+
+Por otro lado, puede usar la orden «ga» para ver el valor del carácter bajo
+el cursor. La salida, si el cursor está sobre un <Esc>, tiene este aspecto:
+
+	<^[>  27,  Hex 1b,  Octal 033 ~
+
+Puede que no haya demasiados retornos de línea en el archivo. Para obtener
+una visión de conjunto, desactive la opción 'wrap': >
+
+	:set nowrap
+
+
+BYTE POSICIÓN
+
+Use esta orden para ver en que byte se encuentra dentro de un archivo: >
+
+	g CTRL-G
+
+La salida es verbosa:
+
+    Col 9-16 of 9-16; Línea 277 of 330; Palabra 1806 de 2058; Byte 10580 de 12206 ~
+
+Los dos últimos números son el byte posición en el archivo y el número total
+de bytes. Tiene en cuenta cómo 'fileformat' cambia el número de bytes que
+emplea un retorno de línea.
+   Para desplazarse a un byte específico en el archivo, use la orden «go».
+Por ejemplo, para ir al byte 2345: >
+
+	2345go
+
+
+USAR XXD
+
+Un editor realmente binario muestra el texto de dos formas: tal cual y en
+formato hexadecimal. Vim hace esto posible si primero convierte el archivo
+con el programa «xxd».
+Este programa está incluido en Vim.
+   Primero edite el archivo en modo binario: >
+
+	vim -b archivo_de_datos
+
+Convierta ahora el archivo a un volcado hexadecimal con xxd: >
+
+	:%!xxd
+
+El texto presentará este aspecto:
+
+	0000000: 1f8b 0808 39d7 173b 0203 7474 002b 4e49  ....9..;..tt.+NI ~
+	0000010: 4b2c 8660 eb9c ecac c462 eb94 345e 2e30  K,.`.....b..4^.0 ~
+	0000020: 373b 2731 0b22 0ca6 c1a2 d669 1035 39d9  7;'1.".....i.59. ~
+
+Ahora puede ver y editar el texto como desee. Vim trata la información como
+texto normal. Cambiar el valor hexadecimal no provoca un cambio en el
+carácter imprimible, o vicecersa.
+Por último, conviertalo otra vez con: >
+	:%!xxd -r
+
+Sólo se usan los cambios en la parte hexadecimal. Los cambios en la parte
+imprimible de texto se ignoran.
+
+Vea la página de manual de xxd para más información.
+
+==============================================================================
+*23.5*	Archivos comprimidos
+
+Esto es fácil: Puede editar un archivo comprimido al igual que cualquier otro
+archivo. La extensión para «gzip» se ocupa de descomprimir el archivo al
+iniciar la edición, y lo comprime cuando finaliza.
+
+	.Z	compress
+	.gz	gzip
+	.bz2	bzip2
+
+Vim realiza la compresión y descompresión mediante los programas
+mencionados. Puede que primero tenga instalar los programas.
+
+==============================================================================
+
+Siguiente capítulo: |usr_24.esx| Insertar con rapidez
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Omar Campagne Polaino
+
+Proyecto: |vim-doc-es|
+

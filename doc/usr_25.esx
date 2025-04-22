@@ -1,0 +1,606 @@
+*usr_25.esx*	Para Vim versión 7.3.  Último cambio: 11/6/2007
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+			  Editar texto con formato
+
+
+El texto rara vez aparece como una oración por línea. Este capítulo trata
+acerca de formatear oraciones para su correcta apariencia en un papel, así
+como otros formatos. Vim también ofrece útiles características para editar
+párrafos de una sola línea y tablas-
+
+|25.1|	Dividir líneas
+|25.2|	Alinear texto
+|25.3|	Sangrado y tabulación
+|25.4|	Tratar líneas largas
+|25.5|	Editar tablas
+
+ Siguiente capítulo: |usr_26.txt|  Repetición
+  Capítulo anterior: |usr_24.esx|  Insertar con rapidez
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*25.1*	Dividir líneas
+
+Vim dispone de un número de funciones que facilitan tratar texto. Por
+omisión, el editor no introduce saltos de línea automáticamente. En
+otras palabras, tiene que pulsar <Intro>. Esto es útil para decidir
+donde termina la línea, dependiendo del programa que esté escribiendo.
+   Si define la opción 'textwidth', Vim insertará automáticamente
+los saltos de línea.
+Suponga que desea crear una estrecha columna de sólo 30 caracteres.
+Para ello, tendría que ejecutar la siguiente orden: >
+
+	:set textwidth=30
+
+Empiece a escribir ahora (la regla solo aparece en el ejemplo):
+
+		1	   2	     3
+	12345678901234567890123456789012345
+	Enseñé programación durante un ~
+
+Si teclea ahora «os», la línea sobrepasaría el límite de 30 caracteres. En
+cuanto Vim detecta esto, inserta un salto línea, obteniendo lo siguiente:
+
+		1	   2	     3
+	12345678901234567890123456789012345
+	Enseñé programación durante ~
+	unos ~
+
+Así mismo, puede escribir el resto del párrafo:
+
+		 1	   2	     3
+	12345678901234567890123456789012345
+	Enseñé programación durante ~
+	unos meses. Una vez, me paró ~
+	la policía de Granada porque ~
+	mis deberes eran demasiado ~
+	difíciles. Historia verídica.~
+
+No necesita introducir líneas nuevas; Vim las insertará automáticamente.
+
+	Nota:
+	La opción 'wrap' hace que Vim muestre las líneas con un salto de
+	línea, pero no inserta realmente un salto de línea.
+
+
+REFORMATEAR
+
+El editor Vim no es un editor de documentos. En un editor de documentos, si
+elimina algo al inicio del párrafo, se reorganizan los saltos de línea. No
+es así en Vim; así que se borra la palabra «programación» en la primera
+línea, obtendría los siguiente:
+
+		 1	   2	     3
+	12345678901234567890123456789012345
+	Enseñé durante ~
+	unos meses. Una vez, me paró ~
+	la policía de Granada porque ~
+	mis deberes eran demasiado ~
+	difíciles. Historia verídica.~
+
+Esto no es elegante. Para dar formato a un párrafo puede usar el operador
+«gq».
+   Usemos esto primero con una selección en modo Visual. Empezando por la
+primera línea, escriba: >
+
+	v4jgq
+
+«v» inicial el modo Visual, «4j» para desplazarse al final del párrafo, y
+después el operador «gq». El resultado es:
+
+		 1	   2	     3
+	12345678901234567890123456789012345
+	Enseñé durante unos meses. ~
+	Una vez, me paró la policía de~
+	Granada porque mis deberes ~
+	eran demasiado difíciles. ~
+	Historia verídica.~
+
+Nota: existe una manera de dar formato automáticamente para tipos
+específicos de plantillas de texto, consulte |auto-format|.
+
+Ya que «gq» es un operador, puede usar una de las tres maneras en las que
+funciona la selección de texto: el modo Visual, con un movimiento y con un
+objeto textual.
+   El ejemplo anterior se puede hacer con «gq4j», lo cual implica teclear
+menos, pero tiene que conocer el número de líneas. Una orden de movimiento
+más útil es «}».
+Esto le desplaza al final del párrafo. Por ello, «gq}» da formato desde el
+cursor hasta el final del párrafo actual.
+   El párrafo es un objeto textual que responde bien al uso de «gq». Pruebe
+esto: >
+
+	gqap
+
+«ap» significa un párrafo («a-paragraph»). Esto da formato al texto de un
+párrafo (separado por líneas vacías). También el área anterior al cursor.
+   Si los párrafos están separados por líneas vacías, puede dar formato a
+todo el archivo con lo siguiente: >
+
+	gggqG
+
+«gg» para ir a la primera línea, «gqG» para dar formato hasta la última
+línea.
+   Aviso: si sus párrafos no están apropiadamente separados, no se unirán.
+Un error común es tener una línea con un espacio o tabulación. Esa es una
+línea en blanco, pero no una línea vacía.
+
+Vim es capaz de dar formato a más que texto. Consulte |fo-table| para ver
+cómo cambiar esto. Consulte la opción 'joinspaces' para modificar el número
+de espacios antes de un punto final.
+   Es posible dar formato con un programa externo. Esto es útil si el texto
+no puede recibir un formato adecuado con la orden integrada en Vim. Consulte
+la opción 'formatprg'.
+
+==============================================================================
+*25.2*	Alinear texto
+
+Use la siguiente orden para centrar un rango de líneas: >
+
+	:{range}center [width]
+
+{range} (rango) is el valor de rango normal en la línea de órdenes. [width]
+(ancho) es el valor opcional del ancho usado al centrar. De no especificar
+[width], su valor por omisión será el de 'textwidth'. (Si 'textwith' es
+cero, el valor será 80.)
+   Por ejemplo: >
+
+	:1,5center 40
+
+El resultado es el siguiente:
+
+	Enseñé durante unos meses. ~
+     Una vez, me paró la policía de~
+        Granada porque mis deberes ~
+	eran demasiado difíciles. ~
+	    Historia verídica.~
+
+
+ALINEAR	A LA DERECHA
+
+De manera parecida, la orden «:right» justifica el texto a la derecha: >
+
+	:1,5right 37
+
+y da como resultado: >
+
+	    Enseñé durante unos meses. ~
+	Una vez, me paró la policía de ~
+            Granada porque mis deberes ~
+	     eran demasiado difíciles. ~
+	             Historia verídica.~
+
+ALINEAR A LA IZQUIERDA
+
+Por último, existe esta orden: >
+
+	:{range}left [margin]
+
+A diferencia de «:center» y «:right», el argumento de «:left» no es la
+longitud de la línea, sino que es el margen derecho. Si se omite, el texto
+aparecerá a la izquierda de la pantalla (al igual que si usa un margen de de
+cero).
+
+	:1left 5
+	:2,5left
+
+El resultado es el siguiente:
+
+	    Enseñé durante unos meses. ~
+	Una vez, me paró la policía de ~
+        Granada porque mis deberes ~
+	eran demasiado difíciles. ~
+	Historia verídica.~
+
+
+JUSTIFICAR TEXTO
+
+Vim no posee una herramienta integrada para justificar texto. Por otro lado,
+ofrece un excelente macro que realiza esta labor. Ejecute la siguiente orden
+para usar este conjunto: >
+
+	:runtime macros/justify.vim
+
+Este archivo script de Vim define una nueva orden visual, «_j». Para
+justificar un bloque de texto, resalte el texto en modo Visual y ejecute «_j».
+   Consulte el archivo para una explicación más completa. Para ir a ese punto,
+pulse «gf» en este nombre:
+$VIMRUNTIME/macros/justify.vim.
+
+Una alternativa es filtrar el texto a través de un programa
+externo. Ejemplo: >
+
+	:%!fmt
+
+==============================================================================
+*25.3*	Sangrado y tabulación
+
+Puede usar el sangrado para destacar texto con respecto al resto. Los textos
+de ejemplo en este manual, por ejemplo, están sangrados con ocho espacios, o
+una tabulación. Generalmente, introduce el sangrado con una tabulación al
+inicio de cada línea. Suponga este texto:
+	la primera línea ~
+	la segunda línea ~
+
+Puede introducir esto pulsando el botón de tabulado, algo de texto, <Intro>,
+tabulado, y más texto.
+   La opción 'autoindent' inserta sangrado automáticamente: >
+
+	:set autoindent
+
+Al iniciar una nueva línea, este recibirá el mismo sangrado que la línea
+anterior. En el ejemplo anterior, el tabulado tras <Intro> ya no es
+necesario.
+
+
+AUMENTAR EL SANGRADO
+
+Para aumentar la cantidad de sangrado en una línea, use el operador «>». A
+menudo usará esto como «>>», que añade sangrado a la línea actual.
+   La cantidad de sangrado añadida se especifica con la opción 'shiftwidth'.
+El valor por omisión es 8. Para lograr que «>>» inserte cuatro espacios de
+sangrado, por ejemplo, use lo siguiente: >
+
+	:set shiftwidth=4
+
+De usar esto sobre la segunda línea del texto de ejemplo obtendría lo
+siguiente: 
+
+	la primera línea ~
+	    la segunda línea ~
+	
+
+«4>>» incrementa el sangrado de 4 líneas.
+
+
+FIN DE TABULACIÓN
+
+Si desea que el sangrado sea un múltiplo de 4, defina 'shiftwidth' a 4. Aún
+obtendría ocho espacios de sangrado al pulsar <Tab>. Defina la opción
+'softtabstop' para modificar esto: >
+
+	:set softtabstop=4
+
+Esto hará que la tecla <Tab> inserte 4 espacios de sangrado. EL carácter
+<Tab> se usará en caso ya existir cuatro espacios (ahorrando 7 espacios en
+el archivo). (Si desea siempre espacios y no caracteres de tabulado, defina
+la opción 'expandtab').
+
+	Nota:
+	Puede definir la opción 'tabstop' con valor de 4. De todas formas, si
+	edita el archivo en otro momento teniendo 'tabstop' su valor
+	predeterminado de 8, el aspecto no será el deseado. Otros programas,
+	así como imprimir el sangrado presentarán un aspecto equivocado. Por
+	ello, recomendamos mantener 'tabstop' con valor de 8 en todo momento.
+	Este es el valor estándar en otras aplicaciones.
+
+
+CAMBIAR LA TABULACIÓN
+
+Suponga que está editando una archivo escrito con una detención de tabulador
+(«tabstop») de 3. No tiene buen aspecto en Vim, ya que usa el valor de
+«tabstop» predeterminado de 8. Puede arreglar esto definiendo 'tabstop' con
+valor de 3, pero tendría que hacer esto cada vez que editase este archivo.
+   Vim puede cambiar el uso de las detenciones de tabulador en el archivo.
+Primero, defina 'tabstop' para que el sangrado encaje, y por último use la
+orden «:retab»: >
+
+	:set tabstop=3
+	:retab 8
+
+La orden «:retab» cambia 'tabstop' a 8, a la vez que modifica el texto para
+que encaje. Para ello, modifica los tramos de espacio blanco a tabulados y
+espacios. Ahora puede escribir en el archivo. La siguiente vez que lo edite,
+la tabulación será la correcta sin necesidad de definir la opción.
+   Aviso: Si usa «:retab» sobre un programa, cabe que modifique el espacio
+en blanco dentro de una cadena entrecomillas. Por ello, es una buena
+costumbre usar «\t» en lugar de un tabulado real.
+
+==============================================================================
+*25.4*	Tratar líneas largas
+
+A veces editará un archivo más ancho que el número de columnas en la ventana.
+Cuando esto ocurre, Vim justifica las líneas para encajar todo en la pantalla.
+   Si desactiva la opción 'wrap' cada línea en el archivo aparecerá como una
+sola línea en la pantalla, desapareciendo así la continuación de la línea en
+el margen derecho de la pantalla.
+   Cuando desplaza el cursor sobre en carácter que no se puede ver, Vim
+desplazará el texto para mostrarlo. Esto es como desplazar un punto de vista
+sobre el texto, en dirección horizontal.
+   Por omisión, Vim no muestra una barra de desplazamiento horizontal en la
+interfaz gráfica. Si desea activarla, use la siguiente orden: >
+
+	:set guioptions+=b
+
+Una barra horizontal aparecerá en la parte inferior de la ventana de Vim.
+
+Si no tiene una barra de desplazamiento o no quiere usarla, puede usar estas
+órdenes para desplazar el texto. El cursor permanecerá en el mismo lugar,
+pero permitiendo también desplazarlo al texto visible, de ser necesario.
+
+	zh		Desplazarse a la derecha.
+	4zh		Cuatro caracteres a la derecha.
+	zH		Desplazarse a la derecha, la mitad del ancho de la
+			ventana.
+	ze		A la derecha, llevando el cursor al final.
+	zl		A la izquierda.
+	4zl		Cuatro caracteres a la izquierda.
+	zL		La mitad del ancho de la ventana a la izquierda.
+	zs		A la izquierda, llevando el cursor al principio.
+
+Vamos a intentar mostrar esto con una línea de texto. El cursor está sobre
+la «w» de «which». La «ventana actual» sobre la línea indica el texto
+actualmente visible. Las «ventana» bajo el texto indican el texto visible
+después de ejecutar la orden.
+
+			      |<-- ventana actual -->|
+		some long text, part of which is visible in the window ~
+	ze	  |<--	   ventana    -->|
+	zH	   |<--     ventana    -->|
+	4zh		  |<--	   ventana    -->|
+	zh		     |<--     ventana	 -->|
+	zl		       |<--	ventana	   -->|
+	4zl			  |<--	   ventana    -->|
+	zL				|<--	 ventana    -->|
+	zs			       |<--	ventana	   -->|
+
+
+
+DESPLAZARSE CON «WRAP» DESACTIVADO
+
+Cuando ha desplazado el texto horizontalmente y 'wrap' está desactivado,
+puede usar las siguientes órdenes para mover el cursor a un carácter que
+puede ver. Por ello, se ignorará el texto a la izquierda y derecha de la
+ventana. Esto nunca causa un desplazamiento del texto:
+
+	g0		Desplazarse al primer carácter en esta línea
+	g^		Al primer carácter que no está en blanco de la línea
+	gm		Al centro de esta línea
+	g$		Al ultimo carácter visible en esta línea
+
+		  |<--	 ventan    -->|
+	algún texto    largo, parte del cual visible ~
+		   g0  g^     gm     g$
+
+
+DIVIDIR LÍNEAS EN PALABRAS		*edición-sin-partir* *edit-no-break*
+
+Cuando prepara el texto para su uso con otro programa, puede que tenga que
+crear los párrafos sin salto de línea. Una desventaja de usar 'nowrap' es
+que no puede ver la oración completa sobre la que trabaja. Si 'wrap' está,
+activada, las palabras se dividen por la mitad, dificultando la lectura.
+   Una buena solución para editar este tipo de párrafos es definir la opción
+'linebreak'. Vim dividirá las líneas en los puntos apropiados al mostrar
+la línea. El texto en el archivo no se modifica.
+   Sin 'linebreak', el texto presentará este aspecto:
+
+	+---------------------------------+
+	|letter generation program for a b|
+	|ank.  They wanted to send out a s|
+	|pecial, personalized letter to th|
+	|eir richest 1000 customers.  Unfo|
+	|rtunately for the programmer, he |
+	+---------------------------------+
+Después: >
+
+	:set linebreak
+
+El texto presentará este aspecto:
+
+	+---------------------------------+
+	|letter generation program for a  |
+	|bank.  They wanted to send out a |
+	|special, personalized letter to  |
+	|their richest 1000 customers.    |
+	|Unfortunately for the programmer,|
+	+---------------------------------+
+
+Opciones relacionadas: 'breakat' especifica los caracteres donde insertar el
+salto de línea. 'showbreak' especifica una cadena a mostrar al principio de
+una línea dividida. Defina 'textwitdh' como cero para evitar dividir un
+párrafo.
+
+
+DESPLAZARSE EN LÍNEAS VISIBLES
+
+Las órdenes «j» y «k» desplazan el cursor. Esto desplaza varias líneas en la
+pantalla en caso de usarlo sobre una larga línea.
+   Para desplazarse sólo una línea en la pantalla, use las órdenes «gj» y «gk».
+Estas órdenes hacen lo mismo que «j» y «k» si la línea no está justificada.
+De activar 'wrap', se desplazan a un carácter visible en una línea inferior
+o superior.
+   Puede que desee usar estas macros, que relacionan estas órdenes de
+desplazamiento a las teclas de cursor: >
+
+	:map <Up> gk
+	:map <Down> gj
+
+
+CONVERTIR UN PÁRRAFO EN UNA LÍNEA
+
+Si desea importar texto desde un programa como MS-Word, cada párrafo debería
+ser una sola línea. De existir una separación entre los párrafos en forma de
+de líneas vacías, debe realizar lo siguiente para convertir cada párrafo en
+una sola línea: >
+
+	:g/./,/^$/join
+
+Parece complicado. Vamos a dividirlo:
+
+	:g/./		Una orden «:global» que encuentra todas las cadenas
+			que contienen al menos un carácter.
+	    ,/^$/	Un rango, que empieza en la línea actual (no vacía),
+			y acaba en una línea vacía.
+		 join	La orden «:join» (unir) une el rango de líneas en una
+			sola línea.
+
+Empecemos con este texto, que contiene ocho líneas partidas en la columna
+30:
+
+	+----------------------------------+
+	|A letter generation program	   |
+	|for a bank.  They wanted to	   |
+	|send out a special,		   |
+	|personalized letter.		   |
+	|				   |
+	|To their richest 1000		   |
+	|customers.  Unfortunately for	   |
+	|the programmer,		   |
+	+----------------------------------+
+
+Acaba con dos líneas:
+
+	+----------------------------------+
+	|A letter generation program for a |
+	|bank.	They wanted to send out a s|
+	|pecial, personalized letter.	   |
+	|To their richest 1000 customers.  |
+	|Unfortunately for the programmer, |
+	+----------------------------------+
+
+Tenga en cuenta que esto no funciona si la línea de separación está en blanco,
+pero no vacía; cuando contiene espacios y/o tabulados. Esta orden funciona
+con líneas en blanco:
+>
+	:g/\S/,/^\s*$/join
+
+Esto requiere una línea vacía o en blanco al final del archivo para poder
+unir el último párrafo.
+
+==============================================================================
+*25.5*	Editar tablas
+
+Suponga que está editando una tabla con cuatro columnas:
+
+	Tabla ordenada	  test 1	test 2	    test 3 ~
+	entrada A	  0.534 ~
+	entrada B	  0.913 ~
+
+Necesita introducir números en la tercera columna. Podría desplazarse a la
+segunda línea, usar «A», introducir espacios y escribir el texto.
+   Existe una orden especial para este tipo de edición: >
+
+	set virtualedit=all
+
+Ahora puede mover el cursor a posiciones donde no hay texto. A esto se le llama
+espacio virtual («virtual space»), y facilita la edición de tablas.
+   Mueva el cursor, buscando la cabecera de la última columna: >
+
+	/test 3
+
+Pulse ahora «j» y estará dónde puede introducir el valor para «input
+A». Teclear «0.693» da como resultado:
+
+	Tabla ordenada	  test 1     test 2	 test 3 ~
+	entrada A	  0.534			 0.693 ~
+	entrada B	  0.913 ~
+
+Vim a rellenado automáticamente el espacio en frente del texto. Ahora, para
+introducir el siguiente campo de esta columna use «Bj». «B» le devuelve al
+inicio de una palabra separada por un espacio en blanco. «j» le desplaza al
+lugar dónde puede introducir el siguiente campo.
+
+	Nota:
+	Puede mover el cursor a cualquier lugar de la pantalla, también más
+	allá del final de línea. Pero Vim no insertará aquí espacios hasta
+	que inserte un carácter en esa posición.
+
+
+COPIAR UNA COLUMNA
+
+Si desea añadir una columna, que debe ser la copia de la tercera columna
+y deberá situarse antes de la columna «test 1». Haga estos 7 pasos:
+1.  Mueva el cursor a la esquina superior izquierda de esta columna, p. ej.,
+    con «/test 3».
+2.  Pulse CTRL-V para empezar el modo de bloque visual.
+3.  Mueva el cursor dos líneas hacia abajo con «2j». Ahora se encuentra en
+    espacio virtual («virtual space»): la línea «entrada B» de la columna
+    «test 3».
+4.  Mueva el cursor a la derecha para incluir toda la columna en la selección
+    además del espacio que desea entre las columnas. «9l» hará esto.
+5.  Copie el rectángulo seleccionado con «y» (yank).
+6.  Mueva el cursor a «test 1», donde se debería situar la nueva columna.
+7.  Pulse «P».
+
+El resultado debería ser:
+
+	Tabla ordenada	  test 3    test 1     test 2	   test 3 ~
+	entrada A	  0.693     0.534		   0.693 ~
+	entrada B		    0.913 ~
+
+Observe que la columna entera «test 1» se ha desplazado a la derecha, así
+como la línea de la columna «test 3» que no tenía texto.
+
+Puede volver a los movimientos de cursor no virtuales con: >
+
+	:set virtualedit=
+
+
+MODO VIRTUAL DE REEMPLAZAR
+
+La desventaja de usar 'virtualedit' es que parece distinto. No puede
+reconocer tabulados o espacios más allá del final de línea si desplaza el
+cursor. Puede usar otro método: Modo Virtual de Reemplazar.
+   Suponga que tiene una línea en una tabla que contienen tabulados y otros
+caracteres. Use «rx» en el primer tabulado:
+
+	inp	0.693   0.534	0.693 ~
+
+	       |
+	   rx  |
+	       V
+
+	inpx0.693   0.534	0.693 ~
+
+EL diseño está desordenado. Use la orden «gr» para evitarlo:
+
+	inp	0.693   0.534	0.693 ~
+
+	       |
+	  grx  |
+	       V
+
+	inpx	0.693   0.534	0.693 ~
+
+Lo que ocurre es que la orden «gr» se asegura que el nuevo carácter tomará
+la cantidad de espacio de pantalla correcta. Los espacios y tabulados
+adicionales se insertarán en el hueco. Por ello, lo que realmente ocurre es
+que el tabulado se reemplaza por «x», y después se añaden espacios en blanco
+para que el texto a continuación siga en el mismo sitio. En este caso se
+inserta un tabulado.
+   Cuando necesita reemplazar más de un carácter, use la orden «R» para pasar
+al modo Reemplazar (consulte |04.9|). Esto desordena la presentación y
+reemplaza los caracteres erróneos:
+
+	inp	0	0.534	0.693 ~
+
+		|
+	 R0.786 |
+		V
+
+	inp	0.78634	0.693 ~
+
+La orden «gR» usa el modo Virtual Reemplazar. Esto respeta el diseño:
+
+	inp	0	0.534	0.693 ~
+
+		|
+	gR0.786 |
+		V
+
+	inp	0.786	0.534	0.693 ~
+
+==============================================================================
+
+Siguiente capítulo: |usr_26.txt| Repetición
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Omar Campagne Polaino
+
+Proyecto: |vim-doc-es|
+

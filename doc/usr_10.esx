@@ -1,0 +1,841 @@
+*usr_10.esx*	Para Vim versión 7.3.  Último cambio: 5/11/2006
+
+		MANUAL DE USUARIO DE VIM - por Bram Moolenaar
+
+			   Realizar grandes cambios
+
+
+En el capítulo 4 se explicaron algunas formas de hacer cambios
+pequeños. Este capítulo tratará de cambios que se repiten o que afectan a
+grandes porciones del texto. El modo Visual permite hacer varias cosas con
+bloques de texto. Use un programa externo para hacer las cosas más
+complicadas.
+
+|10.1|	Órdenes de grabación y reproducción
+|10.2|	Sustitución
+|10.3|	Rangos de aplicación
+|10.4|	Las órdenes globales
+|10.5|	El modo de bloque Visual
+|10.6|	Leer y escribir parte de un archivo
+|10.7|	Formatear texto
+|10.8|	Cambiar mayúsculas y minúsculas
+|10.9|	Uso de un programa externo
+
+ Capítulo siguiente: |usr_11.esx|  Recuperarse de un fallo
+  Capítulo anterior: |usr_09.esx|  Uso de la interfaz gráfica
+Tabla de contenidos: |usr_toc.esx|
+
+==============================================================================
+*10.1*	Órdenes de grabación y reproducción
+
+La orden «.» repite el cambio precedente. ¿Pero qué ocurre si quiere hacer
+algo más complicado que un simple cambio? Para eso tenemos la orden de
+grabación («:recording»). Hay que seguir tres pasos:
+
+1. La orden «q{registro}» inicia la grabación de teclas pulsadas en un registro
+   llamado{registro}. El nombre del registro debe estar en el rango (a-z).
+2. Introduzca sus órdenes.
+3. Pulse q para detener la grabación (sin ningún carácter adicional).
+
+Puede ejecutar la macro tecleando la orden «@{registro}»
+
+Vamos a echarle un vistazo a cómo se usan las órdenes en la práctica. Tiene
+una lista de nombres de archivo como esta:
+
+	stdio.h ~
+	fcntl.h ~
+	unistd.h ~
+	stdlib.h ~
+
+Y lo que quiere es lo siguiente:
+
+	#include "stdio.h" ~
+	#include "fcntl.h" ~
+	#include "unistd.h" ~
+	#include "stdlib.h" ~
+
+Comienza desplazándose al primer carácter de la primera línea. A
+continuación ejecute la siguiente orden:
+
+	qa			Comenzar a grabar la macro en el registro «a».
+	^			Ir al comienzo de la línea.
+	i#include "<Esc>	Insertar el #include " al comienzo de cada
+				línea.
+	$			Ir al final de la línea.
+	a"<Esc>			Añadir el carácter de comillas dobles (") al
+				final de la línea.
+	j			Ir a la próxima línea.
+	q			Detener la grabación de la macro.
+
+Ahora que ha realizado el trabajo una vez, puede repetir el cambio tecleando
+la orden «@a» tres veces.
+   La orden «@a» puede venir precedido de un multiplicador, el cuál causará
+que la macro se ejecute ese número determinado de veces. En este caso: >
+
+	3@a
+
+
+MOVER Y EJECUTAR
+
+Tal vez tenga las líneas que quiere cambiar en varios lugares. Simplemente
+mueva el cursor a cada ubicación y use la orden «@a». Si ha hecho eso
+una vez, puede repetirlo con «@@». Es un poco más sencillo de teclear. Si
+ejecuta el registro b con «@b», el próximo «@@» usará el registro b.
+   Si compara esto con el método «.», hay varias diferencias. Lo primero,
+«.x sólo puede repetir un cambio. Como ha podido ver en el ejemplo de
+arriba, «@a» puede llevar a cabo varios cambios, incluyendo movimientos.  Por
+otro lado, «.» sólo puede recordar el último cambio. Ejecutar un registro le
+permite hacer algunos cambios en el texto y poder usar todavía las órdenes
+grabadas. Por último, puede usar 26 registros distintos. De este modo
+puede reusar 26 secuencias diferentes.
+
+
+USO DE REGISTROS
+
+Los registros que se usan para grabar son los mismos que se usan para las
+órdenes de copiar y eliminar. Esto le permite mezclar la grabación con otras
+órdenes para manipular los registros.
+   Suponga que ha grabado algunas órdenes en el registro n. Cuando lo
+ejecuta con «@n», se da cuenta de que algo no va bien. Podría intentar
+grabarlo de nuevo, pero quizá cometa otro error. Mejor usar este truco:
+
+	G                       ir al final del archivo
+	o<Esc>                  Crear una nueva línea
+	"np                     Pegar el texto del registro n. Verá que las
+				órdenes que grabó se pegan como texto.
+	{edits}                 Cambiar las órdenes que están mal. Esto es
+				como editar texto.
+	0                       Ir al principio de la línea.
+	"ny$                    Copiar (yank) las órdenes corregidas al
+				registro n.
+	dd                      Eliminar la línea con las órdenes pegadas.
+
+Ahora puede ejecutar las órdenes corregidas con «@n». (Si las órdenes
+grabadas incluyen saltos de línea, ajuste los dos últimos puntos explicados
+anteriormente para incluir todas las líneas.)
+
+
+AÑADIR A UN REGISTRO
+
+Hasta el momento hemos usado letras en minúscula para el nombre del registro.
+Para añadir a un registro, use una letra en mayúscula.
+   Suponga por un momento que ha grabado una orden para cambiar una
+palabra en el registro c. Funciona correctamente, pero quisiera añadir una
+búsqueda para la siguiente palabra a cambiar. Esto se puede hacer así: >
+
+	qC/palabra<Entrar>q
+
+Comience con «qC», que añadirá al registro c. De este modo siempre podrá
+escribir el registro al que quieras añadir nuevos pasos mediante la misma de
+letra de identificación, pero en mayúscula.
+
+Esto funciona tanto grabando como y con las órdenes de copiar y
+eliminar. Por ejemplo, quieres reunir una secuencia de líneas en un
+registro. Copie la primera línea con: >
+
+	"aY
+
+Desplácese a la siguiente línea y escriba: >
+
+	"AY
+
+Repita la orden para todas las líneas. El registro «a» contiene ahora todas
+estas líneas, en el orden en el que las ha copiado.
+
+==============================================================================
+*10.2*	Sustitución
+
+La orden «:substitute» le permite ejecutar sustituciones de cadenas de
+caracteres en un rango de líneas. La forma general es la siguiente: >
+
+	:[rango]substitute/de/a/[opciones]
+
+Esta orden cambia la cadena «de» por la cadena «a» en las líneas
+especificadas con [rango]. Por ejemplo, puede cambiar «profesor» por
+«maestro» en todas las líneas con la siguiente orden: >
+
+	:%substitute/profesor/maestro/
+<
+	Nota:
+	La orden «:substitute» casi nunca se escribe completamente. La mayoría
+	de las veces la gente escribe la versión abreviada ":s". A partir de
+	ahora, se empleará la abreviatura.
+
+El «%» antes de la orden especifica que se ejecuta en todas las líneas. Sin
+rango, «:s» sólo funciona en la línea actual. Más sobre los rangos en la
+próxima sección |10.3|.
+
+Por omisión, la orden «:substitute» cambia sólo la primera palabra
+encontrada en cada línea. Por ejemplo, la orden anterior cambia esta línea:
+
+	El profesor Pinilla ha criticado hoy al profesor Burgos. ~
+
+a esta:
+
+	El maestro Pinilla ha criticado hoy al profesor Burgos. ~
+
+Para cambiar todas palabras que aparezcan en la línea deberá usar la opción
+g (global). La orden: >
+
+	:%s/profesor/maestro/g
+
+da como resultado (ejecutándolo sobre la línea original):
+
+	El maestro Pinilla ha criticado hoy al maestro Burgos. ~
+
+Otras opciones incluyen p (print = imprimir), que hace la orden «:s» muestre
+en pantalla la última línea que cambió. La «c» (confirm = confirmar) le dice
+a «:s» que pida confirmación antes que se ejecute cada
+sustitución. Introduzca lo siguiente: >
+
+	:%s/profesor/maestro/c
+
+Vim encuentra la primera aparición de «profesor» y muestra el texto que está
+a punto de cambiar. Le aparecerá la siguiente pregunta: >
+
+	replace with maestro (y/n/a/q/l/^E/^Y)?
+
+Aquí puede darle cualquiera de las siguientes respuestas:
+
+	y               Si; hacer el cambio.
+	n               No; omitir esta coincidenci.
+	a               Todo; hacer este cambio y todos los restantes sin
+			pedir más confirmación.
+	q               Quit; no hacer más cambios.
+	l               Último; hacer este cambio y salir.
+	CTRL-E          Desplazar el texto hacia arriba.
+	CTRL-Y          Desplazar el texto hacia abajo.
+
+
+La parte «de» de la orden «:subsitute» es, de hecho, un patrón (del mismo
+tipo de los que se usan para la búsqueda). Por ejemplo, esta orden sólo
+sustituye «Eso» cuando aparece al comienzo de una línea: >
+
+	:s/^Eso/Aquello/
+
+Si sustituye con una parte «de» o «a» que incluyan una barra inclinada,
+tendrá que poner una barra inversa antes de él. Una forma más sencilla es
+usar otro carácter como separador en lugar de la barra. Un «+», por ejemplo:
+>
+
+	:s+uno/dos+uno o dos+
+
+==============================================================================
+*10.3*	Rangos de aplicación
+
+La orden «:substitute» y muchas otras órdenes «:» se pueden aplicar a
+una selección de líneas. A esto se le llama rango.
+   La forma más simple de un rango es {n},{n} (n es un número entero). Por ej:
+>
+
+	:1,5s/esto/aquello/g
+
+Ejecuta la orden sustituir desde la línea 1 a la 5. La línea 5 queda
+incluida. El rango se sitúa justo antes de la orden.
+
+Puede emplear un único número para acceder a una línea específica: >
+
+	:54s/Político/Demagogo/
+
+Algunas órdenes funcionan sobre un archivo completo cuando no le especifica
+un rango. Para hacerlos funcionar en la línea actual, use «.». La orden
+«:write» funciona de ese modo. Sin un rango, escribe el archivo
+completo. Para hacer que sólo escriba una línea a un archivo: >
+
+	:.write otroarchivo
+
+La primera línea siempre tiene como numeración el 1. ¿Pero qué ocurre con la
+última línea? Puede usar el carácter «$» ppara esto.  Por ejemplo, para
+sustituir en las líneas desde la del cursor hasta el final: >
+
+	:.,$s/si/no/
+
+El rango «%» que usamos anteriormente es una forma de decir «1,$» (desde la
+primera hasta la última).
+
+
+USO DE UN PATRÓN EN EL RANGO
+
+Suponga que está editado un capítulo de un libro y que desea reemplazar
+todas las palabras «grisx con «blanco». Pero sólo en ese capítulo, no en el
+siguiente.  Sabe que los límites entre capítulos tienen la palabra
+«Capítulo» en la primera columna. Esta orden funcionaría aquí: >
+
+	:?^Capítulo?,/^Capítulo/s=gris=azul=g
+
+Puede observar que un patrón se ha usado en dos ocasiones. La primera
+«?^Chapter?» busca el patrón en sentido inverso. Por lo tanto «?patrón?»
+buscará encima de la línea actual. De forma similar, «/^Capítulo/» se usa para
+buscar hacia delante el comienzo del nuevo capítulo.
+   Para evitar confusión con las barras, el carácter «=» se ha empleado en
+la orden sustituir. Una barra o cualquier otro carácter habría funcionado
+igual de bien.
+
+
+AÑADIR Y ELIMINAR
+
+Hay un pequeño error en la orden de arriba: Si el título del siguiente
+capítulo hubiese incluido «grisx habría sido reemplazado igualmente. Quizá
+quería eso, ¿pero qué ocurre si no? Puede especificar un «offset».
+   Para buscar un patrón e indicar la línea anterior: >
+
+	/Capítulo/-1
+
+Puede usar cualquier número en lugar de 1. Para indicar la segunda línea por
+debajo de la cadena encontrada: >
+
+	/Capítulo/+2
+
+El desplazamiento se puede emplear también con otros elementos en un rango.
+Observe esto: >
+
+	:.+3,$-5
+
+Esto especifica que el rango comienza tres líneas por debajo de la actual y
+termina cinco líneas antes de la última línea del archivo.
+
+
+USO DE MARCAS
+
+En lugar de adivinar el número de algunas líneas en determinadas posiciones,
+e introducirlas en un rango, puede usar marcadores.
+   Ponga marcas como se explica en el capítulo 3. Por ejemplo, usa «ms» para
+marcar la parte superior de un área y «mi» para marcar la parte inferior".
+Puede usar el rango para especificar las líneas entre las marcas
+(inclusive): >
+
+	:'t,'b
+
+
+MODO VISUAL Y RANGOS
+
+Puede seleccionar texto con el modo Visual. Si pulsa «:» para iniciar una
+orden, verá lo siguiente: >
+
+	:'<,'>
+
+Ahora puede introducir la orden y éste se aplicará al rango de líneas que
+tiene seleccionadas.
+
+	Nota:
+	Cuando use el modo Visual para seleccionar parte de una línea, o use
+	CTRL-V para seleccionar un bloque de texto, las órdenes se aplicarán
+	a líneas completas. Puede que esto cambie en una futura versión.
+
+Los «'<» y «'>» son marcadores que se sitúan al principio y al final de la
+selección. Estos marcadores mantienen estas posiciones hasta que aparece una
+nueva selección Visual. Por lo tanto, puede usar la orden «"'<"» para saltar
+al lugar donde el área Visual comenzaba. También puede mezclarlas: >
+
+	:'>,$
+
+Esto especifica las líneas desde el final del área visual hasta el final del
+archivo.
+
+
+UN NÚMERO DE LÍNEAS
+
+Cuando sepa cuántas líneas quieres cambiar, puede teclear el número y luego
+«:».  Si, por ejemplo, escribe «5:» obtendrá: >
+
+	:.,.+4
+
+Ahora puedes ejecutar la orden que quiera usar. Usará el rango «.» (línea
+actual) hasta «.+4» (cuatro líneas más). Esto hará un total de cinco líneas.
+
+==============================================================================
+*10.4*	Las órdenes globales
+
+La orden «:global» es una de las características más potentes de
+Vim. Permite que encuentre una cadena con un patrón y ejecute una orden en
+esa ubicación. El formato habitual es: >
+
+	:[rango]global/{patrón}/{orden}
+
+Esto es similar a la orden «:substitute». Pero en lugar de reemplazar el
+texto concordado con otro texto, la orden {orden} se ejecutará.
+
+	Nota:
+	La orden ejecutada con «:global» debe ser uno que comience con un
+	punto y coma. Las órdenes para el modo Normal no se pueden emplear de
+	forma directa. De esto se encargará |:normal|.
+
+Suponga que quiere cambiar «foobar» por «barfoo», pero solamente en los
+comentarios de C++. Estos comentarios empiezan por «//». Use lo siguiente: >
+
+	:g+//+s/foobar/barfoo/g
+
+Esto comienza con «:g», la abreviatura de «:global», igual que ocurría con «:s» y
+«substitutex. Luego viene el patrón, entre signos «+». Ya que el patrón
+que estamos buscando contiene una barra inclinada, esto emplea el signo «+»
+para separar el patrón. A continuación viene la orden que cambia «foobar» a
+«barfoo».
+   El rango predeterminado de la orden global es el archivo completo. Como en
+este caso, ya que ningún rango se ha especificado. Esto difiere de la orden
+«:substitute», la cuál afecta a una línea por omisión.
+   La orden no es perfecta, ya que también encontrará líneas donde «//»
+aparece a mitad de línea y la sustitución también se hará antes de los «//».
+
+Tal y como ocurre con «:substitute», puede emplear cualquier patrón.  Cuando
+aprenda patrones más complicados, podrá usarlos aquí.
+
+==============================================================================
+*10.5*	El modo de bloque Visual
+
+Con CTRL-V puede seleccionar un área rectangular de texto. Hay algunas
+órdenes que hacen algo especial con los bloques de texto.
+
+La orden «$» en el modo bloque Visual tiene algo de especial. Cuando el
+último orden de movimiento fue «$», todas las líneas de la selección Visual
+se extenderán hasta el final de la línea, incluso cuando la línea con el
+cursor sea más corta. Esto se hará efectivo hasta que use otra orden de
+movimiento que desplace el cursor horizontalmente.
+
+
+INSERTAR TEXTO
+
+La orden «I{cadena}<Esc>» inserta el texto {cadena} en cada línea, justo a
+la izquierda del bloque. Comience tecleando CTRL-V para entrar en el modo
+bloque Visual. Mueva el cursor para definir su bloque. A continuación pulse
+«I» para iniciar el modo Insertar. A medida que teclea, el texto aparece
+únicamente en la primera línea.
+   Tras pulsar <Esc> para finalizar la inserción, el texto aparecerá
+mágicamente insertado en el resto de líneas contenidas en el bloque:
+
+	include uno ~
+	include dos ~
+	include tres ~
+	include cuatro ~
+
+Mueva el cursor a la «u» de «uno» y presione CTRL-V. Desplácese hacia abajo
+con «3j» hasta«"cuatro». Tiene una selección que abarca cuatro
+líneas. Teclee: >
+
+	Imain.<Esc>
+
+El resultado:
+
+	include main.uno ~
+	include main.dos ~
+	include main.tres ~
+	include main.cuatro ~
+
+Si el bloque abarca líneas que no caben dentro del área del bloque, el texto
+no se insertará en esa línea. Por ejemplo, haga un bloque Visual que no
+incluya la palabra «larga» en la primera y última línea de este texto, de
+manera que no se seleccione texto en la segunda línea:
+
+	Esto es una línea larga ~
+	corta ~
+	Cualquier es una línea larga ~
+
+		    ^^^^^ bloque seleccionado
+
+Ahora usa la orden «Imuy <Esc>». El resultado es:
+
+	Esto es una línea muy larga ~
+	corta ~
+	Esto es una línea muy larga ~
+
+En el texto corto no se introdujo nada.
+
+Si la cadena que insertó contiene una nueva línea, el «I» actúa justo como
+una inserción normal y únicamente afecta a la primera línea del bloque.
+
+La orden «A» funciona de la misma manera, excepto que se añade a la derecha
+del bloque. En este caso sí se añade al final de la línea corta. De este
+modo puede elegir si quieres añadir o no un texto a la línea corta.
+   Hay un caso especial para «Ax: seleccione un bloque Visual y pulsw «$» para
+hacer que el bloque se extienda al final de cada línea. Usar «A» añadirá el
+texto al final de cada línea.
+   De usar el mismo ejemplo que arriba y teclear «$A XXX<Esc>» obtendría el
+siguiente resultado:
+
+	Esto es una línea larga XXX~
+	corta XXX~
+	Esto es una línea larga XXX~
+
+Esto requiere el uso de la orden «$». Vim recordará que los ha usado. Hacer
+la misma selección con el cursor hasta el final de la línea más larga con
+otras órdenes no te dará el mismo resultado.
+
+
+CAMBIAR EL TEXTO
+
+La orden de bloque Visual «c» elimina el bloque y le devuelve al modo
+Insertar para que escriba en una cadena de caracteres. La cadena se
+insertará en cada línea del bloque.
+   Comenzando con la misma selección que las palabras zlarga» de arriba,
+y teclear después «c_LARGA_<Esc>», le daría esto:
+
+	Esto es una línea _LARGA_ ~
+	corta ~
+	Esto es una línea _LARGA_ ~
+
+Tal y como ocurre con «Ix, la línea corta no cambia. Del mismo modo, no
+podrá introducir una nueva línea en el texto.
+
+La orden «C» elimina texto desde el borde izquierdo del bloque hasta el
+final de cada línea. Luego le deja en modo Insert para que pueda teclear una
+cadena, que se añadirá al final de cada línea.
+   Comenzando con el mismo texto, teclee «Ctexto nuevo<Esc>». Obtendrá:
+
+	Esto es un texto nuevo ~
+	corta ~
+	Esto es un texto nuevo ~
+
+Observe que aunque sólo se seleccionó la palabra «larga», el texto
+tras ella fue eliminado igualmente. Por lo tanto sólo la posición del borde
+izquierdo del eje izquierdo importa realmente.
+   Una vez más, las palabras que no forman parte del bloque se excluyen.
+
+Otras órdenes que cambian los caracteres en el bloque son:
+
+	~       cambiar may./min.   (a -> A and A -> a)
+	U       cambiar a may.      (a -> A and A -> A)
+	u       cambiar a min.      (a -> a and A -> a)
+
+
+RELLENAR CON UN CARÁCTER
+
+Para rellenar un bloque completo con un sólo carácter, usw la orden «r».
+Pruébelo de nuevo con el texto de antes, pulsando «rx»:
+
+	Esto es una línea larga ~
+	corta ~
+	Cualquier es una línea larga ~
+
+
+	Nota:
+	Si desea incluir los caracteres más allá del final de línea en el
+	bloque, consulte la opción 'virtualedit' en el capítulo 25.
+
+
+CAMBIAR
+
+La orden «>» empuja el texto hacia la derecha un espacio determinado,
+insertando espacios en blanco. El punto base empleado para esta operación es
+el borde izquierdo del bloque visual.
+   Con el mismo ejemplo de nuevo, «>» le da el resultado:
+
+	Esto es una	línea larga ~
+	corta ~
+	Esto es una	línea larga ~
+
+El espacio del desplazamiento se especifica con la opción 'shiftwidth".
+Para cambiarlo a cuatro espacios: >
+
+	:set shiftwidth=4
+
+La orden «<» desplaza por cada empuje la misma cantidad de espacios en
+blanco hacia la izquierda. Esta orden se limita al texto que se encuentre,
+de manera que eliminará la cantidad de espacio en blanco disponible sin
+sobreescribir texto.
+
+
+UNIR LÍNEAS
+
+La orden «J» funde todas las líneas en una sola, eliminando los saltos de
+línea. De hecho, el salto de línea, espacios en blanco al comienzo y al
+final de línea se convierten en un solo espacio. Se usan dos espacios tras
+un final de línea (pudiéndose cambiar esto con la opción 'joinspaces').
+   Vamos a usar el ejemplo que nos resulta ya familiar. El resultado de usar
+la orden «J» será:
+
+	Esto es una línea larga corta Esto es una línea larga ~
+
+La orden «J» no requiere selección de bloques. Funciona de igual modo con la
+selección «v» y «V».
+
+Si no quiere que los espacios en blanco cambien, use la orden «gJ».
+
+==============================================================================
+*10.6*	Leer y escribir parte de un archivo
+
+Cuando escriba un correo, puede que desee incluir otro archivo.
+Esto se puede llevar a cabo con la orden «:read {nombredearchivo}». El
+texto del archivo se pegará debajo de la línea actual:
+   A partir de este texto:
+
+	Hola Juan, ~
+	Aquí tienes el parche que arregla el problema: ~
+	Un saludo, Pedro. ~
+
+Mueva el cursor a la segunda línea y escriba: >
+
+	:read parche
+
+El archivo de nombre «parche» se insertará: con este resultado:
+
+	Hola Juan, ~
+	Aquí tienes el parche que arregla el problema: ~
+	2c2 ~
+	<	for (i = 0; i <= length; ++i) ~
+	--- ~
+	>	for (i = 0; i < length; ++i) ~
+	Un saludo, Pedro. ~
+
+La orden «:read» acepta un rango. El archivo será colocado justo debajo de
+la última línea de este rango. Por lo tanto, «:$r parche» añadirá el
+archivo «parche» al final del actual.
+   ¿Qué ocurre si quiere pegar el archivo encima de la primera línea? Esto
+se puede realizar con el número de línea cero. Este número de línea en
+realidad no existe, lo cuál hará que con muchas órdenes reciba un error. >
+>
+:0read parche
+
+El archivo «parche» se insertará sobre la primera línea del archivo.
+
+
+ESCRIBIR UN RANGO DE LÍNEAS
+
+Para guardar un rango de líneas en un archivo puede usar la orden «:write».
+Sin el rango esto guardará el archivo completo. Pero con un rango
+especificado únicamente las líneas que se especifiquen se escribirán: >
+
+	:.,$write tempo
+
+Esto guardará las líneas desde el cursor hasta el final del texto en el
+archivo «tempo». Si este archivo existe actualmente obtendrá un mensaje de
+error. Vim le protege de que sobreescriba un archivo preexistente. Si sabe
+lo que hace y quiere sobreescribirlo, añada «!»: >
+
+	:.,$write! tempo
+
+CUIDADO: El «!» debe ponerse justo después de la orden «:write», sin el
+espacio en blanco. En caso contrario, se convierte en una orden de filtro,
+el cuál se explica en el capítulo siguiente.
+
+
+AÑADIR A UN ARCHIVO
+
+En la primera sección de este capítulo se explicó cómo reunir una serie de
+líneas en un registro. Se puede hacer lo mismo para reunir líneas en un
+archivo. Escriba una primera línea con esta orden: >
+
+	:.write archivo
+
+Ahora ponga el cursor en la siguiente línea que quiera añadir y escriba
+esto: >
+
+	:.write >>archivo
+
+El «>>» le dice a Vim que «archivo» no se debe escribir como un nuevo
+archivo sino que la línea se deba añadir al final. Puede repetir esto
+tantas veces como desee.
+
+==============================================================================
+*10.7*	Formatear texto
+
+Cuando introducza texto, tal vez le resulta útil que, si la longitud de cada
+línea supera un número, sea automáticamente partida. Para hacer esto
+posible, active la opción 'textwidth': >
+
+	:set textwidth=72
+
+Quizá se acuerde de que en el ejemplo de archivo «vimrc» esta orden era
+empleada para cualquier tipo de archivo. Por lo tanto, si está usando ese
+archivo «vimrc», ya lo tiene activado. Para comprobar el valor actual: >
+
+	:set textwidth
+
+A partir de ahora las líneas se partirán cuando lleguen a 72 caracteres. Sin
+embargo, cuando introduzca texto en mitad de una línea, o cuando elimine
+unas palabras la línea no será reformateada por Vim.
+   Para decirle a Vim que formatee el párrafo actual: >
+
+	gqap
+
+Esto consiste en un orden «gq», que es un operador, seguido de una «ap», el
+objeto de texto para «un párrafo». Un párrafo es lo que está separado de
+otro párrafo por una línea en blanco.
+
+	Nota:
+	Una línea que contiene espacios en blanco NO separa párrafos. Esto
+	suele ser difícil de notar.
+
+En lugar de «ap» puede usar cualquier movimiento u objeto de texto. Si sus
+párrafos están adecuadamente separados, puede usar esto para formatear todo:
+>
+
+	gggqG
+
+«gg» le lleva a la primera línea, «gq» es el operador de formateo y «G» la
+orden de movimiento que le lleva a la última línea.
+
+En caso de que sus párrafos no estén claramente definidos, puede dar formato
+sólo a las líneas que seleccione manualmente. Ponga el cursor sobre la
+primera línea que quiera formatear. Teclee «gqj». Esto formatea la línea
+actual y la siguiente. Si la primera era demasiado corta, las palabras de la
+siguiente línea serán añadidas. Si era demasiado larga, las palabras se
+moverán a la siguiente línea. A continuación puede usar la orden «.» para
+repetir laoperación. Repítalo hasta que llegue al final del texto a
+formatear.
+
+==============================================================================
+*10.8*	Cambiar mayúsculas y minúsculas
+
+Suponga que tiene texto con las cabeceras de sección en minúscula. Quiere
+que la palabra «sección» esté en mayúsculas.   Puede hacerlo con el operador
+«gU». Comience con el cursor en la primera columna: >
+
+			     gUw
+<	cabecera de sección ---->      cabecera de SECCIÓN
+
+El operador «gu» hace exactamente lo contrario:
+
+			     guw
+	cabecera de SECCIÓN ---->      cabecera de sección
+
+También puede usar «g~» para alternar may./min. Son operadores, así que
+funcionan con órdenes de movimiento, objetos de texto y el modo Visual.
+   Para hacer que un operador funcione en líneas, lo duplica. El operador
+de eliminación es «d», de manera que para eliminar una línea empleas «dd»
+De forma similar, «gugu» hace que la línea al completo sea en minúsculas. Esto
+puede abreviarse con «guu». «gUgU» se puede abreviar a «gUU» y «g~g~» a
+«g~~»:
+
+				      g~~ 
+	Algunas CHICAS se divierten  ---->  aLGUNAS chicas SE DIVIERTEN ~
+
+==============================================================================
+*10.9*	Uso de un programa externo
+
+Vim tiene un conjunto de órdenes muy potente para hacer cualquier cosa.
+Pero siempre hay un programa externo que es mejor para una tarea específica.
+   La orden «!{movimiento}{programa}» recoge un bloque de un texto y lo
+filtra a través de un programa externo. En otras palabras, ejecuta la
+orden de sistema {programa}, dándole el bloque de texto representado por
+{movimiento} como entrada. La salida de la orden sustituirá la selección.
+   Ya que esto requiere más explicación si no usa los filtros UNIX
+habitualmente, veamos un ejemplo. La orden «sort» ordena un archivo. Si
+ejecuta lo siguiente, el archivo desordenado entrada.txt será ordenado y
+guardado en output.txt. (Esto funciona en UNIX y en Windows.) >
+
+	sort <input.txt >output.txt
+
+Ahora haga lo mismo en Vim. Desea ordenar las líneas de la 1 a la 5. Para
+comenzar, ponga el cursor en la línea 1. A continuación ejecute la siguiente
+orden: >
+
+	!5G
+
+El «!» le dice a Vim que está realizando una operación filtro. El editor
+Vim espera que introduzca a continuación un orden de movimiento para saber
+qué filtrar. La orden «5G» le dice a Vim que vaya a la línea 5, de forma
+que sepa que tiene que filtrar desde la línea 1 (la actual) hasta la 5.
+   Antes de filtrar nada, la línea de órdenes se activa y muestra un «!».
+Ahora es el momento de que escriba el filtro, en este caso «sort». Por lo
+tanto, la orden completo sería: >
+
+	!5Gsort<Entrar>
+
+El resultado es que se ejecuta el programa «sort» sobre las 5 primeras
+líneas. La salida del programa reemplaza estas líneas.
+
+	línea 55		      línea 11
+	línea 33		      línea 22
+	línea 11	-->	      línea 33
+	línea 22		      línea 44
+	línea 44		      línea 55
+	última línea		      última línea
+
+La orden «!!» filtra la línea actual. En Unix, la orden »date» imprime la
+hora y fecha actuales. «!!date<Entrar>» reemplaza la línea actual con la
+salida de «date». Esto es útil para añadir una marca de tiempo al archivo.
+
+
+CUANDO NO FUNCIONA
+
+Iniciar la consola, enviarle texto y capturar la salida requiere que Vim
+sepa exactamente cómo funciona la consola de forma precisa. Cuando tenga
+problemas con el filtrado, comprueba los valores de las siguientes opciones:
+
+	'shell'		especifica el programa que Vim empleará para ejecutar
+			programas externos.
+	'shellcmdflag'	argumento para pasar un orden a la consola
+	'shellquote'	comillas a usar alrededor de la orden
+	'shellxquote'	comillas a usar alrededor de la orden y redirección
+	'shelltype'	tipo de consola (sólo para Amiga)
+	'shellslash'	usar barras inclinadas en la orden (sólo para
+			Windows y similares)
+	'shellredir'	cadena para escribir la salida a un archivo
+
+En Unix esto es raramente un problema, porque hay dos tipos de consola: «sh» y
+«csh». Vim comprueba la opción 'shell' y configura todo automáticamente,
+dependiendo de si ve «cshx en algún lugar de 'shell'.
+   Sin embargo, en Windows, hay muchos tipos de consolas y quizá tenga que
+ajustar las opciones para hacer que el filtrado funcione correctamente.
+Busque en la ayuda más información sobre las opciones de configuración
+de la consola para poder solucionarlo.
+
+
+LEER LA SALIDA DE LA ORDEN
+
+Para escribir los contenidos del directorio actual en el archivo, use:
+
+en Unix: >
+	:read !ls
+en MS-Windows: >
+	:read !dir
+
+La salida de las órdenes «ls» o «dir» se puede capturar e insertar en el
+texto, debajo del cursor. Esto es similar a leer un archivo, excepto que el
+«!» se emplea para decirle a Vim que hay una orden a continuación.
+   Puede que la orden tenga argumentos. Puede emplear un rango para
+decirle a Vim dónde debería poner las líneas: >
+
+	:0read !date -u
+
+Esto inserta la hora y fecha actuales en formato UTC en la primera línea del
+archivo. (Bueno, si tienes una orden «date» que acepta el argumento «-u».)
+Tenga en cuenta la diferencia de usar «!!date»; esto reemplazó una línea,
+mientras que «:read !date» insertó una línea.
+
+
+PASAR TEXTO A UNA ORDEN
+
+La orden Unix «wc» cuenta palabras. Para contar las del archivo actual: >
+
+	:write !wc
+
+Esta es la misma orden «write» vista que anteriormente, pero en lugar de un
+nombre de archivo, se emplean el carácter «!» y una orden externa. El texto
+guardado será pasado al orden especificado como entrada estándar. La salida
+será algo así:
+
+       4      47     249 ~
+
+La orden «wc» no es muy informativa. Esto significa que tiene 4 líneas, 47
+palabras y 249 caracteres.
+
+Tenga cuidado de no cometer este error: >
+
+	:write! wc
+
+Esto guardará el archivo «wc» en el directorio actual con la opción «force»
+(forzar). ¡El espacio en blanco es muy importante en este caso!
+
+
+REDIBUJAR LA PANTALLA
+
+Si la orden externa produjo un mensaje de error, la pantalla de Vim tal vez
+esté sobreescrita con información confusa. Vim es muy eficiente y sólo
+reescribe aquellas partes de la pantalla que lo necesiten. Pero no puede
+saber sobre lo que otro programa ha tocado. Para decirle a Vim que redibuje
+la pantalla: >
+
+	CTRL-L
+
+==============================================================================
+
+Capítulo siguiente: |usr_11.esx| Recuperarse de un fallo
+
+Copyright: consulte |manual-copyright| vim:tw=78:ts=8:ft=help:norl:
+
+==============================================================================
+
+Traducción del capítulo: Álvaro Castro Castillo 
+
+Proyecto: |vim-doc-es|
+

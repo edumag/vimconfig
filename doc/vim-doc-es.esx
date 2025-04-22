@@ -1,0 +1,25 @@
+*vim-doc-es*		  Para Vim versión 7.3	
+
+		     ====  Proyecto vim-doc-es  ====
+
+El proyecto vim-doc-es nació con la intención de ofrecer una correcta y
+completa traducción de Vim al español, incluyendo la documentación
+(páginas de manual y archivos de ayuda) así como la interfaz gráfica y
+los mensajes del programa.
+
+El proyecto está alojado en assembla [1], y te invitamos a que te
+pongas en contacto con nosotros a través de la lista de correo [2].
+
+Deseamos escuchar tus correcciones y sugerencias a través de la lista de
+correo. ¡Ayúdanos a hacer un mejor manual!
+
+Por supuesto, también te invitamos a que te unas a nosotros en la labor
+de localización de Vim al español. Nuestra wiki te ofrece toda la
+documentación necesaria para poder localizar Vim correctamente. 
+
+Esperamos que nuestra labor te ayude a usar Vim de una manera eficiente
+si estás empezando a interesarte por él, o a emplear Vim de una manera
+más completa, si es que ya lo conoces.
+
+[1] http://www.assembla.com/wiki/show/vim-doc-es
+[2] vim-doc-es@freelists.org
