@@ -997,3 +997,9 @@ let g:vim_ai_image = {
 \    "download_dir": "",
 \  },
 \}
+
+Plugin 'wuelnerdotexe/vim-astro'
+let g:astro_typescript = 'enable'
+
+
+
