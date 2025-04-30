@@ -259,6 +259,10 @@ map <F1> :new $HOME/.vim/README.md<CR>
 map <F2> :NERDTreeToggle<CR>
 imap <F2> <Esc>:NERDTreeToggle<CR>
 
+" Configuramos nerdtree_open
+" nerdtree_plugin/nerdtree_open.vim
+let g:nerdtree_open_cmd = 'xdg-open'
+
 " Cerrar nerdtree automáticamente al abrir fichero.
 let NERDTreeQuitOnOpen=1
 
