@@ -881,6 +881,13 @@ Plugin 'https://github.com/airblade/vim-gitgutter.git'
 " https://github.com/madox2/vim-ai
 Plugin 'madox2/vim-ai'
 
+" ollama
+let s:model_ai = "deepseek-coder-v2:latest"
+let s:url_ai = "http://127.0.0.1:11434"
+" LMStudio
+""let s:model_ai = "deepseek-coder-v2-lite-instruct"
+""let s:url_ai = "http://192.168.100.149:1234/v1/chat/completions"
+
 " This prompt instructs model to be consise in order to be used inline in editor
 let s:initial_complete_prompt =<< trim END
 >>> system
@@ -894,13 +901,13 @@ END
 let g:vim_ai_complete = {
 \  "prompt": "",
 \  "options": {
-\    "model": "deepseek-coder-v2-lite-instruct",
-\    "endpoint_url": "http://192.168.100.149:1234/v1/chat/completions",
+\    "model": s:model_ai,
+\    "endpoint_url": s:url_ai . "/v1/chat/completions",
 \    "auth_type": "none",
 \    "max_tokens": 0,
 \    "max_completion_tokens": 0,
 \    "temperature": 0.1,
-\    "request_timeout": 20,
+\    "request_timeout": 200,
 \    "stream": 1,
 \    "selection_boundary": "#####",
 \    "initial_prompt": s:initial_complete_prompt,
@@ -919,7 +926,7 @@ let g:vim_ai_edit = {
 \    "max_tokens": 0,
 \    "max_completion_tokens": 0,
 \    "temperature": 0.1,
-\    "request_timeout": 20,
+\    "request_timeout": 200,
 \    "stream": 1,
 \    "selection_boundary": "#####",
 \    "initial_prompt": s:initial_complete_prompt,
@@ -934,8 +941,11 @@ let g:vim_ai_edit = {
 let s:initial_chat_prompt =<< trim END
 >>> system
 
-You are a general assistant.
-If you attach a code block add syntax type after ``` to enable syntax highlighting.
+Tu eres un experto programador informático.
+
+Si añades bloques de código hazlo con formato makdown, Añadiendo ``` para obtener colores.
+
+Si puedes contesta en castellano.
 END
 
 " :AIChat
@@ -957,12 +967,13 @@ END
 let g:vim_ai_chat = {
 \  "prompt": "",
 \  "options": {
-\    "model": "lmstudio-community/DeepSeek-Coder-V2-Lite-Instruct-GGUF",
-\    "endpoint_url": "http://192.168.100.149:1234/v1/chat/completions",
+\    "model": s:model_ai,
+\    "endpoint_url": s:url_ai . "/v1/chat/completions",
 \    "max_tokens": 0,
+\    "num_ctx": 8192,
 \    "max_completion_tokens": 0,
 \    "temperature": 1,
-\    "request_timeout": 20,
+\    "request_timeout": 200,
 \    "stream": 1,
 \    "auth_type": "none",
 \    "token_file_path": "",
@@ -984,11 +995,11 @@ let g:vim_ai_image = {
 \  "prompt": "",
 \  "options": {
 \    "model": "dall-e-3",
-\    "endpoint_url": "http://192.168.100.149:1234/v1/images/generations",
+\    "endpoint_url": "http://127.0.0.1:11434/v1/images/generations",
 \    "quality": "standard",
 \    "size": "1024x1024",
 \    "style": "vivid",
-\    "request_timeout": 40,
+\    "request_timeout": 400,
 \    "auth_type": "bearer",
 \    "token_file_path": "",
 \    "token_load_fn": "",
@@ -998,8 +1009,34 @@ let g:vim_ai_image = {
 \  },
 \}
 
+" custom command suggesting git commit message, takes no arguments
+function! GitCommitMessageFn()
+  let l:range = 0
+  let l:diff = system('git --no-pager diff --staged')
+  let l:prompt = "generate a short commit message from the diff below:\n" . l:diff
+  let l:config = {
+  \  "options": {
+  \    "model": "gpt-4o",
+  \    "initial_prompt": ">>> system\nyou are a code assistant",
+  \    "temperature": 1,
+  \  },
+  \}
+  call vim_ai#AIRun(l:range, l:config, l:prompt)
+endfunction
+command! GitCommitMessage call GitCommitMessageFn()
+
+
+" custom command that provides a code review for selected code block
+function! CodeReviewFn(range) range
+  let l:prompt = "programming syntax is " . &filetype . ", review the code below"
+  let l:config = {
+  \  "options": {
+  \    "initial_prompt": ">>> system\nyou are a clean code expert",
+  \  },
+  \}
+  exe a:firstline.",".a:lastline . "call vim_ai#AIChatRun(a:range, l:config, l:prompt)"
+endfunction
+command! -range -nargs=? AICodeReview <line1>,<line2>call CodeReviewFn(<range>)
+
 Plugin 'wuelnerdotexe/vim-astro'
 let g:astro_typescript = 'enable'
-
-
-
