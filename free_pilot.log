@@ -1,0 +1,358 @@
+2025-05-03 16:42:14: Plugin initialized with ollama backend
+2025-05-03 16:42:14: Enabled AI completion for buffer
+2025-05-03 16:42:14: Plugin initialized with ollama backend
+2025-05-03 16:42:14: Using Ollama model: deepseek-coder-v2:latest
+2025-05-03 16:42:15: Enabled AI completion for buffer
+2025-05-03 16:44:34: Triggering completion
+2025-05-03 16:44:34: Started new timer: 226
+2025-05-03 16:44:36: No longer in insert mode, skipping completion
+2025-05-03 16:45:41: Enabled AI completion for buffer
+2025-05-03 16:45:59: Enabled AI completion for buffer
+2025-05-03 16:49:03: AI completion not enabled for filetype: help
+2025-05-03 16:49:13: Enabled AI completion for buffer
+2025-05-03 16:49:23: AI completion not enabled for filetype: help
+2025-05-03 16:49:24: Enabled AI completion for buffer
+2025-05-03 16:59:37: Triggering completion
+2025-05-03 16:59:37: Stopped existing timer
+2025-05-03 16:59:37: Started new timer: 1214
+2025-05-03 16:59:39: Starting completion request using ollama
+2025-05-03 16:59:39: Created request #1 for line 747
+2025-05-03 16:59:43: Triggering completion
+2025-05-03 16:59:43: Stopped existing timer
+2025-05-03 16:59:43: Started new timer: 1216
+2025-05-03 16:59:44: Triggering completion
+2025-05-03 16:59:44: Stopped existing timer
+2025-05-03 16:59:44: Started new timer: 1218
+2025-05-03 16:59:44: Triggering completion
+2025-05-03 16:59:44: Stopped existing timer
+2025-05-03 16:59:44: Started new timer: 1220
+2025-05-03 16:59:44: Triggering completion
+2025-05-03 16:59:44: Stopped existing timer
+2025-05-03 16:59:44: Started new timer: 1222
+2025-05-03 16:59:44: Triggering completion
+2025-05-03 16:59:44: Stopped existing timer
+2025-05-03 16:59:44: Started new timer: 1224
+2025-05-03 16:59:45: Triggering completion
+2025-05-03 16:59:45: Stopped existing timer
+2025-05-03 16:59:45: Started new timer: 1226
+2025-05-03 16:59:46: Triggering completion
+2025-05-03 16:59:46: Stopped existing timer
+2025-05-03 16:59:46: Started new timer: 1228
+2025-05-03 16:59:46: Triggering completion
+2025-05-03 16:59:46: Stopped existing timer
+2025-05-03 16:59:46: Started new timer: 1230
+2025-05-03 16:59:47: Triggering completion
+2025-05-03 16:59:47: Stopped existing timer
+2025-05-03 16:59:47: Started new timer: 1232
+2025-05-03 16:59:47: Triggering completion
+2025-05-03 16:59:47: Stopped existing timer
+2025-05-03 16:59:47: Started new timer: 1234
+2025-05-03 16:59:48: Triggering completion
+2025-05-03 16:59:48: Stopped existing timer
+2025-05-03 16:59:48: Started new timer: 1236
+2025-05-03 16:59:49: Triggering completion
+2025-05-03 16:59:49: Stopped existing timer
+2025-05-03 16:59:49: Started new timer: 1238
+2025-05-03 16:59:50: Triggering completion
+2025-05-03 16:59:50: Stopped existing timer
+2025-05-03 16:59:50: Started new timer: 1240
+2025-05-03 16:59:50: Triggering completion
+2025-05-03 16:59:50: Stopped existing timer
+2025-05-03 16:59:50: Started new timer: 1242
+2025-05-03 16:59:51: Job for request #1 exited with status 0
+2025-05-03 16:59:51: Processing Ollama response
+2025-05-03 16:59:51: Triggering completion
+2025-05-03 16:59:51: Stopped existing timer
+2025-05-03 16:59:51: Started new timer: 1244
+2025-05-03 16:59:53: Triggering completion
+2025-05-03 16:59:53: Stopped existing timer
+2025-05-03 16:59:53: Started new timer: 1246
+2025-05-03 16:59:54: Triggering completion
+2025-05-03 16:59:54: Stopped existing timer
+2025-05-03 16:59:54: Started new timer: 1248
+2025-05-03 16:59:54: Triggering completion
+2025-05-03 16:59:54: Stopped existing timer
+2025-05-03 16:59:54: Started new timer: 1250
+2025-05-03 16:59:56: Starting completion request using ollama
+2025-05-03 16:59:56: Created request #2 for line 748
+2025-05-03 16:59:59: Triggering completion
+2025-05-03 16:59:59: Stopped existing timer
+2025-05-03 16:59:59: Started new timer: 1256
+2025-05-03 16:59:59: Triggering completion
+2025-05-03 16:59:59: Stopped existing timer
+2025-05-03 16:59:59: Started new timer: 1258
+2025-05-03 17:00:00: Triggering completion
+2025-05-03 17:00:00: Stopped existing timer
+2025-05-03 17:00:00: Started new timer: 1260
+2025-05-03 17:00:00: Triggering completion
+2025-05-03 17:00:00: Stopped existing timer
+2025-05-03 17:00:00: Started new timer: 1262
+2025-05-03 17:00:02: Starting completion request using ollama
+2025-05-03 17:00:02: Created request #3 for line 748
+2025-05-03 17:00:02: Stopped job 29
+2025-05-03 17:00:02: Job for request #3 exited with status -1
+2025-05-03 17:00:03: Triggering completion
+2025-05-03 17:00:03: Stopped existing timer
+2025-05-03 17:00:03: Started new timer: 1263
+2025-05-03 17:00:04: Triggering completion
+2025-05-03 17:00:04: Stopped existing timer
+2025-05-03 17:00:04: Started new timer: 1264
+2025-05-03 17:00:06: Starting completion request using ollama
+2025-05-03 17:00:06: Created request #4 for line 748
+2025-05-03 17:00:06: Stopped job 31
+2025-05-03 17:00:06: Job for request #4 exited with status -1
+2025-05-03 17:00:33: Job for request #4 exited with status 0
+2025-05-03 17:00:33: Processing Ollama response
+2025-05-03 17:00:56: Triggering completion
+2025-05-03 17:00:56: Stopped existing timer
+2025-05-03 17:00:56: Started new timer: 1269
+2025-05-03 17:00:56: Triggering completion
+2025-05-03 17:00:56: Stopped existing timer
+2025-05-03 17:00:56: Started new timer: 1271
+2025-05-03 17:00:56: Triggering completion
+2025-05-03 17:00:56: Stopped existing timer
+2025-05-03 17:00:56: Started new timer: 1273
+2025-05-03 17:00:56: Triggering completion
+2025-05-03 17:00:56: Stopped existing timer
+2025-05-03 17:00:56: Started new timer: 1275
+2025-05-03 17:00:58: Triggering completion
+2025-05-03 17:00:58: Stopped existing timer
+2025-05-03 17:00:58: Started new timer: 1277
+2025-05-03 17:00:59: Triggering completion
+2025-05-03 17:00:59: Stopped existing timer
+2025-05-03 17:00:59: Started new timer: 1279
+2025-05-03 17:00:59: Triggering completion
+2025-05-03 17:00:59: Stopped existing timer
+2025-05-03 17:00:59: Started new timer: 1281
+2025-05-03 17:00:59: Triggering completion
+2025-05-03 17:00:59: Stopped existing timer
+2025-05-03 17:00:59: Started new timer: 1283
+2025-05-03 17:00:59: Triggering completion
+2025-05-03 17:00:59: Stopped existing timer
+2025-05-03 17:00:59: Started new timer: 1285
+2025-05-03 17:01:01: Triggering completion
+2025-05-03 17:01:01: Stopped existing timer
+2025-05-03 17:01:01: Started new timer: 1287
+2025-05-03 17:01:03: Starting completion request using ollama
+2025-05-03 17:01:03: Created request #5 for line 900
+2025-05-03 17:01:03: Triggering completion
+2025-05-03 17:01:03: Stopped existing timer
+2025-05-03 17:01:03: Started new timer: 1289
+2025-05-03 17:01:03: Triggering completion
+2025-05-03 17:01:03: Stopped existing timer
+2025-05-03 17:01:03: Started new timer: 1291
+2025-05-03 17:01:04: Triggering completion
+2025-05-03 17:01:04: Stopped existing timer
+2025-05-03 17:01:04: Started new timer: 1293
+2025-05-03 17:01:04: Triggering completion
+2025-05-03 17:01:04: Stopped existing timer
+2025-05-03 17:01:04: Started new timer: 1295
+2025-05-03 17:01:06: No longer in insert mode, skipping completion
+2025-05-03 17:01:17: Job for request #5 exited with status 0
+2025-05-03 17:01:17: Processing Ollama response
+2025-05-03 17:02:09: Triggering completion
+2025-05-03 17:02:09: Stopped existing timer
+2025-05-03 17:02:09: Started new timer: 1360
+2025-05-03 17:02:09: Triggering completion
+2025-05-03 17:02:09: Stopped existing timer
+2025-05-03 17:02:09: Started new timer: 1362
+2025-05-03 17:02:10: Triggering completion
+2025-05-03 17:02:10: Stopped existing timer
+2025-05-03 17:02:10: Started new timer: 1364
+2025-05-03 17:02:10: Triggering completion
+2025-05-03 17:02:10: Stopped existing timer
+2025-05-03 17:02:10: Started new timer: 1366
+2025-05-03 17:02:11: Triggering completion
+2025-05-03 17:02:11: Stopped existing timer
+2025-05-03 17:02:11: Started new timer: 1368
+2025-05-03 17:02:11: Triggering completion
+2025-05-03 17:02:11: Stopped existing timer
+2025-05-03 17:02:11: Started new timer: 1370
+2025-05-03 17:02:13: No longer in insert mode, skipping completion
+2025-05-03 17:02:54: Triggering completion
+2025-05-03 17:02:54: Stopped existing timer
+2025-05-03 17:02:54: Started new timer: 1382
+2025-05-03 17:02:55: Triggering completion
+2025-05-03 17:02:55: Stopped existing timer
+2025-05-03 17:02:55: Started new timer: 1384
+2025-05-03 17:02:57: No longer in insert mode, skipping completion
+2025-05-03 17:03:54: Triggering completion
+2025-05-03 17:03:54: Stopped existing timer
+2025-05-03 17:03:54: Started new timer: 1428
+2025-05-03 17:03:55: Triggering completion
+2025-05-03 17:03:55: Stopped existing timer
+2025-05-03 17:03:55: Started new timer: 1430
+2025-05-03 17:03:55: Triggering completion
+2025-05-03 17:03:55: Stopped existing timer
+2025-05-03 17:03:55: Started new timer: 1432
+2025-05-03 17:03:56: Triggering completion
+2025-05-03 17:03:56: Stopped existing timer
+2025-05-03 17:03:56: Started new timer: 1434
+2025-05-03 17:03:58: Starting completion request using ollama
+2025-05-03 17:03:58: Created request #6 for line 749
+2025-05-03 17:03:58: Triggering completion
+2025-05-03 17:03:58: Stopped existing timer
+2025-05-03 17:03:58: Started new timer: 1435
+2025-05-03 17:04:00: Starting completion request using ollama
+2025-05-03 17:04:00: Created request #7 for line 749
+2025-05-03 17:04:00: Stopped job 42
+2025-05-03 17:04:00: Job for request #7 exited with status -1
+2025-05-03 17:04:01: Triggering completion
+2025-05-03 17:04:01: Stopped existing timer
+2025-05-03 17:04:01: Started new timer: 1436
+2025-05-03 17:04:03: Starting completion request using ollama
+2025-05-03 17:04:03: Created request #8 for line 749
+2025-05-03 17:04:03: Stopped job 43
+2025-05-03 17:04:03: Job for request #8 exited with status -1
+2025-05-03 17:04:04: Triggering completion
+2025-05-03 17:04:04: Stopped existing timer
+2025-05-03 17:04:04: Started new timer: 1437
+2025-05-03 17:04:06: No longer in insert mode, skipping completion
+2025-05-03 17:04:24: Job for request #8 exited with status 0
+2025-05-03 17:04:24: Processing Ollama response
+2025-05-03 17:09:11: Triggering completion
+2025-05-03 17:09:11: Stopped existing timer
+2025-05-03 17:09:11: Started new timer: 1492
+2025-05-03 17:09:13: Starting completion request using ollama
+2025-05-03 17:09:13: Created request #9 for line 881
+2025-05-03 17:09:14: Triggering completion
+2025-05-03 17:09:14: Stopped existing timer
+2025-05-03 17:09:14: Started new timer: 1502
+2025-05-03 17:09:16: Triggering completion
+2025-05-03 17:09:16: Stopped existing timer
+2025-05-03 17:09:16: Started new timer: 1504
+2025-05-03 17:09:16: Triggering completion
+2025-05-03 17:09:16: Stopped existing timer
+2025-05-03 17:09:16: Started new timer: 1506
+2025-05-03 17:09:18: Triggering completion
+2025-05-03 17:09:18: Stopped existing timer
+2025-05-03 17:09:18: Started new timer: 1508
+2025-05-03 17:09:18: Triggering completion
+2025-05-03 17:09:18: Stopped existing timer
+2025-05-03 17:09:18: Started new timer: 1510
+2025-05-03 17:09:19: Triggering completion
+2025-05-03 17:09:19: Stopped existing timer
+2025-05-03 17:09:19: Started new timer: 1512
+2025-05-03 17:09:19: Triggering completion
+2025-05-03 17:09:19: Stopped existing timer
+2025-05-03 17:09:19: Started new timer: 1514
+2025-05-03 17:09:21: Starting completion request using ollama
+2025-05-03 17:09:21: Created request #10 for line 881
+2025-05-03 17:09:21: Stopped job 52
+2025-05-03 17:09:21: Job for request #10 exited with status -1
+2025-05-03 17:09:22: Triggering completion
+2025-05-03 17:09:22: Stopped existing timer
+2025-05-03 17:09:22: Started new timer: 1516
+2025-05-03 17:09:23: Triggering completion
+2025-05-03 17:09:23: Stopped existing timer
+2025-05-03 17:09:23: Started new timer: 1517
+2025-05-03 17:09:25: Triggering completion
+2025-05-03 17:09:25: Stopped existing timer
+2025-05-03 17:09:25: Started new timer: 1518
+2025-05-03 17:09:25: Triggering completion
+2025-05-03 17:09:25: Stopped existing timer
+2025-05-03 17:09:25: Started new timer: 1519
+2025-05-03 17:09:27: Triggering completion
+2025-05-03 17:09:27: Stopped existing timer
+2025-05-03 17:09:27: Started new timer: 1520
+2025-05-03 17:09:29: Starting completion request using ollama
+2025-05-03 17:09:29: Created request #11 for line 881
+2025-05-03 17:09:29: Stopped job 53
+2025-05-03 17:09:29: Job for request #11 exited with status -1
+2025-05-03 17:09:43: Triggering completion
+2025-05-03 17:09:43: Stopped existing timer
+2025-05-03 17:09:43: Started new timer: 1610
+2025-05-03 17:09:45: Starting completion request using ollama
+2025-05-03 17:09:46: Created request #12 for line 910
+2025-05-03 17:09:46: Stopped job 55
+2025-05-03 17:09:46: Job for request #12 exited with status -1
+2025-05-03 17:10:06: Triggering completion
+2025-05-03 17:10:06: Stopped existing timer
+2025-05-03 17:10:06: Started new timer: 1686
+2025-05-03 17:10:07: Triggering completion
+2025-05-03 17:10:07: Stopped existing timer
+2025-05-03 17:10:07: Started new timer: 1688
+2025-05-03 17:10:08: Triggering completion
+2025-05-03 17:10:08: Stopped existing timer
+2025-05-03 17:10:08: Started new timer: 1690
+2025-05-03 17:10:08: Triggering completion
+2025-05-03 17:10:08: Stopped existing timer
+2025-05-03 17:10:08: Started new timer: 1692
+2025-05-03 17:10:09: Triggering completion
+2025-05-03 17:10:09: Stopped existing timer
+2025-05-03 17:10:09: Started new timer: 1694
+2025-05-03 17:10:09: Triggering completion
+2025-05-03 17:10:09: Stopped existing timer
+2025-05-03 17:10:09: Started new timer: 1696
+2025-05-03 17:10:09: Triggering completion
+2025-05-03 17:10:09: Stopped existing timer
+2025-05-03 17:10:09: Started new timer: 1698
+2025-05-03 17:10:10: Triggering completion
+2025-05-03 17:10:10: Stopped existing timer
+2025-05-03 17:10:10: Started new timer: 1700
+2025-05-03 17:10:10: Triggering completion
+2025-05-03 17:10:10: Stopped existing timer
+2025-05-03 17:10:10: Started new timer: 1702
+2025-05-03 17:10:10: Triggering completion
+2025-05-03 17:10:10: Stopped existing timer
+2025-05-03 17:10:10: Started new timer: 1704
+2025-05-03 17:10:10: Triggering completion
+2025-05-03 17:10:10: Stopped existing timer
+2025-05-03 17:10:10: Started new timer: 1706
+2025-05-03 17:10:10: Job for request #12 exited with status 0
+2025-05-03 17:10:10: Processing Ollama response
+2025-05-03 17:10:11: Triggering completion
+2025-05-03 17:10:11: Stopped existing timer
+2025-05-03 17:10:11: Started new timer: 1708
+2025-05-03 17:10:13: Starting completion request using ollama
+2025-05-03 17:10:13: Created request #13 for line 913
+2025-05-03 17:10:13: Triggering completion
+2025-05-03 17:10:13: Stopped existing timer
+2025-05-03 17:10:13: Started new timer: 1710
+2025-05-03 17:10:15: No longer in insert mode, skipping completion
+2025-05-03 17:10:26: Job for request #13 exited with status 0
+2025-05-03 17:10:27: Processing Ollama response
+2025-05-03 17:10:29: Triggering completion
+2025-05-03 17:10:29: Stopped existing timer
+2025-05-03 17:10:29: Started new timer: 1748
+2025-05-03 17:10:31: Starting completion request using ollama
+2025-05-03 17:10:31: Created request #14 for line 917
+2025-05-03 17:10:34: Triggering completion
+2025-05-03 17:10:34: Stopped existing timer
+2025-05-03 17:10:34: Started new timer: 1754
+2025-05-03 17:10:36: Triggering completion
+2025-05-03 17:10:36: Stopped existing timer
+2025-05-03 17:10:36: Started new timer: 1756
+2025-05-03 17:10:36: Triggering completion
+2025-05-03 17:10:36: Stopped existing timer
+2025-05-03 17:10:36: Started new timer: 1758
+2025-05-03 17:10:36: Triggering completion
+2025-05-03 17:10:36: Stopped existing timer
+2025-05-03 17:10:36: Started new timer: 1760
+2025-05-03 17:10:36: Triggering completion
+2025-05-03 17:10:36: Stopped existing timer
+2025-05-03 17:10:36: Started new timer: 1762
+2025-05-03 17:10:38: Starting completion request using ollama
+2025-05-03 17:10:39: Created request #15 for line 917
+2025-05-03 17:10:39: Stopped job 59
+2025-05-03 17:10:39: Job for request #15 exited with status -1
+2025-05-03 17:10:40: Triggering completion
+2025-05-03 17:10:40: Stopped existing timer
+2025-05-03 17:10:40: Started new timer: 1764
+2025-05-03 17:10:42: Starting completion request using ollama
+2025-05-03 17:10:42: Created request #16 for line 917
+2025-05-03 17:10:42: Stopped job 60
+2025-05-03 17:10:42: Job for request #16 exited with status -1
+2025-05-03 17:10:42: Triggering completion
+2025-05-03 17:10:42: Stopped existing timer
+2025-05-03 17:10:42: Started new timer: 1765
+2025-05-03 17:10:44: Starting completion request using ollama
+2025-05-03 17:10:44: Created request #17 for line 917
+2025-05-03 17:10:44: Stopped job 62
+2025-05-03 17:10:44: Job for request #17 exited with status -1
+2025-05-03 17:10:45: Triggering completion
+2025-05-03 17:10:45: Stopped existing timer
+2025-05-03 17:10:45: Started new timer: 1766
+2025-05-03 17:10:47: No longer in insert mode, skipping completion
+2025-05-03 17:11:29: Job for request #17 exited with status 0
+2025-05-03 17:11:29: Processing Ollama response

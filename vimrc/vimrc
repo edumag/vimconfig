@@ -792,21 +792,6 @@ nmap <leader>pt :let &errorformat = '%f:%l:%m'<cr>:cexpr system('./phpstan ')<cr
 """"nmap <Leader>dl <Plug>VimspectorStepInto
 """"nmap <Leader>dj <Plug>VimspectorStepOver
 
-Plugin 'Exafunction/codeium.vim'
-" Codeium provides the following functions to control suggestions:
-" Clear current suggestion	codeium#Clear()	<C-]>
-" Next suggestion	codeium#CycleCompletions(1)	<M-]>
-" Previous suggestion	codeium#CycleCompletions(-1)	<M-[>
-" Insert suggestion	codeium#Accept()	<Tab>
-" Manually trigger suggestion	codeium#Complete()	<M-Bslash>
-" Accept word from suggestion	codeium#AcceptNextWord()	<C-k>
-" Accept line from suggestion	codeium#AcceptNextLine()	<C-l>
-" Codeium's default keybindings can be disabled by setting
-let g:codeium_disable_bindings = 0
-imap <C-c>   <Cmd>call codeium#CycleCompletions(1)<CR>
-imap <C-z>   <Cmd>call codeium#CycleCompletions(-1)<CR>
-imap <C-x>   <Cmd>call codeium#Clear()<CR>
-
 "" Project lint (nerdtree)
 " https://github.com/kristijanhusak/vim-project-lint?tab=readme-ov-file
 Plugin 'kristijanhusak/vim-project-lint'
@@ -882,15 +867,78 @@ Plugin 'nikvdp/ejs-syntax'
 
 Plugin 'https://github.com/airblade/vim-gitgutter.git'
 
-" https://github.com/madox2/vim-ai
-Plugin 'madox2/vim-ai'
+""" AI
+
+"" AI - CONFIG
+
+let g:vim_ai_token_file_path = '~/.config/openai.token'
 
 " ollama
 let s:model_ai = "deepseek-coder-v2:latest"
 let s:url_ai = "http://127.0.0.1:11434"
 " LMStudio
 ""let s:model_ai = "deepseek-coder-v2-lite-instruct"
-""let s:url_ai = "http://192.168.100.149:1234/v1/chat/completions"
+""let s:url_ai = "http://192.168.100.149:1234"
+
+"" free-pilot
+" https://github.com/whatever555/free-pilot-vim
+""Plugin 'whatever555/free-pilot-vim'
+""
+""" How long to wait before triggering completion (in ms)
+""let g:free_pilot_debounce_delay = 2000
+""
+""" Maximum number of suggestions to show
+""let g:free_pilot_max_suggestions = 3
+""
+""" Enable debug logging
+""let g:free_pilot_debug = 1
+""
+""" Choose backend: 'ollama' or 'openrouter'
+""let g:free_pilot_backend = 'ollama'
+""
+""" AI temperature (0.0 - 1.0, lower = more focused)
+""let g:free_pilot_temperature = 0.1
+""
+""" Debug log file location (empty = no logging)
+""let g:free_pilot_log_file = 'free_pilot.log'
+""
+""" Maximum tokens to generate
+""let g:free_pilot_max_tokens = 120
+""
+""" Model to use with Ollama
+""let g:free_pilot_ollama_model = s:model_ai
+""
+""" Ollama API endpoint
+""let g:free_pilot_ollama_url = s:url_ai . "/api/generate"
+
+
+"" vim-ollama
+"" Funciona pero muy lento.
+Plugin 'gergap/vim-ollama'
+let g:ollama_debounce_time = 300
+
+"" codeium
+""Plugin 'Exafunction/codeium.vim'
+""" Codeium provides the following functions to control suggestions:
+""" Clear current suggestion	codeium#Clear()	<C-]>
+""" Next suggestion	codeium#CycleCompletions(1)	<M-]>
+""" Previous suggestion	codeium#CycleCompletions(-1)	<M-[>
+""" Insert suggestion	codeium#Accept()	<Tab>
+""" Manually trigger suggestion	codeium#Complete()	<M-Bslash>
+""" Accept word from suggestion	codeium#AcceptNextWord()	<C-k>
+""" Accept line from suggestion	codeium#AcceptNextLine()	<C-l>
+""" Codeium's default keybindings can be disabled by setting
+""""let g:codeium_server_config = {
+""""\    'api_url': s:url_ai
+""""\}
+""let g:codeium_disable_bindings = 0
+""imap <C-c>   <Cmd>call codeium#CycleCompletions(1)<CR>
+""imap <C-z>   <Cmd>call codeium#CycleCompletions(-1)<CR>
+""imap <C-x>   <Cmd>call codeium#Clear()<CR>
+
+
+" https://github.com/madox2/vim-ai
+Plugin 'madox2/vim-ai'
 
 " This prompt instructs model to be consise in order to be used inline in editor
 let s:initial_complete_prompt =<< trim END
@@ -909,6 +957,7 @@ let g:vim_ai_complete = {
 \    "endpoint_url": s:url_ai . "/v1/chat/completions",
 \    "auth_type": "none",
 \    "max_tokens": 0,
+\    "num_ctx": 163840,
 \    "max_completion_tokens": 0,
 \    "temperature": 0.1,
 \    "request_timeout": 200,
@@ -924,10 +973,11 @@ let g:vim_ai_complete = {
 let g:vim_ai_edit = {
 \  "prompt": "",
 \  "options": {
-\    "model": "deepseek-coder-v2-lite-instruct",
-\    "endpoint_url": "http://192.168.100.149:1234/v1/chat/completions",
+\    "model": s:model_ai,
+\    "endpoint_url": s:url_ai . "/v1/chat/completions",
 \    "auth_type": "none",
 \    "max_tokens": 0,
+\    "num_ctx": 163840,
 \    "max_completion_tokens": 0,
 \    "temperature": 0.1,
 \    "request_timeout": 200,
@@ -974,7 +1024,7 @@ let g:vim_ai_chat = {
 \    "model": s:model_ai,
 \    "endpoint_url": s:url_ai . "/v1/chat/completions",
 \    "max_tokens": 0,
-\    "num_ctx": 8192,
+\    "num_ctx": 163840,
 \    "max_completion_tokens": 0,
 \    "temperature": 1,
 \    "request_timeout": 200,
@@ -998,8 +1048,8 @@ let g:vim_ai_image = {
 \  "provider": "openai",
 \  "prompt": "",
 \  "options": {
+\    "endpoint_url": "https://api.openai.com/v1/images/generations",
 \    "model": "dall-e-3",
-\    "endpoint_url": "http://127.0.0.1:11434/v1/images/generations",
 \    "quality": "standard",
 \    "size": "1024x1024",
 \    "style": "vivid",
