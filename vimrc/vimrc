@@ -995,7 +995,7 @@ let g:vim_ai_edit = {
 let s:initial_chat_prompt =<< trim END
 >>> system
 
-Tu eres un experto programador informático.
+Eres un experto desarrollador de código, experto en buenas practicas.
 
 Si añades bloques de código hazlo con formato makdown, Añadiendo ``` para obtener colores.
 
@@ -1070,7 +1070,7 @@ function! GitCommitMessageFn()
   let l:prompt = "generate a short commit message from the diff below:\n" . l:diff
   let l:config = {
   \  "options": {
-  \    "model": "gpt-4o",
+  \    "model": s:model_ai,
   \    "initial_prompt": ">>> system\nyou are a code assistant",
   \    "temperature": 1,
   \  },
