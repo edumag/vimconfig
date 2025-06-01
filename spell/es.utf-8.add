@@ -5,3 +5,8 @@ Garrigoles
 REDIS_CLUSTER_PORT_RANGE
 {"name":"boltiawifi-api","hostname":"05e291ffc25b","pid":19,"level":50,"object":{"importeBase":0,"importeExtra":100,"importeShipping":100,"importeDiscount":22.1,"taxes":21,"total":180},"req_id":"f1440785-7bd5-484d-9800-1bc2dfc24d6e","msg":"PaymentCreateOperationShop.payments: ","time":"2024-12-31T16:30:28.331Z","v":0}
 warning
+microservicios
+orquestador
+laravel
+framework
+Describe

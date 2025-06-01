@@ -76,9 +76,6 @@ set mouse=a
 """ VISUALIZACIÓN
 set fillchars=vert:\│
 set colorcolumn=80
-set background=dark
-"set background=light
-colorscheme edumag2                " Basado en onedark
 set sm                             " Visualización de modos
 set showcmd                        " Visualización de comandos mientras vamos escribiendo
 set showmatch                      " Indica cierre de llaves
@@ -88,9 +85,7 @@ set noerrorbells
 set wrap                           " Evitamos lineas partidas.
 set showbreak=\|                   " Shows this string before broken lines
 syntax on
-" Colores
-highlight Comment ctermfg=Blue
-hi Normal guibg=NONE ctermbg=NONE  " Background transparent.
+syntax enable
 
 """ StatusLine
 " set ruler                        " visualizar numero de linea y columna
@@ -126,10 +121,15 @@ hi StatusLine ctermfg=15 cterm=bold ctermbg=8
 " poner algunas opciones adicionales que son cómodas para programar (ver los
 " comentarios correspondientes).
 
-if has("gui_running")
-    " colorscheme edumag
-    colorscheme onedark
-endif
+" colorscheme edumag2                " Basado en onedark
+" colorscheme onedark
+" colorscheme solarized
+
+set background=dark
+" set background=light
+
+Plugin 'NLKNguyen/papercolor-theme'
+colorscheme PaperColor
 
 if has("syntax") || has("gui_running")
 
@@ -147,6 +147,9 @@ if has("syntax") || has("gui_running")
 
 endif
 
+highlight Comment ctermfg=Blue
+hi Normal guibg=NONE ctermbg=NONE  " Background transparent.
+
 " Con esto Vim señalará con fondo rojo los espacios que queden al final
 " de línea: rara vez sirven para algo, así que prefiero poder *verlos*
 " para poder quitarlos.
@@ -163,15 +166,15 @@ hi SpellBad cterm=underline
 """ SANGRADO, SALTOS DE LINEA Y TABULADORES
 
 " setlocal textwidth=80          " Limita el ancho a 80 caracteres.
-set tabstop=4                    " ancho de tabulador estandar
+set tabstop=4                    " ancho de tabulador estándar
 set softtabstop=4                " ancho que deseamos
 set shiftwidth=4                 " ancho del sangrado
 "set foldmethod=marker           " Plegar por marcas
 set foldmarker={,}               " Marcas con las que plegar
 set foldmethod=indent            " Plegar por indent
-set autoindent                   " Indentación automatica
+set autoindent                   " Indentación automática
 set expandtab                    " El tabulador utiliza espacios en blanco
-filetype indent on	            " Indenta segun tipo de archivo
+filetype indent on	            " Indenta según tipo de archivo
 set backspace=indent,eol,start	" more powerful backspacing
 set smartindent
 
@@ -594,6 +597,7 @@ let g:ale_linters = {
     \ 'sh': ['shellcheck'],
     \'javascript': ['eslint'],
     \'typescript': ['eslint', 'tsserver', 'prettier'],
+    \'python': ['pylsp']
 \}
 let g:ale_fixers = {
     \ 'php': ['phpcbf'],
@@ -602,6 +606,7 @@ let g:ale_fixers = {
     \'yaml': ['prettier'],
     \'typescript': ['eslint', 'prettier'],
     \'markdown': ['prettier'],
+    \'python': ['autopep8']
 \}
 
 " Keybindings para ALE.
@@ -622,8 +627,9 @@ Plugin 'itchyny/vim-gitbranch'
 Plugin 'itchyny/lightline.vim'
 " https://github.com/maximbaz/lightline-ale
 Plugin 'maximbaz/lightline-ale'
+"    \ 'colorscheme': 'onedark',
 let g:lightline = {
-    \ 'colorscheme': 'onedark',
+    \ 'colorscheme': 'PaperColor',
     \}
 " Función personalizada para obtener el path relativo del fichero.
 function! LightLineFilename()
@@ -808,14 +814,14 @@ let g:project_lint#echo_progress = v:true
 " let g:project_lint#enabled_linters = {'javascript': ['eslint'], 'python': ['mypy']}
 " If there's no setting provided for filetype, all available linters are used.
 " If provided an empty array fora filetype, no linting is done for it.
-" let g:project_lint#enabled_linters = {}
+" let g:project_lint#pylsp = {}
 " Para que funcione con typescript hay que instalar tslint.
 " Y ejecutar tslint --init.
 let g:project_lint#enabled_linters = {
       \ 'javascript': ['eslint'],
       \ 'typescript': ['tslint'],
       \ 'json': ['jq'],
-      \ 'python': ['mypy']
+      \ 'python': ['pylsp']
       \ }
 "let g:project_lint#linter_args = {'mypy': '--ignore-missing-imports'}
 let g:project_lint#linter_args = {'tslint': '-p .'}
@@ -1027,7 +1033,7 @@ let g:vim_ai_chat = {
 \    "num_ctx": 163840,
 \    "max_completion_tokens": 0,
 \    "temperature": 1,
-\    "request_timeout": 200,
+\    "request_timeout": 1000,
 \    "stream": 1,
 \    "auth_type": "none",
 \    "token_file_path": "",
@@ -1082,10 +1088,10 @@ command! GitCommitMessage call GitCommitMessageFn()
 
 " custom command that provides a code review for selected code block
 function! CodeReviewFn(range) range
-  let l:prompt = "programming syntax is " . &filetype . ", review the code below"
+  let l:prompt = "El código es " . &filetype . ", revisa que utlice buenas practicas y clean code"
   let l:config = {
   \  "options": {
-  \    "initial_prompt": ">>> system\nyou are a clean code expert",
+  \    "initial_prompt": ">>> system\nEres un experto programador que utiliza clean code.",
   \  },
   \}
   exe a:firstline.",".a:lastline . "call vim_ai#AIChatRun(a:range, l:config, l:prompt)"
