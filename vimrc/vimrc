@@ -36,7 +36,7 @@
 :set rnu
 :set nu
 
-" set cursorline               " Linea actual subrayada.
+" set cursorline               " Línea actual subrayada.
 set clipboard=unnamedplus      " Copias de vim a PORTAPAPELES
 set virtualedit=block          " Permite moverse al cursor por toda la pantalla.
 set encoding=utf-8
@@ -82,7 +82,7 @@ set showmatch                      " Indica cierre de llaves
 " set novisualbell
 set noerrorbells
 " "set nowrap                      " Evitamos lineas partidas.
-set wrap                           " Evitamos lineas partidas.
+set nowrap                           " Evitamos lineas partidas.
 set showbreak=\|                   " Shows this string before broken lines
 syntax on
 syntax enable
@@ -596,7 +596,7 @@ let g:ale_linters = {
     \ 'markdown': ['mdl'],
     \ 'sh': ['shellcheck'],
     \'javascript': ['eslint'],
-    \'typescript': ['eslint', 'tsserver', 'prettier'],
+    \'typescript': ['tslint', 'tsserver', 'prettier'],
     \'python': ['pylsp']
 \}
 let g:ale_fixers = {
@@ -604,7 +604,7 @@ let g:ale_fixers = {
     \'javascript': ['eslint'],
     \'json': ['prettier'],
     \'yaml': ['prettier'],
-    \'typescript': ['eslint', 'prettier'],
+    \'typescript': ['tslint', 'prettier'],
     \'markdown': ['prettier'],
     \'python': ['autopep8']
 \}
@@ -875,76 +875,63 @@ Plugin 'https://github.com/airblade/vim-gitgutter.git'
 
 """ AI
 
+"" vim-ollama
+"" Funciona pero muy lento.
+" Plugin 'gergap/vim-ollama'
+" let g:ollama_debounce_time = 300
+
+"" codeium
+Plugin 'Exafunction/codeium.vim'
+" Codeium provides the following functions to control suggestions:
+" Clear current suggestion	codeium#Clear()	<C-]>
+" Next suggestion	codeium#CycleCompletions(1)	<M-]>
+" Previous suggestion	codeium#CycleCompletions(-1)	<M-[>
+" Insert suggestion	codeium#Accept()	<Tab>
+" Manually trigger suggestion	codeium#Complete()	<M-Bslash>
+" Accept word from suggestion	codeium#AcceptNextWord()	<C-k>
+" Accept line from suggestion	codeium#AcceptNextLine()	<C-l>
+" Codeium's default keybindings can be disabled by setting
+""let g:codeium_server_config = {
+""\    'api_url': s:url_ai
+""\}
+let g:codeium_disable_bindings = 0
+imap <C-c>   <Cmd>call codeium#CycleCompletions(1)<CR>
+imap <C-z>   <Cmd>call codeium#CycleCompletions(-1)<CR>
+imap <C-x>   <Cmd>call codeium#Clear()<CR>
+
+" https://github.com/madox2/vim-ai
+Plugin 'madox2/vim-ai'
+Plugin 'madox2/vim-ai-provider-google'
+
 "" AI - CONFIG
 
-let g:vim_ai_token_file_path = '~/.config/openai.token'
+" vim-ai
+let g:vim_ai_roles_config_file = '~/.vim/vim-ai-roles.ini'
 
 " ollama
-let s:model_ai = "deepseek-coder-v2:latest"
-let s:url_ai = "http://127.0.0.1:11434"
+" let s:model_ai = "deepseek-coder-v2:latest"
+" let s:url_ai = "http://127.0.0.1:11434"
+" deepseek
+" let s:model_ai = "deepseek-chat"
+" let s:url_ai = "https://api.deepseek.com"
+" let s:api_key = $DEEPSEEK_API_KEY
+" openrouter
+let s:model_ai = "deepseek/deepseek-chat-v3-0324:free"
+let s:url_ai = "https://openrouter.ai/api"
+let s:api_key = $OPENROUTER_API_KEY
+let g:vim_ai_token_file_path = '~/.config/openai.token'
 " LMStudio
 ""let s:model_ai = "deepseek-coder-v2-lite-instruct"
 ""let s:url_ai = "http://192.168.100.149:1234"
 
-"" free-pilot
-" https://github.com/whatever555/free-pilot-vim
-""Plugin 'whatever555/free-pilot-vim'
-""
-""" How long to wait before triggering completion (in ms)
-""let g:free_pilot_debounce_delay = 2000
-""
-""" Maximum number of suggestions to show
-""let g:free_pilot_max_suggestions = 3
-""
-""" Enable debug logging
-""let g:free_pilot_debug = 1
-""
-""" Choose backend: 'ollama' or 'openrouter'
-""let g:free_pilot_backend = 'ollama'
-""
-""" AI temperature (0.0 - 1.0, lower = more focused)
-""let g:free_pilot_temperature = 0.1
-""
-""" Debug log file location (empty = no logging)
-""let g:free_pilot_log_file = 'free_pilot.log'
-""
-""" Maximum tokens to generate
-""let g:free_pilot_max_tokens = 120
-""
-""" Model to use with Ollama
-""let g:free_pilot_ollama_model = s:model_ai
-""
-""" Ollama API endpoint
-""let g:free_pilot_ollama_url = s:url_ai . "/api/generate"
+" enables/disables full markdown highlighting in aichat files
+" NOTE: code syntax highlighting works out of the box without this option enabled
+" NOTE: highlighting may be corrupted when using together with the `preservim/vim-markdown`
+let g:vim_ai_chat_markdown = 1
 
-
-"" vim-ollama
-"" Funciona pero muy lento.
-Plugin 'gergap/vim-ollama'
-let g:ollama_debounce_time = 300
-
-"" codeium
-""Plugin 'Exafunction/codeium.vim'
-""" Codeium provides the following functions to control suggestions:
-""" Clear current suggestion	codeium#Clear()	<C-]>
-""" Next suggestion	codeium#CycleCompletions(1)	<M-]>
-""" Previous suggestion	codeium#CycleCompletions(-1)	<M-[>
-""" Insert suggestion	codeium#Accept()	<Tab>
-""" Manually trigger suggestion	codeium#Complete()	<M-Bslash>
-""" Accept word from suggestion	codeium#AcceptNextWord()	<C-k>
-""" Accept line from suggestion	codeium#AcceptNextLine()	<C-l>
-""" Codeium's default keybindings can be disabled by setting
-""""let g:codeium_server_config = {
-""""\    'api_url': s:url_ai
-""""\}
-""let g:codeium_disable_bindings = 0
-""imap <C-c>   <Cmd>call codeium#CycleCompletions(1)<CR>
-""imap <C-z>   <Cmd>call codeium#CycleCompletions(-1)<CR>
-""imap <C-x>   <Cmd>call codeium#Clear()<CR>
-
-
-" https://github.com/madox2/vim-ai
-Plugin 'madox2/vim-ai'
+" debug settings
+let g:vim_ai_debug = 1
+let g:vim_ai_debug_log_file = "/tmp/vim_ai_debug.log"
 
 " This prompt instructs model to be consise in order to be used inline in editor
 let s:initial_complete_prompt =<< trim END
@@ -961,11 +948,11 @@ let g:vim_ai_complete = {
 \  "options": {
 \    "model": s:model_ai,
 \    "endpoint_url": s:url_ai . "/v1/chat/completions",
-\    "auth_type": "none",
+\    "api_key_name": s:api_key,
 \    "max_tokens": 0,
 \    "num_ctx": 163840,
 \    "max_completion_tokens": 0,
-\    "temperature": 0.1,
+\    "temperature": 1,
 \    "request_timeout": 200,
 \    "stream": 1,
 \    "selection_boundary": "#####",
@@ -981,7 +968,7 @@ let g:vim_ai_edit = {
 \  "options": {
 \    "model": s:model_ai,
 \    "endpoint_url": s:url_ai . "/v1/chat/completions",
-\    "auth_type": "none",
+\    "auth_type": "bearer",
 \    "max_tokens": 0,
 \    "num_ctx": 163840,
 \    "max_completion_tokens": 0,
@@ -1029,15 +1016,14 @@ let g:vim_ai_chat = {
 \  "options": {
 \    "model": s:model_ai,
 \    "endpoint_url": s:url_ai . "/v1/chat/completions",
+\    "api_key": s:api_key,
+\    "auth_type": "bearer",
 \    "max_tokens": 0,
 \    "num_ctx": 163840,
 \    "max_completion_tokens": 0,
 \    "temperature": 1,
 \    "request_timeout": 1000,
 \    "stream": 1,
-\    "auth_type": "none",
-\    "token_file_path": "",
-\    "token_load_fn": "",
 \    "selection_boundary": "",
 \    "initial_prompt": s:initial_chat_prompt,
 \  },
@@ -1097,6 +1083,3 @@ function! CodeReviewFn(range) range
   exe a:firstline.",".a:lastline . "call vim_ai#AIChatRun(a:range, l:config, l:prompt)"
 endfunction
 command! -range -nargs=? AICodeReview <line1>,<line2>call CodeReviewFn(<range>)
-
-Plugin 'wuelnerdotexe/vim-astro'
-let g:astro_typescript = 'enable'
