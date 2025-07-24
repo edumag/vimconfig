@@ -66,6 +66,7 @@ set exrc
 set secure
 
 " Activamos mouse
+" Utilizando la techa Shift desactivamos el mouse temporalmente.
 set mouse=a
 "
 " Guardamos historial de cambios.
@@ -908,21 +909,21 @@ Plugin 'madox2/vim-ai-provider-google'
 " vim-ai
 let g:vim_ai_roles_config_file = '~/.vim/vim-ai-roles.ini'
 
-" ollama
+"" ollama
 " let s:model_ai = "deepseek-coder-v2:latest"
 " let s:url_ai = "http://127.0.0.1:11434"
-" deepseek
+"" deepseek
 " let s:model_ai = "deepseek-chat"
 " let s:url_ai = "https://api.deepseek.com"
 " let s:api_key = $DEEPSEEK_API_KEY
-" openrouter
+"" LMStudio
+" let s:model_ai = "deepseek-coder-v2-lite-instruct"
+" let s:url_ai = "http://192.168.100.149:1234"
+"" openrouter
 let s:model_ai = "deepseek/deepseek-chat-v3-0324:free"
 let s:url_ai = "https://openrouter.ai/api"
 let s:api_key = $OPENROUTER_API_KEY
 let g:vim_ai_token_file_path = '~/.config/openai.token'
-" LMStudio
-""let s:model_ai = "deepseek-coder-v2-lite-instruct"
-""let s:url_ai = "http://192.168.100.149:1234"
 
 " enables/disables full markdown highlighting in aichat files
 " NOTE: code syntax highlighting works out of the box without this option enabled
@@ -1037,21 +1038,19 @@ let g:vim_ai_chat = {
 \}
 
 let g:vim_ai_image = {
-\  "provider": "openai",
 \  "prompt": "",
 \  "options": {
-\    "endpoint_url": "https://api.openai.com/v1/images/generations",
-\    "model": "dall-e-3",
+\    "endpoint_url": s:url_ai . "/v1/chat/completions",
+\    "model": "mistralai/mistral-small-3.2-24b-instruct:free",
 \    "quality": "standard",
 \    "size": "1024x1024",
 \    "style": "vivid",
 \    "request_timeout": 400,
-\    "auth_type": "bearer",
-\    "token_file_path": "",
-\    "token_load_fn": "",
+\    "api_key": s:api_key,
+\    "auth_type": "bearer"
 \  },
 \  "ui": {
-\    "download_dir": "",
+\    "download_dir": "~/Imágenes/",
 \  },
 \}
 
