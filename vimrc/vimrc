@@ -221,7 +221,7 @@ set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.i
 command Incloura !$HOME/desarrollo/magtrabajos/magtrabajos -a %
 command Console grep -r 'console\.' src/
 command OnlyThis grep -r '@onlyThis' test/
-command TODO grep -r -E "@todo\|@bug" src/ test/
+command TODO grep -r -E "@todo\|@bug" --exclude-dir=node_modules *
 
 " AUTOCOMMAND
 " En Vim se pueden definir comandos que se ejecutan automáticamente cuando
@@ -273,7 +273,7 @@ let NERDTreeQuitOnOpen=1
 """ TEMPLATES
 inoreabbrev <h. <Esc>:r ~/.vim/templates/skeleton.html<cr><Esc>ggdd
 inoreabbrev <d. <LT>div><cr><LT>/div><Esc>O
-inoreabbrev __CD console.dir({ data: data }, { depth: null })<Esc>26h
+inoreabbrev __CD console.dir({ DATA: data }, { depth: null })<Esc>26h
 
 """ PROGRAMACIÓN
 
