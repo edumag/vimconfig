@@ -219,9 +219,9 @@ inoremap ` ``<Esc>ha
 " These are files we are not likely to want to edit or read.
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 command Incloura !$HOME/desarrollo/magtrabajos/magtrabajos -a %
-command Console grep -r 'console\.' src/
+command Console grep -r 'console\.' --exclude-dir=dist --exclude-dir=node_modules *
 command OnlyThis grep -r '@onlyThis' test/
-command TODO grep -r -E "@todo\|@bug" --exclude-dir=node_modules *
+command TODO grep -r -E "@todo\|@bug" --exclude-dir=dist --exclude-dir=node_modules *
 
 " AUTOCOMMAND
 " En Vim se pueden definir comandos que se ejecutan automáticamente cuando
