@@ -2,4 +2,5 @@
 bundle/*
 plugged/*
 undodir/*
+.netrwhist
 

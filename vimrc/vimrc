@@ -607,7 +607,8 @@ let g:ale_fixers = {
     \'yaml': ['prettier'],
     \'typescript': ['tslint', 'prettier'],
     \'markdown': ['prettier'],
-    \'python': ['autopep8']
+    \'python': ['autopep8'],
+    \'sh': ['shfmt']
 \}
 
 " Keybindings para ALE.
