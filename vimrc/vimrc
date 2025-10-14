@@ -509,7 +509,7 @@ Plugin 'MaxMEllon/vim-jsx-pretty'
 Plugin 'junegunn/fzf.vim'
 Plugin 'junegunn/fzf', { 'do': { -> fzf#install() } }
 " Buscar ficheros.
-nnoremap <silent> <C-f> :Files<CR>
+nnoremap <silent> <C-f> :FZF <CR>
 " Buscar en ficheros.
 " Dependencias. sudo apt  install ripgrep
 nnoremap <silent> <Leader>f :Rg<CR>
