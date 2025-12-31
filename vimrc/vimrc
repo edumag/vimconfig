@@ -82,8 +82,7 @@ set showcmd                        " Visualización de comandos mientras vamos e
 set showmatch                      " Indica cierre de llaves
 " set novisualbell
 set noerrorbells
-" "set nowrap                      " Evitamos lineas partidas.
-set nowrap                           " Evitamos lineas partidas.
+" set nowrap                           " Evitamos lineas partidas.
 set showbreak=\|                   " Shows this string before broken lines
 syntax on
 syntax enable
@@ -167,9 +166,9 @@ hi SpellBad cterm=underline
 """ SANGRADO, SALTOS DE LINEA Y TABULADORES
 
 " setlocal textwidth=80          " Limita el ancho a 80 caracteres.
-set tabstop=4                    " ancho de tabulador estándar
-set softtabstop=4                " ancho que deseamos
-set shiftwidth=4                 " ancho del sangrado
+set tabstop=2                    " ancho de tabulador estándar
+set softtabstop=2                " ancho que deseamos
+set shiftwidth=2                 " ancho del sangrado
 "set foldmethod=marker           " Plegar por marcas
 set foldmarker={,}               " Marcas con las que plegar
 set foldmethod=indent            " Plegar por indent
@@ -242,6 +241,9 @@ autocmd BufWinEnter * silent! :%foldopen!
 " Forzar detectar archivos .md como markdown.
 au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
 
+" Forzar detectar archivos .txt como markdown.
+au BufNewFile,BufFilePre,BufRead *.txt set filetype=txt
+
 " Syntax para rst
 au BufNewFile,BufRead *.rst set ft=rest
 
@@ -271,7 +273,7 @@ let g:nerdtree_open_cmd = 'xdg-open'
 let NERDTreeQuitOnOpen=1
 
 """ TEMPLATES
-inoreabbrev <h. <Esc>:r ~/.vim/templates/skeleton.html<cr><Esc>ggdd
+inoreabbrev __html <Esc>:r ~/.vim/templates/skeleton.html<cr><Esc>ggdd
 inoreabbrev <d. <LT>div><cr><LT>/div><Esc>O
 inoreabbrev __CD console.dir({ DATA: data }, { depth: null })<Esc>26h
 
@@ -439,7 +441,9 @@ au FileType python setlocal formatprg=autopep8\ -
 "   " let g:airline_extensions = ['branch', 'tabline']
 
 " Debug
-" Plugin 'joonty/vdebug'
+Plugin 'joonty/vdebug'
+let g:vdebug_options = {'server': 'totbisbal.ddev.site'}
+let g:vdebug_options = {'port': '9003'}
 
 " Python Mode.
 " Desactivamos temporalmente.
@@ -598,6 +602,7 @@ let g:ale_linters = {
     \ 'sh': ['shellcheck'],
     \'javascript': ['eslint'],
     \'typescript': ['tslint', 'tsserver', 'prettier'],
+    \'vue': ['vue-tsc'],
     \'python': ['pylsp']
 \}
 let g:ale_fixers = {
@@ -606,6 +611,7 @@ let g:ale_fixers = {
     \'json': ['prettier'],
     \'yaml': ['prettier'],
     \'typescript': ['tslint', 'prettier'],
+    \'vue': ['tslint', 'prettier'],
     \'markdown': ['prettier'],
     \'python': ['autopep8'],
     \'sh': ['shfmt']
@@ -865,9 +871,6 @@ nmap <leader>t :let $VIM_DIR=expand('%:p:h')<CR>:below horizontal terminal<CR>cd
 " Repetir cualquier comando.
 Plugin 'tpope/vim-repeat'
 silent! call repeat#set("\<Plug>MyWonderfulMap", v:count)
-
-" Logs view.
-autocmd BufNewFile,BufRead *.txt set filetype=json
 
 " vimserver
 Plugin 'https://github.com/wolandark/vim-live-server.git'
